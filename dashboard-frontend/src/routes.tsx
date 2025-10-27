@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Users from "./pages/Users";
 import Stats from "./pages/Stats";
 import Login from "./pages/Login";
+import CreateTrainer from "./pages/CreateTrainer";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function AppRoutes() {
@@ -32,6 +33,15 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/create-trainer"
+        element={
+          <ProtectedRoute>
+            <CreateTrainer />
+          </ProtectedRoute>
+        }
+      />
+
       <Route path="/login" element={<Login />} />
     </Routes>
   );

@@ -17,7 +17,7 @@ export default function Login() {
 
     if (res.ok && data.token) {
       localStorage.setItem("token", data.token);
-      window.location.href = "/dashboard";
+      window.location.href = "/";
     } else {
       alert(data.error || "Login fehlgeschlagen");
     }

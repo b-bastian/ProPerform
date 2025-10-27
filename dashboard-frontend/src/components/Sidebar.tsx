@@ -20,6 +20,9 @@ export default function Sidebar() {
       <Link to="/stats" className={linkClass("/stats")}>
         📊 Stats
       </Link>
+      <Link to="/create-trainer" className={linkClass("/create-trainer")}>
+        🏋️‍♂️ Trainer erstellen
+      </Link>
     </div>
   );
 }

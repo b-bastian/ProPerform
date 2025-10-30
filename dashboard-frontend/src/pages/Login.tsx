@@ -27,7 +27,7 @@ export default function Login() {
     <div className="flex items-center justify-center h-screen bg-[#101828] text-white px-4">
       <div className="bg-white/10 backdrop-blur-lg p-14 rounded-3xl shadow-2xl w-full max-w-xl">
         <h1 className="text-4xl font-extrabold mb-8 text-center text-blue-400 tracking-wide">
-          🔐 Anmeldung
+          Anmeldung
         </h1>
 
         <form onSubmit={handleLogin} className="flex flex-col space-y-7">

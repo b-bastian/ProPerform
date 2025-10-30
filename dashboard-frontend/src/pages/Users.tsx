@@ -42,7 +42,7 @@ export default function Users() {
       <div className="bg-gray-800 rounded-2xl shadow-lg p-8 w-[90%] max-w-2xl text-center">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-4xl font-bold text-blue-400">
-            👥 Benutzerverwaltung
+            Benutzerverwaltung
           </h1>
           <select
             value={filter}

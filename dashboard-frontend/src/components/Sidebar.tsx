@@ -7,6 +7,7 @@ import {
   House,
   Users,
   ChartColumn,
+  UserPlus,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -30,6 +31,11 @@ export default function Sidebar() {
       to: "/create-trainer",
       icon: <Dumbbell size={20} />,
       label: "Trainer erstellen",
+    },
+    {
+      to: "/create-owner",
+      icon: <UserPlus size={20} />,
+      label: "Owner erstellen",
     },
   ];
 

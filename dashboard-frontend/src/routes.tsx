@@ -5,6 +5,7 @@ import Stats from "./pages/Stats";
 import Login from "./pages/Login";
 import CreateTrainer from "./pages/CreateTrainer";
 import ProtectedRoute from "./components/ProtectedRoute";
+import CreateOwner from "./pages/CreateOwner";
 
 export default function AppRoutes() {
   return (
@@ -38,6 +39,14 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <CreateTrainer />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/create-owner"
+        element={
+          <ProtectedRoute>
+            <CreateOwner />
           </ProtectedRoute>
         }
       />

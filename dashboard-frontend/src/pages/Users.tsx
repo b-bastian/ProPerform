@@ -38,16 +38,17 @@ export default function Users() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full w-full">
-      <div className="bg-gray-800 rounded-2xl shadow-lg p-8 w-[90%] max-w-2xl text-center">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-4xl font-bold text-blue-400">
-            Benutzerverwaltung
-          </h1>
+    <div className="flex items-center justify-center min-h-screen text-white px-6 py-16">
+      <div className="bg-[#1C2541]/70 backdrop-blur-md border border-white/10 p-12 rounded-3xl shadow-2xl w-full max-w-5xl">
+        <h1 className="text-4xl font-extrabold mb-10 text-center text-blue-400 tracking-wide flex items-center justify-center gap-3">
+          Benutzerverwaltung
+        </h1>
+
+        <div className="flex justify-end mb-8">
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="bg-gray-700 text-gray-200 text-sm rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="bg-[#2A3558] text-gray-200 text-base rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition"
           >
             <option value="all">Alle</option>
             <option value="owners">Owners</option>
@@ -56,49 +57,57 @@ export default function Users() {
           </select>
         </div>
 
-        <table className="w-full border-separate border-spacing-y-2">
-          <thead>
-            <tr className="text-left text-gray-400 uppercase text-sm">
-              <th className="px-4">UID</th>
-              <th className="px-4">Vorname</th>
-              <th className="px-4">Geburtsdatum</th>
-              <th className="px-4">E-Mail</th>
-              <th className="px-4">Rolle</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((u, i) => (
-              <tr
-                key={i}
-                className="bg-gray-700 hover:bg-gray-600 transition rounded-lg"
-              >
-                <td className="px-4 py-3 text-gray-200 font-bold">{u.uid}</td>
-                <td className="px-4 py-3 text-gray-200 font-medium">
-                  {u.firstname}
-                </td>
-                <td className="px-4 py-3 text-gray-300">
-                  {u.birthdate ? formatDate(u.birthdate) : "-"}
-                </td>
-                <td className="px-4 py-3 text-gray-300">{u.email}</td>
-                {u.role_id === 1 ? (
-                  <td className="px-4 py-3 text-green-400 font-semibold">
-                    Admin
-                  </td>
-                ) : u.role_id === 2 ? (
-                  <td className="px-4 py-3 text-yellow-400 font-semibold">
-                    Nutzer
-                  </td>
-                ) : u.role_id === 3 ? (
-                  <td className="px-4 py-3 text-red-400 font-semibold">
-                    Trainer
-                  </td>
-                ) : (
-                  <td className="px-4 py-3 text-gray-400 font-semibold">-</td>
-                )}
+        <div className="overflow-x-auto">
+          <table className="w-full border-separate border-spacing-y-3">
+            <thead>
+              <tr className="text-left text-gray-400 uppercase text-sm tracking-wider">
+                <th className="px-5">UID</th>
+                <th className="px-5">Vorname</th>
+                <th className="px-5">Geburtsdatum</th>
+                <th className="px-5">E-Mail</th>
+                <th className="px-5">Rolle</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {users.map((u, i) => (
+                <tr
+                  key={i}
+                  className="bg-[#2A3558] hover:bg-[#32406B] transition rounded-xl"
+                >
+                  <td className="px-5 py-3 text-gray-200 font-semibold">
+                    {u.uid}
+                  </td>
+                  <td className="px-5 py-3 text-gray-100 font-medium">
+                    {u.firstname}
+                  </td>
+                  <td className="px-5 py-3 text-gray-300">
+                    {u.birthdate ? formatDate(u.birthdate) : "-"}
+                  </td>
+                  <td className="px-5 py-3 text-gray-300">{u.email}</td>
+                  {u.role_id === 1 ? (
+                    <td className="px-5 py-3 text-green-400 font-semibold">
+                      Admin
+                    </td>
+                  ) : u.role_id === 2 ? (
+                    <td className="px-5 py-3 text-yellow-400 font-semibold">
+                      Nutzer
+                    </td>
+                  ) : u.role_id === 3 ? (
+                    <td className="px-5 py-3 text-red-400 font-semibold">
+                      Trainer
+                    </td>
+                  ) : (
+                    <td className="px-5 py-3 text-gray-400 font-semibold">-</td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p className="text-center text-gray-500 text-sm mt-10">
+          Nur angemeldete Admins können Benutzer einsehen.
+        </p>
       </div>
     </div>
   );

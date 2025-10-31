@@ -38,7 +38,7 @@ export default function CreateOwner() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#0E1628] text-white px-6 py-16">
+    <div className="flex items-center justify-center min-h-screen text-white px-6 py-16">
       <div className="bg-[#1C2541]/70 backdrop-blur-md border border-white/10 p-12 rounded-3xl shadow-2xl w-full max-w-4xl">
         <h1 className="text-4xl font-extrabold mb-12 text-center text-blue-400 tracking-wide flex items-center justify-center gap-3 col-span-2">
           Owner erstellen

@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import CreateTrainer from "./pages/CreateTrainer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CreateOwner from "./pages/CreateOwner";
+import SystemStatus from "./pages/System";
 
 export default function AppRoutes() {
   return (
@@ -47,6 +48,14 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <CreateOwner />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/system"
+        element={
+          <ProtectedRoute>
+            <SystemStatus />
           </ProtectedRoute>
         }
       />

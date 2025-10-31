@@ -3,7 +3,7 @@ export default function CreateTrainer() {
 
   return (
     <div className="flex items-center justify-center h-full w-full">
-      <div className="bg-gradient-to-br from-green-600 via-teal-600 to-cyan-700 text-white rounded-3xl shadow-2xl p-10 max-w-3xl w-[90%] text-center">
+      <div className="bg-linear-to-br from-green-600 via-teal-600 to-cyan-700 text-white rounded-3xl shadow-2xl p-10 max-w-3xl w-[90%] text-center">
         <h1 className="text-4xl font-bold mb-8">Trainer erstellen</h1>
         <div className="bg-white/20 rounded-2xl p-6 shadow-md hover:bg-white/30 transition transform hover:-translate-y-1 inline-block">
           <form>

@@ -83,25 +83,29 @@ export default function OnboardingScreen2() {
 
     try {
       /*
-      TODO CAN: Du musst dann firstname, birthdate, email und password_hash in 
-                LocalStorage oder AsyncStorage speichern und das dann im 
-                OnboardingScreen3.tsx das wieder abrufen und dann das von oben
-                wieder machen nur mit allen anderen Parametern auch also dann noch
-                - weight
-                - height
-                - gender
-                an das Backend senden.
-                So:
-                
-                await axios.post('https://api.properform.app/users/register', {
-                  firstname: firstName,
-                  birthdate: birthDate,
-                  email,
-                  password_hash: password,
-                  weight: weight,
-                  height: height,
-                  gender: gender -> ist aber ENUM darf nur gespeichert werden "male", "female", "other" oder "not specified",
-                });
+      TODO CAN: Im OnboardingScreen2.tsx nach der Eingabe firstname, birthdate, email und password_hash in AsyncStorage speichern.
+                Im OnboardingScreen3.tsx diese Werte wieder abrufen.
+                Danach zusätzlich weight, height und gender abfragen.
+                Anschließend alle Felder gemeinsam an das Backend senden:
+                  
+                  await axios.post("https://api.properform.app/users/createUser", {
+                    firstname: firstName,
+                    birthdate: birthDate,
+                    email,
+                    password: passwordHash,
+                    weight,
+                    height,
+                    gender, // ENUM: "male", "female", "other", "not specified"
+                    onboarding_completed: true,
+                    fitness_level,
+                    training_frequency,
+                    primary_goal,
+                  });
+
+
+Route heißt jetzt /createUser (nicht mehr /register).
+
+Backend erwartet password → wird automatisch gehasht.
       */
 
       Alert.alert('Erfolg', 'Dein Account wurde erfolgreich erstellt!');

@@ -58,7 +58,7 @@ export default function CreateOwner() {
               onChange={(e) => setFirstname(e.target.value)}
               required
               className="w-full px-5 py-3 rounded-xl bg-[#2A3558] text-white focus:ring-2 focus:ring-blue-500 outline-none text-lg placeholder-gray-400 transition"
-              placeholder="z. B. Max"
+              placeholder="Max"
             />
           </div>
 
@@ -87,7 +87,7 @@ export default function CreateOwner() {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full px-5 py-3 rounded-xl bg-[#2A3558] text-white focus:ring-2 focus:ring-blue-500 outline-none text-lg placeholder-gray-400 transition"
-              placeholder="z. B. owner@example.com"
+              placeholder="owner@example.com"
             />
           </div>
 

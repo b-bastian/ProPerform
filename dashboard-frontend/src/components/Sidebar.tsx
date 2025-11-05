@@ -8,6 +8,7 @@ import {
   Users,
   ChartColumn,
   UserPlus,
+  ChevronsLeftRightEllipsis
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -37,6 +38,11 @@ export default function Sidebar() {
       icon: <UserPlus size={20} />,
       label: "Owner erstellen",
     },
+    {
+      to: "/system",
+      icon: <ChevronsLeftRightEllipsis size={20} />,
+      label: "Systemstatus"
+    }
   ];
 
   return (

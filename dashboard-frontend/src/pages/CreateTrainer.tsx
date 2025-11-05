@@ -53,6 +53,7 @@ export default function CreateTrainer() {
   }
 
   return (
+<<<<<<< HEAD
     <div className="flex items-center justify-center min-h-screen bg-[#0E1628] text-white px-6 py-16">
       <div className="bg-[#1C2541]/70 backdrop-blur-md border border-white/10 p-12 rounded-3xl shadow-2xl w-full max-w-4xl">
         <h1 className="text-4xl font-extrabold mb-12 text-center text-blue-400 tracking-wide flex items-center justify-center gap-3">
@@ -67,6 +68,13 @@ export default function CreateTrainer() {
             <label className="text-sm mb-2 text-gray-400 tracking-wide">
               Vorname
             </label>
+=======
+    <div className="flex items-center justify-center h-full w-full">
+      <div className="bg-linear-to-br from-green-600 via-teal-600 to-cyan-700 text-white rounded-3xl shadow-2xl p-10 max-w-3xl w-[90%] text-center">
+        <h1 className="text-4xl font-bold mb-8">Trainer erstellen</h1>
+        <div className="bg-white/20 rounded-2xl p-6 shadow-md hover:bg-white/30 transition transform hover:-translate-y-1 inline-block">
+          <form>
+>>>>>>> ab4e13a33820abb0b2dc9fa577a2d26cbee42a74
             <input
               type="text"
               value={firstname}

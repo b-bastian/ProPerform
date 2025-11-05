@@ -80,6 +80,7 @@ export default function Users() {
   };
 
   return (
+<<<<<<< HEAD
     <div className="flex flex-col items-center justify-center h-full w-full">
       <div className="bg-gray-800 rounded-2xl shadow-lg p-8 w-[90%] max-w-6xl text-center">
         <div className="flex justify-between items-center mb-6">
@@ -210,10 +211,78 @@ export default function Users() {
                     </button>
                   </div>
                 </td>
+=======
+    <div className="flex items-center justify-center min-h-screen text-white px-6 py-16">
+      <div className="bg-[#1C2541]/70 backdrop-blur-md border border-white/10 p-12 rounded-3xl shadow-2xl w-full max-w-5xl">
+        <h1 className="text-4xl font-extrabold mb-10 text-center text-blue-400 tracking-wide flex items-center justify-center gap-3">
+          Benutzerverwaltung
+        </h1>
+
+        <div className="flex justify-end mb-8">
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="bg-[#2A3558] text-gray-200 text-base rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none transition"
+          >
+            <option value="all">Alle</option>
+            <option value="owners">Owners</option>
+            <option value="users">Users</option>
+            <option value="trainers">Trainers</option>
+          </select>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full border-separate border-spacing-y-3">
+            <thead>
+              <tr className="text-left text-gray-400 uppercase text-sm tracking-wider">
+                <th className="px-5">UID</th>
+                <th className="px-5">Vorname</th>
+                <th className="px-5">Geburtsdatum</th>
+                <th className="px-5">E-Mail</th>
+                <th className="px-5">Rolle</th>
+>>>>>>> ab4e13a33820abb0b2dc9fa577a2d26cbee42a74
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {users.map((u, i) => (
+                <tr
+                  key={i}
+                  className="bg-[#2A3558] hover:bg-[#32406B] transition rounded-xl"
+                >
+                  <td className="px-5 py-3 text-gray-200 font-semibold">
+                    {u.uid}
+                  </td>
+                  <td className="px-5 py-3 text-gray-100 font-medium">
+                    {u.firstname}
+                  </td>
+                  <td className="px-5 py-3 text-gray-300">
+                    {u.birthdate ? formatDate(u.birthdate) : "-"}
+                  </td>
+                  <td className="px-5 py-3 text-gray-300">{u.email}</td>
+                  {u.role_id === 1 ? (
+                    <td className="px-5 py-3 text-green-400 font-semibold">
+                      Admin
+                    </td>
+                  ) : u.role_id === 2 ? (
+                    <td className="px-5 py-3 text-yellow-400 font-semibold">
+                      Nutzer
+                    </td>
+                  ) : u.role_id === 3 ? (
+                    <td className="px-5 py-3 text-red-400 font-semibold">
+                      Trainer
+                    </td>
+                  ) : (
+                    <td className="px-5 py-3 text-gray-400 font-semibold">-</td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p className="text-center text-gray-500 text-sm mt-10">
+          Nur angemeldete Admins können Benutzer einsehen.
+        </p>
       </div>
     </div>
   );

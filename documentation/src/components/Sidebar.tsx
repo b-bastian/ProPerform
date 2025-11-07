@@ -5,29 +5,9 @@ import {
   ChevronRight,
   ChevronDown,
   ChevronUp,
-  House,
-  BookOpen,
-  Code,
-  Settings,
 } from "lucide-react";
 
-type SubSubLink = {
-  to: string;
-  label: string;
-};
-
-type SubLink = {
-  to?: string;
-  label: string;
-  subLinks?: SubSubLink[];
-};
-
-type NavLink = {
-  to: string;
-  icon: JSX.Element;
-  label: string;
-  subLinks?: SubLink[];
-};
+import { navLinks, type NavLink, type SubLink } from "../data/navigation";
 
 export default function Sidebar() {
   const { pathname } = useLocation();
@@ -51,7 +31,7 @@ export default function Sidebar() {
         : "text-gray-300 hover:bg-blue-900"
     }`;
 
-  const subLinkClass = (path: string, isButton: boolean = false) =>
+  const subLinkClass = (path: string, isButton = false) =>
     `flex items-center justify-start gap-3 pl-12 pr-4 py-2.5 rounded-lg mb-1 transition-colors duration-200 ${
       isButton ? "cursor-pointer" : ""
     } ${
@@ -67,74 +47,35 @@ export default function Sidebar() {
         : "text-gray-500 hover:bg-blue-900 hover:text-gray-300"
     }`;
 
-  const links: NavLink[] = [
-    { to: "/", icon: <House size={20} />, label: "Home" },
-    {
-      to: "/docs",
-      icon: <BookOpen size={20} />,
-      label: "Dokumentation",
-      subLinks: [
-        { to: "/docs/getting-started", label: "Getting Started" },
-        { to: "/docs/installation", label: "Installation" },
-        { to: "/docs/configuration", label: "Konfiguration" },
-      ],
-    },
-    {
-      to: "/api",
-      icon: <Code size={20} />,
-      label: "API Reference",
-      subLinks: [
-        {
-          label: "Endpoints",
-          subLinks: [
-            { to: "/api/auth/register", label: "POST /auth/register" },
-            { to: "/api/auth/login", label: "POST /auth/login" },
-            { to: "/api/auth/check", label: "GET /auth/checkToken" },
-          ],
-        },
-        {
-          label: "Users",
-          subLinks: [
-            { to: "/api/users/get", label: "GET /users/:id" },
-            { to: "/api/users/update", label: "PUT /users/:id" },
-            { to: "/api/users/delete", label: "DELETE /users/:id" },
-          ],
-        },
-        { to: "/api/authentication", label: "Authentication" },
-        { to: "/api/examples", label: "Beispiele" },
-      ],
-    },
-    { to: "/settings", icon: <Settings size={20} />, label: "Einstellungen" },
-  ];
-
   const renderSubSubLinks = (subLink: SubLink, parentLabel: string) => {
-    const fullLabel = `${parentLabel}-${subLink.label}`;
+    const id = `${parentLabel}-${subLink.label}`;
 
     if (subLink.subLinks) {
       return (
-        <div key={fullLabel}>
+        <div key={id}>
           <button
-            onClick={() => toggleExpanded(fullLabel)}
+            onClick={() => toggleExpanded(id)}
             className={`w-full ${subLinkClass("", true)}`}
           >
             <span className="flex-1 text-left text-sm font-medium">
               {subLink.label}
             </span>
-            {expandedItems.includes(fullLabel) ? (
+            {expandedItems.includes(id) ? (
               <ChevronUp size={14} />
             ) : (
               <ChevronDown size={14} />
             )}
           </button>
-          {expandedItems.includes(fullLabel) && (
+
+          {expandedItems.includes(id) && (
             <div className="mt-1">
-              {subLink.subLinks.map((subSubLink) => (
+              {subLink.subLinks.map((subSub) => (
                 <Link
-                  key={subSubLink.to}
-                  to={subSubLink.to}
-                  className={subSubLinkClass(subSubLink.to)}
+                  key={subSub.to}
+                  to={subSub.to}
+                  className={subSubLinkClass(subSub.to)}
                 >
-                  <span className="text-xs font-mono">{subSubLink.label}</span>
+                  <span className="text-xs font-mono">{subSub.label}</span>
                 </Link>
               ))}
             </div>
@@ -169,7 +110,7 @@ export default function Sidebar() {
       </h1>
 
       <div className="flex-1 overflow-y-auto">
-        {links.map((link) => (
+        {navLinks.map((link: NavLink) => (
           <div key={link.to} className="mb-2">
             {link.subLinks && !collapsed ? (
               <>
@@ -189,10 +130,11 @@ export default function Sidebar() {
                     </>
                   )}
                 </button>
+
                 {expandedItems.includes(link.label) && !collapsed && (
                   <div className="mt-1">
-                    {link.subLinks.map((subLink) =>
-                      renderSubSubLinks(subLink, link.label)
+                    {link.subLinks.map((sub) =>
+                      renderSubSubLinks(sub, link.label)
                     )}
                   </div>
                 )}

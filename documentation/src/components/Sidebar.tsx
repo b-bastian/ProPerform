@@ -109,7 +109,7 @@ export default function Sidebar() {
         ProPerform
       </h1>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto scrollbar-none">
         {navLinks.map((link: NavLink) => (
           <div key={link.to} className="mb-2">
             {link.subLinks && !collapsed ? (

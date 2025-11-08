@@ -5,7 +5,9 @@ import CodeBlock from "../../../components/docs/CodeBlock";
 export default function CreateUser() {
   return (
     <div className="px-6 py-8">
-      <Heading>POST users/createUser</Heading>
+      <Heading>
+        <code>POST /users/createUser</code>
+      </Heading>
       <Text>
         This endpoint allows you to create a new user in the system. You need to
         provide the necessary user information in the request body.
@@ -13,7 +15,7 @@ export default function CreateUser() {
 
       <Heading>1. Prepare the Request</Heading>
       <Text>
-        To create a new user, you need to send a POST request to the
+        To create a new user, you need to send a POST request to the{" "}
         <code>/users/createUser</code> endpoint with the user information in the
         request body.
       </Text>

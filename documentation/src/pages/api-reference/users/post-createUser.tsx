@@ -1,6 +1,7 @@
 import Heading from "../../../components/docs/Heading";
 import Text from "../../../components/docs/Text";
 import CodeBlock from "../../../components/docs/CodeBlock";
+import List from "../../../components/docs/List";
 
 export default function CreateUser() {
   return (
@@ -13,67 +14,64 @@ export default function CreateUser() {
         provide the necessary user information in the request body.
       </Text>
 
-      <Heading>1. Prepare the Request</Heading>
+      <Heading>Request Body</Heading>
       <Text>
-        To create a new user, you need to send a POST request to the{" "}
-        <code>/users/createUser</code> endpoint with the user information in the
-        request body.
+        You need to provive the following fields in the JSON request body:
       </Text>
+      <List
+        items={[
+          "firstname (string): Firstname of the user. e.g. 'Patrick'.",
+          "birthdate (string, format: YYYY-MM-DD): Birthdate of the user. e.g. '1990-05-15'.",
+          "email (string): Email address of the user. e.g. 'patrick@gmail.com'.",
+          "password (string): Password for the user account. e.g. 'securePassword123'.",
+          "weight (decimal): Weight of the user in kilograms. e.g. 70.5.",
+          "height (decimal): Height of the user in centimeters. e.g. 175.0.",
+          "gender (enum: 'male', 'female', 'other', 'not specified'): Gender of the user. e.g. 'male'.",
+          "onboarding_completed (boolean): Indicates if the user has completed onboarding. e.g. true.",
+          "fitness_level (enum: 'beginner', 'intermediate', 'advanced'): Fitness level of the user. e.g. 'beginner'.",
+          "training_frequency (int): Number of training sessions per week (1-7 times per week). e.g. 3.",
+          "primary_goal (string): Primary fitness goal of the user (build muscle, lose weight, stay at weight). e.g. 'build muscle'.",
+        ]}
+      />
+
+      <Heading>Example Request</Heading>
+      <CodeBlock
+        language="javascript"
+        code={`const token = localStorage.getItem("token");
+
+fetch("https://api.properform.app/users/createUser", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": \`Bearer \${token}\`
+  },
+  body: JSON.stringify({
+    firstname: "Patrick",
+    birthdate: "1990-05-15",
+    email: "patrick@gmail.com",
+    password: "securePassword123",
+    weight: 70.5,
+    height: 175.0,
+    gender: "male",
+    onboarding_completed: true,
+    fitness_level: "beginner",
+    training_frequency: 3,
+    primary_goal: "build muscle"
+  })
+})
+  .then(res => res.json())
+  .then(data => console.log(data))
+  .catch(err => console.error("Error:", err));`}
+      />
+
+      <Heading>Example Response</Heading>
       <CodeBlock
         language="json"
-        code={
-          'await fetch("https://api.yourdomain.com/users/createUser", {\n  method: "POST",\n  headers: {\n    "Content-Type": "application/json",\n    "Authorization'
-        }
+        code={`{
+  "message": "Benutzer erfolgreich erstellt",
+  "uid": 42
+}`}
       />
-
-      <Heading>2. Install Dependencies</Heading>
-      <Text>
-        Install all required dependencies using npm or yarn. The installation
-        may take a moment depending on your connection.
-      </Text>
-      <CodeBlock
-        language="bash"
-        code={`npm install
-# or
-yarn install`}
-      />
-
-      <Heading>3. Start the Development Server</Heading>
-      <Text>
-        After installing the dependencies, start the development server.
-      </Text>
-      <CodeBlock
-        language="bash"
-        code={`npm run dev
-# or
-yarn dev`}
-      />
-
-      <Heading>4. Project Structure Overview</Heading>
-      <Text>
-        Below is a simplified version of the project folder structure to help
-        you understand where the main files are located.
-      </Text>
-      <CodeBlock
-        language="txt"
-        code={`src/
- ├─ components/
- │   ├─ Heading.tsx
- │   ├─ Text.tsx
- │   └─ CodeBlock.tsx
- ├─ pages/
- │   └─ GettingStarted.tsx
- ├─ data/
- │   └─ navigation.ts
- └─ App.tsx`}
-      />
-
-      <Heading>5. Start Building</Heading>
-      <Text>
-        You are now ready to start building your documentation or application.
-        Add new pages inside the <code>pages/</code> directory and link them
-        using the navigation configuration inside <code>navigation.ts</code>.
-      </Text>
     </div>
   );
 }

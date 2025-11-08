@@ -16,7 +16,7 @@ export default function CreateUser() {
 
       <Heading>Request Body</Heading>
       <Text>
-        You need to provive the following fields in the JSON request body:
+        You need to provide the following fields in the JSON request body:
       </Text>
       <List
         items={[

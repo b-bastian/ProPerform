@@ -2,7 +2,7 @@ type TextProps = {
   children: React.ReactNode;
 };
 
-export default function Text({ children }: TextProps) {
+export default function BoldText({ children }: TextProps) {
   return (
     <p className="text-base leading-relaxed text-gray-300 mb-3 font-bold">
       {children}

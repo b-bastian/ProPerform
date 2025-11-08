@@ -48,12 +48,23 @@ export const navLinks: NavLink[] = [
         label: "Users",
         subLinks: [
           { to: "/api/users/createUser", label: "POST /users/createUser" },
-          { to: "/api/users/update", label: "PUT /users/:id" },
-          { to: "/api/users/delete", label: "DELETE /users/:id" },
+          { to: "/api/users/getAll", label: "GET /users/getAll" },
+          { to: "/api/users/getAllOwners", label: "GET /users/getAllOwners" },
+          {
+            to: "/api/users/getAllTrainers",
+            label: "GET /users/getAllTrainers",
+          },
+          {
+            to: "/api/users/getNumberOfUsers",
+            label: "GET /users/getNumberOfUsers",
+          },
+          {
+            to: "/api/users/getNumberOfTrainers",
+            label: "GET /users/getNumberOfTrainers",
+          },
+          { to: "/api/users/deleteUser", label: "DELETE /users/:uid" },
         ],
       },
-      { to: "/api/authentication", label: "Authentication" },
-      { to: "/api/examples", label: "Beispiele" },
     ],
   },
   { to: "/settings", icon: <Settings size={20} />, label: "Einstellungen" },

@@ -9,3 +9,13 @@ body,
   margin: 0;
   padding: 0;
 }
+
+/* hide scrollbar for sidebar only */
+.sidebar-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar-scroll {
+  -ms-overflow-style: none; /* IE + Edge */
+  scrollbar-width: none; /* Firefox */
+}

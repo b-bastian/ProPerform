@@ -47,7 +47,7 @@ export const navLinks: NavLink[] = [
       {
         label: "Users",
         subLinks: [
-          { to: "/api/users/get", label: "GET /users/:id" },
+          { to: "/api/users/createUser", label: "POST /users/createUser" },
           { to: "/api/users/update", label: "PUT /users/:id" },
           { to: "/api/users/delete", label: "DELETE /users/:id" },
         ],
@@ -59,7 +59,6 @@ export const navLinks: NavLink[] = [
   { to: "/settings", icon: <Settings size={20} />, label: "Einstellungen" },
 ];
 
-/* ✅ Automatische flache Search-Liste */
 export const searchLinks = (() => {
   const items: { to: string; label: string; category: string }[] = [];
 

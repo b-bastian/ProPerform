@@ -97,7 +97,7 @@ export default function Sidebar() {
 
   return (
     <div
-      className={`relative h-screen bg-gray-900 border-r border-gray-800 p-4 flex flex-col transition-all duration-300 ${
+      className={`fixed top-0 left-0 h-screen bg-gray-900 border-r border-gray-800 p-4 flex flex-col transition-all duration-300 ${
         collapsed ? "w-20" : "w-64"
       }`}
     >
@@ -109,7 +109,7 @@ export default function Sidebar() {
         ProPerform
       </h1>
 
-      <div className="flex-1 overflow-y-auto scrollbar-none">
+      <div className="flex-1 overflow-y-auto sidebar-scroll">
         {navLinks.map((link: NavLink) => (
           <div key={link.to} className="mb-2">
             {link.subLinks && !collapsed ? (

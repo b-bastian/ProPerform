@@ -8,13 +8,11 @@ import Label from "../../../components/Label";
 export default function GetAll() {
   return (
     <div className="px-6 py-8">
-      <div className="space-y-2">
+      <div className="space-y-2 mb-4">
         <div className="flex items-center gap-3">
           <code>GET /users/getAll</code>
           <Label text="Protected route" color="#F87171" />
         </div>
-
-        <CodeBlock code="fetch('https://api.example.com/users/getAll')" />
       </div>
 
       <Text>

@@ -3,13 +3,17 @@ import Text from "../../../components/docs/Text";
 import CodeBlock from "../../../components/docs/CodeBlock";
 import ItalicText from "../../../components/docs/ItalicText";
 import List from "../../../components/docs/List";
+import Label from "../../../components/Label";
 
 export default function DeleteUser() {
   return (
     <div className="px-6 py-8">
-      <Heading>
-        <code>DELETE /users/deleteUser/:uid</code>
-      </Heading>
+      <div className="space-y-2 mb-4">
+        <div className="flex items-center gap-3">
+          <code>DELETE /users/delete/:uid</code>
+          <Label text="Protected route" color="#F87171" />
+        </div>
+      </div>
 
       <Text>
         This endpoint allows you to delete a specific user from the system by

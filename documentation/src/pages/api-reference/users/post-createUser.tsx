@@ -2,13 +2,18 @@ import Heading from "../../../components/docs/Heading";
 import Text from "../../../components/docs/Text";
 import CodeBlock from "../../../components/docs/CodeBlock";
 import List from "../../../components/docs/List";
+import Label from "../../../components/Label";
 
 export default function CreateUser() {
   return (
     <div className="px-6 py-8">
-      <Heading>
-        <code>POST /users/createUser</code>
-      </Heading>
+      <div className="space-y-2 mb-4">
+        <div className="flex items-center gap-3">
+          <code>POST /users/createUser</code>
+          <Label text="Protected route" color="#F87171" />
+        </div>
+      </div>
+
       <Text>
         This endpoint allows you to create a new user in the system. You need to
         provide the necessary user information in the request body.

@@ -3,13 +3,17 @@ import Text from "../../../components/docs/Text";
 import CodeBlock from "../../../components/docs/CodeBlock";
 import List from "../../../components/docs/List";
 import ItalicText from "../../../components/docs/ItalicText";
+import Label from "../../../components/Label";
 
 export default function GetAllOwners() {
   return (
     <div className="px-6 py-8">
-      <Heading>
-        <code>GET /users/getAllOwners</code>
-      </Heading>
+      <div className="space-y-2 mb-4">
+        <div className="flex items-center gap-3">
+          <code>GET /users/getAllOwners</code>
+          <Label text="Protected route" color="#F87171" />
+        </div>
+      </div>
       <Text>
         This endpoint allows you to retrieve a list of all the owners in the
         database.

@@ -1,8 +1,6 @@
 import Heading from "../../../components/docs/Heading";
 import Text from "../../../components/docs/Text";
 import CodeBlock from "../../../components/docs/CodeBlock";
-import List from "../../../components/docs/List";
-import ItalicText from "../../../components/docs/ItalicText";
 import Label from "../../../components/Label";
 
 export default function GetAllOwners() {

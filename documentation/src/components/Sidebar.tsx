@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState, type JSX } from "react";
+import { useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,

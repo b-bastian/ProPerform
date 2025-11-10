@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+/* Scrollbars ausblenden, aber Scrollfunktion behalten */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+html,
+body {
+  overflow: auto; /* scrollen bleibt möglich */
+  scrollbar-width: none; /* für Firefox */
+  -ms-overflow-style: none; /* für IE/Edge */
+}
+
 /* Baseline für Höhe & Layout */
 html,
 body,

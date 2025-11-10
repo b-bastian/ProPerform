@@ -47,6 +47,7 @@ export const navLinks: NavLink[] = [
       {
         label: "Users",
         subLinks: [
+          { to: "/api/users/adminLogin", label: "POST /users/adminLogin" },
           { to: "/api/users/createUser", label: "POST /users/createUser" },
           { to: "/api/users/getAll", label: "GET /users/getAll" },
           { to: "/api/users/getAllOwners", label: "GET /users/getAllOwners" },
@@ -63,6 +64,19 @@ export const navLinks: NavLink[] = [
             label: "GET /users/getNumberOfTrainers",
           },
           { to: "/api/users/deleteUser", label: "DELETE /users/:uid" },
+        ],
+      },
+      {
+        label: "Trainers",
+        subLinks: [
+          {
+            to: "/api/trainers/createTrainer",
+            label: "POST /trainers/createTrainer",
+          },
+          {
+            to: "/api/trainers/verifyCode",
+            label: "POST /trainers/verifyCode",
+          },
         ],
       },
     ],

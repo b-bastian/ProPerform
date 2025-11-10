@@ -8,6 +8,9 @@ import GetAllTrainers from "./pages/api-reference/users/get-getAllTrainers";
 import GetNumberOfUsers from "./pages/api-reference/users/get-getNumberOfUsers";
 import GetNumberOfTrainers from "./pages/api-reference/users/get-getNumberOfTrainers";
 import DeleteUser from "./pages/api-reference/users/delete-deleteUser";
+import AdminLogin from "./pages/api-reference/users/post-adminLogin";
+import CreateTrainer from "./pages/api-reference/trainers/post-createTrainer";
+import VerifyCode from "./pages/api-reference/trainers/post-verifyCode";
 
 export default function AppRoutes() {
   return (
@@ -44,6 +47,15 @@ export default function AppRoutes() {
       </Routes>
       <Routes>
         <Route path="/api/users/deleteUser" element={<DeleteUser />} />
+      </Routes>
+      <Routes>
+        <Route path="/api/users/adminLogin" element={<AdminLogin />} />
+      </Routes>
+      <Routes>
+        <Route path="/api/trainers/createTrainer" element={<CreateTrainer />} />
+      </Routes>
+      <Routes>
+        <Route path="/api/trainers/verifyCode" element={<VerifyCode />} />
       </Routes>
     </>
   );

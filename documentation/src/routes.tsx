@@ -11,6 +11,8 @@ import DeleteUser from "./pages/api-reference/users/delete-deleteUser";
 import AdminLogin from "./pages/api-reference/users/post-adminLogin";
 import CreateTrainer from "./pages/api-reference/trainers/post-createTrainer";
 import VerifyCode from "./pages/api-reference/trainers/post-verifyCode";
+import LinkAthlete from "./pages/api-reference/trainers/post-linkAthlete";
+import RegenerateCode from "./pages/api-reference/trainers/patch-regenCode";
 
 export default function AppRoutes() {
   return (
@@ -56,6 +58,15 @@ export default function AppRoutes() {
       </Routes>
       <Routes>
         <Route path="/api/trainers/verifyCode" element={<VerifyCode />} />
+      </Routes>
+      <Routes>
+        <Route path="/api/trainers/linkAthlete" element={<LinkAthlete />} />
+      </Routes>
+      <Routes>
+        <Route
+          path="/api/trainers/regenerateCode"
+          element={<RegenerateCode />}
+        />
       </Routes>
     </>
   );

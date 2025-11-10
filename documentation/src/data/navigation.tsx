@@ -77,6 +77,14 @@ export const navLinks: NavLink[] = [
             to: "/api/trainers/verifyCode",
             label: "POST /trainers/verifyCode",
           },
+          {
+            to: "/api/trainers/linkAthlete",
+            label: "POST /trainers/linkAthlete",
+          },
+          {
+            to: "/api/trainers/regenerateCode",
+            label: "PATCH /trainers/:id/regenerateCode",
+          },
         ],
       },
     ],

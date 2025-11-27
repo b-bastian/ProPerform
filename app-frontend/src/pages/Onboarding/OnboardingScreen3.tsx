@@ -1,12 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../components/header';
 import SecondaryButton from '../../components/secondaryButton';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function OnboardingScreen3() {
   const navigation = useNavigation<any>();
+
+useEffect(() => {
+  const checkData = async () => {
+    const first = await AsyncStorage.getItem('onboarding_firstName');
+    const email = await AsyncStorage.getItem('onboarding_email');
+    const birth = await AsyncStorage.getItem('onboarding_birthDate');
+    const password = await AsyncStorage.getItem('onboarding_password');
+
+    console.log("DEBUG FIRSTNAME:", first);
+    console.log("DEBUG EMAIL:", email);
+    console.log("DEBUG BIRTHDATE:", birth);
+    console.log("DEBUG PASSWORD:", password);
+  };
+
+  checkData();
+}, []);   
+
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>

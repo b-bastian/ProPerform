@@ -1,29 +1,65 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../components/header';
 import SecondaryButton from '../../components/secondaryButton';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 export default function OnboardingScreen3() {
   const navigation = useNavigation<any>();
 
-useEffect(() => {
-  const checkData = async () => {
-    const first = await AsyncStorage.getItem('onboarding_firstName');
-    const email = await AsyncStorage.getItem('onboarding_email');
-    const birth = await AsyncStorage.getItem('onboarding_birthDate');
-    const password = await AsyncStorage.getItem('onboarding_password');
+const [firstName, setFirstName] = useState<string | null>(null);
+const [email, setEmail] = useState<string | null>(null);
+const [birthDate, setBirthDate] = useState<string | null>(null);
+const [password, setPassword] = useState<string | null>(null);
 
-    console.log("DEBUG FIRSTNAME:", first);
-    console.log("DEBUG EMAIL:", email);
-    console.log("DEBUG BIRTHDATE:", birth);
-    console.log("DEBUG PASSWORD:", password);
-  };
+useEffect(function () {
+  async function loadData() {
+    setFirstName(await AsyncStorage.getItem('onboarding_firstName'));
+    setEmail(await AsyncStorage.getItem('onboarding_email'));
+    setBirthDate(await AsyncStorage.getItem('onboarding_birthDate'));
+    setPassword(await AsyncStorage.getItem('onboarding_password'));
+  }
 
-  checkData();
-}, []);   
+  loadData();
+}, []);
+
+const [weight, setWeight] = useState('');
+const [height, setHeight] = useState('');
+const [gender, setGender] = useState<'male' | 'female' | 'other' | 'not specified'>('not specified');
+
+const [fitnessLevel, setFitnessLevel] = useState('');
+const [trainingFrequency, setTrainingFrequency] = useState('');
+const [primaryGoal, setPrimaryGoal] = useState('');
+
+async function submitOnboarding() {
+  if (!firstName || !email || !password || !birthDate) {
+    return;
+  }
+
+  await axios.post('https://api.properform.app/users/createUser', {
+    firstname: firstName,
+    birthdate: birthDate,
+    email: email,
+    password: password,
+    weight: Number(weight),
+    height: Number(height),
+    gender: gender,
+    onboarding_completed: true,
+    fitness_level: fitnessLevel,
+    training_frequency: trainingFrequency,
+    primary_goal: primaryGoal,
+  });
+
+  await AsyncStorage.setItem('onboardingFinished', 'true');
+}
+
+// TODO Can 11.12
+// add try and catch to submit onboarding, create ui
+
+
 
 
   return (

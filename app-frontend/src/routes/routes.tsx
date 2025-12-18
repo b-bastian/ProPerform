@@ -10,6 +10,9 @@ import OnboardingScreen from '../pages/Onboarding/OnboardingScreen';
 import OnboardingScreen2 from '../pages/Onboarding/OnboardingScreen2';
 import OnboardingScreen3 from '../pages/Onboarding/OnboardingScreen3';
 
+const DEV_MODE = __DEV__; // false setzen für normal
+const DEV_START_SCREEN = 'OnboardingScreen3'; // change screen here
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -37,15 +40,22 @@ export default function Routes() {
 
   useEffect(() => {
     (async () => {
-      const finished = await AsyncStorage.getItem('onboardingFinished');
-      setShowOnboarding(!finished);
+      if (DEV_MODE) {
+        setShowOnboarding(true);
+      } else {
+        const finished = await AsyncStorage.getItem('onboardingFinished');
+        setShowOnboarding(!finished);
+      }
     })();
   }, []);
 
   if (showOnboarding === null) return null;
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName={DEV_MODE ? DEV_START_SCREEN : undefined}
+    >
       {showOnboarding ? (
         <>
           <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />

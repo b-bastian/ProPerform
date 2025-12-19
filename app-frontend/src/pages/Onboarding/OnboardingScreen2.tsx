@@ -113,8 +113,6 @@ Backend erwartet password → wird automatisch gehasht.
       await AsyncStorage.setItem('onboarding_password', password);
       await AsyncStorage.setItem('onboarding_birthDate', birthDate);
 
-
-
       Alert.alert('Erfolg', 'Dein Account wurde erfolgreich erstellt!');
       navigation.navigate('OnboardingScreen3');
     } catch (error: any) {

@@ -10,7 +10,7 @@ import OnboardingScreen from '../pages/Onboarding/OnboardingScreen';
 import OnboardingScreen2 from '../pages/Onboarding/OnboardingScreen2';
 import OnboardingScreen3 from '../pages/Onboarding/OnboardingScreen3';
 
-const DEV_MODE = __DEV__; // false setzen für normal
+const DEV_MODE = false; // false setzen für normal, __DEV__ dev mode
 const DEV_START_SCREEN = 'OnboardingScreen3'; // change screen here
 
 const Tab = createBottomTabNavigator();

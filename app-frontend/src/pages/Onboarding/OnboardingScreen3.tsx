@@ -102,7 +102,6 @@ export default function OnboardingScreen3() {
       );
 
       await AsyncStorage.setItem('onboardingFinished', 'true');
-      navigation.replace('Main');
     } catch (error: any) {
       if (error.response) {
         console.log('STATUS:', error.response.status);

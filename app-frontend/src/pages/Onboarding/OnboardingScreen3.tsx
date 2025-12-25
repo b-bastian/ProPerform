@@ -55,7 +55,7 @@ export default function OnboardingScreen3() {
 
     try {
       console.log('sending data to api');
-      await axios.post('https://api.properform.app/createUser', {
+      await axios.post('https://api.properform.app/users/createUser', {
         firstname: firstName,
         birthdate: birthDate,
         email: email,
@@ -121,7 +121,7 @@ export default function OnboardingScreen3() {
               <Picker.Item label="Divers" value="other" />
             </Picker>
 
-            <Text style={styles.label}>Geschlecht</Text>
+            <Text style={styles.label}>Fitness-Level</Text>
             <Picker
               selectedValue={fitnessLevel}
               onValueChange={value => setFitnessLevel(value)}

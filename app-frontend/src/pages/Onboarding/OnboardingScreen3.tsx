@@ -55,7 +55,7 @@ export default function OnboardingScreen3() {
 
     try {
       console.log('sending data to api');
-      await axios.post('https://api.properform.app/users/createUser', {
+      await axios.post('https://api.properform.app/createUser', {
         firstname: firstName,
         birthdate: birthDate,
         email: email,
@@ -73,12 +73,18 @@ export default function OnboardingScreen3() {
       await AsyncStorage.setItem('onboardingFinished', 'true');
 
       navigation.replace('Main');
-    } catch (error) {
-      console.error('Fehler beim Onboarding', error);
+    } catch (error: any) {
+      if (error.response) {
+        console.log('STATUS:', error.response.status);
+        console.log('DATA:', error.response.data);
+        console.log('HEADERS:', error.response.headers);
+      } else {
+        console.log('ERROR:', error.message);
+      }
     }
   }
 
-  // TODO Can 
+  // TODO Can
   // like onboardingscreen2, add errors etc.
 
   return (

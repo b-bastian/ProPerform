@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { parseDecimal } from '../../utils/number';
-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../components/header';
 import SecondaryButton from '../../components/secondaryButton';
@@ -113,8 +112,9 @@ export default function OnboardingScreen3() {
     }
   }
 
-  // TODO Can
+  // TODO Can 25.12
   // like onboardingscreen2, add errors etc.
+  // better design
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>

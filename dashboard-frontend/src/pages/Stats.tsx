@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Stats() {
   const [numberOfUsers, setNumberOfUsers] = useState(0);
@@ -11,9 +11,11 @@ export default function Stats() {
     try {
       const [usersRes, trainersRes] = await Promise.all([
         fetch("https://api.properform.app/users/getNumberOfUsers", {
+          method: "GET",
           headers: { Authorization: `Bearer ${token}` },
         }),
         fetch("https://api.properform.app/users/getNumberOfTrainers", {
+          method: "GET",
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -32,9 +34,9 @@ export default function Stats() {
     }
   };
 
-  useState(() => {
+  useEffect(() => {
     fetchStats();
-  });
+  }, []);
 
   const stats = [
     {

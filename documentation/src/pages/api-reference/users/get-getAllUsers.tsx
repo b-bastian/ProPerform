@@ -10,7 +10,7 @@ export default function GetUsers() {
     <div className="px-6 py-8">
       <div className="space-y-2 mb-4">
         <div className="flex items-center gap-3">
-          <code>GET /users/get/:role?</code>
+          <code>GET /users/:role?</code>
           <Label text="Protected route" color="#F87171" />
         </div>
       </div>
@@ -18,8 +18,7 @@ export default function GetUsers() {
       <Text>
         This endpoint returns users from the system. The optional{" "}
         <ItalicText>role</ItalicText> parameter can be used to filter users by
-        role. If no role or <ItalicText>all</ItalicText> is provided, all users
-        are returned.
+        role. If the parameter is omitted, users of all roles are returned.
       </Text>
 
       <Heading>Available Roles</Heading>
@@ -39,8 +38,8 @@ export default function GetUsers() {
             description: "Returns only users with the trainer role",
           },
           {
-            label: "left empty",
-            description: "Returns all users without role filtering",
+            label: "(omitted)",
+            description: "Returns users of all roles",
           },
         ]}
       />
@@ -51,14 +50,14 @@ export default function GetUsers() {
         code={`const token = localStorage.getItem("token");
 
 // all users
-fetch("https://api.properform.app/users/get", {
+fetch("https://api.properform.app/users", {
   headers: {
     Authorization: \`Bearer \${token}\`
   }
 });
 
 // only trainers
-fetch("https://api.properform.app/users/get/trainers", {
+fetch("https://api.properform.app/users/trainers", {
   headers: {
     Authorization: \`Bearer \${token}\`
   }
@@ -69,19 +68,25 @@ fetch("https://api.properform.app/users/get/trainers", {
       <CodeBlock
         language="json"
         code={`{
-  "counts": {
-    "owners": 3,
-    "users": 12,
-    "trainers": 4,
-    "all": 19
-  },
+  "count": 3,
   "users": [
     {
       "uid": 7,
       "firstname": "Lena",
       "birthdate": "1996-04-18",
       "email": "lena@gmail.com",
-      "role_id": 3
+      "role_id": 2,
+      "type": "user"
+    },
+    {
+      "tid": 4,
+      "firstname": "Mark",
+      "lastname": "Huber",
+      "birthdate": "1990-11-02",
+      "email": "mark@gmail.com",
+      "phone_number": "+436641234567",
+      "type": "trainer",
+      "source": "trainers"
     }
   ]
 }`}

@@ -6,6 +6,7 @@ import Header from '../../components/header';
 import SecondaryButton from '../../components/secondaryButton';
 import { useNavigation } from '@react-navigation/native';
 import InputField from '../../components/input';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 export default function OnboardingScreen2() {
@@ -107,6 +108,10 @@ Route heißt jetzt /createUser (nicht mehr /register).
 
 Backend erwartet password → wird automatisch gehasht.
       */
+      await AsyncStorage.setItem('onboarding_firstName', firstName);
+      await AsyncStorage.setItem('onboarding_email', email);
+      await AsyncStorage.setItem('onboarding_password', password);
+      await AsyncStorage.setItem('onboarding_birthDate', birthDate);
 
       Alert.alert('Erfolg', 'Dein Account wurde erfolgreich erstellt!');
       navigation.navigate('OnboardingScreen3');

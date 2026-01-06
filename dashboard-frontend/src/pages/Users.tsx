@@ -110,12 +110,13 @@ export default function Users() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full mt-10 mb-10">
-      {/* USER TABLE */}
-      <div className="bg-gray-800 rounded-2xl shadow-lg p-8 w-[90%] max-w-6xl mb-6">
-        <h1 className="text-4xl font-bold text-blue-400 mb-6 text-center">
-          Benutzerverwaltung
-        </h1>
+    <div className="flex flex-col items-center justify-center h-full w-full">
+      <div className="bg-gray-800 rounded-2xl shadow-lg p-8 w-[90%] max-w-6xl text-center">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-4xl font-bold text-blue-400 mx-auto">
+            Benutzerverwaltung
+          </h1>
+        </div>
 
         <table className="w-full border-separate border-spacing-y-2">
           <thead>
@@ -143,11 +144,11 @@ export default function Users() {
                 <td className="px-4 py-3 text-gray-300 bg-gray-700 group-hover:bg-gray-600">
                   {u.email}
                 </td>
-                <td className="px-4 py-3 font-semibold bg-gray-700 group-hover:bg-gray-600">
-                  <span className="text-yellow-400">Nutzer</span>
+                <td className="px-4 py-3 text-green-400 font-semibold bg-gray-700 group-hover:bg-gray-600 first:rounded-l-2xl last:rounded-r-2xl">
+                  Nutzer
                 </td>
-                <td className="px-4 py-3 bg-gray-700 group-hover:bg-gray-600 rounded-r-lg">
-                  <div className="flex justify-center items-center">
+                <td className="px-4 py-3 bg-gray-700 group-hover:bg-gray-600 first:rounded-l-2xl last:rounded-r-2xl">
+                  <div className="flex items-center justify-center w-full h-full">
                     <button
                       onClick={() => deleteUser(u.uid)}
                       className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer"
@@ -194,11 +195,11 @@ export default function Users() {
                 <td className="px-4 py-3 text-gray-300 bg-gray-700 group-hover:bg-gray-600">
                   {t.email}
                 </td>
-                <td className="px-4 py-3 font-semibold bg-gray-700 group-hover:bg-gray-600">
-                  <span className="text-green-400">Trainer</span>
+                <td className="px-4 py-3 text-green-400 font-semibold bg-gray-700 group-hover:bg-gray-600 first:rounded-l-2xl last:rounded-r-2xl">
+                  Nutzer
                 </td>
-                <td className="px-4 py-3 bg-gray-700 group-hover:bg-gray-600 rounded-r-lg">
-                  <div className="flex justify-center items-center">
+                <td className="px-4 py-3 bg-gray-700 group-hover:bg-gray-600 first:rounded-l-2xl last:rounded-r-2xl">
+                  <div className="flex items-center justify-center w-full h-full">
                     <button
                       onClick={() => deleteTrainer(t.tid)}
                       className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer"
@@ -211,11 +212,11 @@ export default function Users() {
             ))}
           </tbody>
         </table>
-
-        <p className="text-center text-gray-500 text-sm mt-10">
-          Nur angemeldete Admins können Benutzer und Trainer einsehen.
-        </p>
       </div>
+
+      <p className="text-center text-gray-500 text-sm mt-10">
+        Nur angemeldete Admins können Benutzer einsehen.
+      </p>
     </div>
   );
 }

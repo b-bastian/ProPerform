@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import { OnboardingContext } from '../context/OnboardingContext';
 import HomeScreen from '../pages/HomeScreen';
 import ProfileScreen from '../pages/ProfileScreen';
 import OnboardingScreen from '../pages/Onboarding/OnboardingScreen';
@@ -68,25 +68,35 @@ export default function Routes() {
   if (showOnboarding === null) return null;
 
   return (
-    <Stack.Navigator
-      screenOptions={{ headerShown: false }}
-      initialRouteName={DEV_MODE ? DEV_START_SCREEN : undefined}
+    <OnboardingContext.Provider
+      value={{
+        finishOnboarding: () => setShowOnboarding(false),
+        resetOnboarding: () => setShowOnboarding(true),
+      }}
     >
-      {showOnboarding ? (
-        <>
-          <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
-          <Stack.Screen
-            name="OnboardingScreen2"
-            component={OnboardingScreen2}
-          />
-          <Stack.Screen
-            name="OnboardingScreen3"
-            component={OnboardingScreen3}
-          />
-        </>
-      ) : (
-        <Stack.Screen name="Main" component={MainTabs} />
-      )}
-    </Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName={DEV_MODE ? DEV_START_SCREEN : undefined}
+      >
+        {showOnboarding ? (
+          <>
+            <Stack.Screen
+              name="OnboardingScreen"
+              component={OnboardingScreen}
+            />
+            <Stack.Screen
+              name="OnboardingScreen2"
+              component={OnboardingScreen2}
+            />
+            <Stack.Screen
+              name="OnboardingScreen3"
+              component={OnboardingScreen3}
+            />
+          </>
+        ) : (
+          <Stack.Screen name="Main" component={MainTabs} />
+        )}
+      </Stack.Navigator>
+    </OnboardingContext.Provider>
   );
 }

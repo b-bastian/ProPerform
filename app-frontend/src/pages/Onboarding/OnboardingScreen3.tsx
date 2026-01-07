@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
   View,
   Text,
@@ -18,9 +18,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import InputField from '../../components/input';
 import PrimaryButton from '../../components/primaryButton';
+import { OnboardingContext } from '../../context/OnboardingContext';
 
 export default function OnboardingScreen3() {
   const navigation = useNavigation<any>();
+  const { finishOnboarding } = useContext(OnboardingContext);
 
   const [firstName, setFirstName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
@@ -101,6 +103,7 @@ export default function OnboardingScreen3() {
       );
 
       await AsyncStorage.setItem('onboardingFinished', 'true');
+      finishOnboarding();
     } catch (error: any) {
       if (error.response) {
         console.log('STATUS:', error.response.status);

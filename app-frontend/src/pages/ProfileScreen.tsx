@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   View,
   Text,
@@ -6,12 +6,22 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Button,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../components/header';
 import PrimaryButton from '../components/primaryButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { OnboardingContext } from '../context/OnboardingContext';
 
 export default function ProfileScreen() {
+  const { resetOnboarding } = React.useContext(OnboardingContext);
+
+  const handleResetOnboarding = async () => {
+    await AsyncStorage.removeItem('onboardingFinished');
+    resetOnboarding();
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView
@@ -56,6 +66,15 @@ export default function ProfileScreen() {
             <TouchableOpacity style={styles.logoutButton}>
               <Text style={styles.buttonText}>Abmelden</Text>
             </TouchableOpacity>
+          </View>
+
+          <View style={styles.seperator} />
+
+          <View>
+            <Button
+              title="Onboarding erneut starten"
+              onPress={handleResetOnboarding}
+            />
           </View>
         </View>
       </ScrollView>

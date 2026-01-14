@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext } from "react";
 import {
   View,
   Text,
@@ -7,23 +7,23 @@ import {
   TouchableOpacity,
   ScrollView,
   Button,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Header from '../components/header';
-import PrimaryButton from '../components/primaryButton';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { OnboardingContext } from '../context/OnboardingContext';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Header from "../components/header";
+import PrimaryButton from "../components/primaryButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { OnboardingContext } from "../context/OnboardingContext";
 
 export default function ProfileScreen() {
   const { resetOnboarding } = React.useContext(OnboardingContext);
 
   const handleResetOnboarding = async () => {
-    await AsyncStorage.removeItem('onboardingFinished');
+    await AsyncStorage.removeItem("onboardingFinished");
     resetOnboarding();
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
@@ -37,7 +37,7 @@ export default function ProfileScreen() {
           <Header></Header>
           <View style={styles.containerImage}>
             <Image
-              source={require('../../assets/imgs/profile_picture.png')}
+              source={require("../../assets/images/profile_picture.png")}
               resizeMode="contain"
               style={styles.profileImage}
             />
@@ -85,7 +85,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   content: {
     flex: 1,
@@ -94,65 +94,65 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 36,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    fontFamily: 'Inter',
+    fontWeight: "bold",
+    textAlign: "center",
+    fontFamily: "Inter",
   },
   profileImage: {
     width: 120,
     height: 120,
   },
   containerImage: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 20,
   },
   welcomeTitle: {
     fontSize: 32,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
   welcomeText: {
     fontSize: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
   infoCard: {
     marginTop: 30,
     padding: 20,
     borderWidth: 2,
-    borderColor: '#A0A0A0',
+    borderColor: "#A0A0A0",
     borderRadius: 15,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   infoCardTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   infoCardLabel: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   seperator: {
     height: 1,
-    backgroundColor: '#A0A0A0',
+    backgroundColor: "#A0A0A0",
     marginVertical: 20,
-    width: '100%',
+    width: "100%",
   },
   logoutButton: {
-    backgroundColor: '#D32F2F', // Rot
+    backgroundColor: "#D32F2F", // Rot
     paddingVertical: 15,
     borderRadius: 12,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 4,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });

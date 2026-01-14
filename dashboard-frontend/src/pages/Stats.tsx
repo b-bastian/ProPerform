@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
 
 export default function Stats() {
+  const [numberAll, setNumberAll] = useState(0);
   const [numberOfUsers, setNumberOfUsers] = useState(0);
   const [numberOfTrainers, setNumberOfTrainers] = useState(0);
+  const [numberofOwners, setNumberOfOwners] = useState(0);
 
   const fetchStats = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
     try {
+      /*
       const [usersRes, trainersRes] = await Promise.all([
         fetch("https://api.properform.app/users/getNumberOfUsers", {
           method: "GET",
@@ -19,15 +22,45 @@ export default function Stats() {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
+      */
 
-      if (usersRes.ok) {
-        const usersData = await usersRes.json();
-        setNumberOfUsers(usersData.userCount || 0);
+      const allRes = await fetch("https://api.properform.app/users", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const trainersRes = await fetch(
+        "https://api.properform.app/users/trainers",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const usersRes = await fetch("https://api.properform.app/users/users", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const ownersRes = await fetch("https://api.properform.app/users/owners", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (allRes.ok) {
+        const usersData = await allRes.json();
+        setNumberAll(usersData.count || 3000);
       }
 
       if (trainersRes.ok) {
-        const trainersData = await trainersRes.json();
-        setNumberOfTrainers(trainersData.trainerCount || 0);
+        const trainerData = await trainersRes.json();
+        setNumberOfTrainers(trainerData.count || 2000);
+      }
+
+      if (usersRes.ok) {
+        const userData = await usersRes.json();
+        setNumberOfUsers(userData.count || 1000);
+      }
+
+      if (ownersRes.ok) {
+        const ownerData = await ownersRes.json();
+        setNumberOfOwners(ownerData.count || 500);
       }
     } catch (error) {
       console.error("Error fetching stats:", error);
@@ -41,18 +74,25 @@ export default function Stats() {
   const stats = [
     {
       label: "Alle Nutzer",
-      value: numberOfUsers + numberOfTrainers,
+      value: numberAll,
     },
-    { label: "Benutzer", value: numberOfUsers },
+    {
+      label: "Users",
+      value: numberOfUsers,
+    },
     { label: "Trainer", value: numberOfTrainers },
+    { label: "Owners", value: numberofOwners },
   ];
+
+  const allOwners = stats.find((s) => s.label === "Owners");
 
   return (
     <div className="flex items-center justify-center h-full w-full">
       <div className="bg-linear-to-br from-blue-600 via-indigo-600 to-purple-700 text-white rounded-3xl shadow-2xl p-10 max-w-3xl w-[90%] text-center">
         <h1 className="text-4xl font-bold mb-8">Statistiken</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-6">
-          {stats.map((s, i) => (
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {stats.slice(0, -1).map((s, i) => (
             <div
               key={i}
               className="bg-white/20 rounded-2xl p-6 shadow-md hover:bg-white/30 transition transform hover:-translate-y-1"
@@ -61,6 +101,13 @@ export default function Stats() {
               <p className="text-lg opacity-90 mt-2">{s.label}</p>
             </div>
           ))}
+
+          {allOwners && (
+            <div className="sm:col-span-3 bg-white/20 rounded-2xl p-6 shadow-md hover:bg-white/30 transition transform hover:-translate-y-1">
+              <p className="text-5xl font-bold">{allOwners.value}</p>
+              <p className="text-lg opacity-90 mt-2">{allOwners.label}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

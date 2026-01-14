@@ -50,6 +50,7 @@ export default function Users() {
     const response = confirm(
       `Möchten Sie den Trainer mit TID ${tid} wirklich löschen?`
     );
+
     if (!response) return;
 
     try {
@@ -77,6 +78,7 @@ export default function Users() {
   const fetchUsers = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
+
     const res = await fetch("https://api.properform.app/users/users", {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -110,7 +112,7 @@ export default function Users() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full w-full">
+    <div className="flex flex-col items-center w-full min-h-screen overflow-y-auto">
       <div className="bg-gray-800 rounded-2xl shadow-lg p-8 w-[90%] max-w-6xl text-center">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-4xl font-bold text-blue-400 mx-auto">
@@ -120,13 +122,13 @@ export default function Users() {
 
         <table className="w-full border-separate border-spacing-y-2">
           <thead>
-            <tr className="text-left text-gray-400 uppercase text-sm">
-              <th className="px-4">ID</th>
-              <th className="px-4">Vorname</th>
-              <th className="px-4">Geburtsdatum</th>
-              <th className="px-4">E-Mail</th>
-              <th className="px-4">Rolle</th>
-              <th className="px-4">Aktionen</th>
+            <tr className="text-gray-400 uppercase text-sm">
+              <th className="px-4 text-center">ID</th>
+              <th className="px-4 text-center">Vorname</th>
+              <th className="px-4 text-center">Geburtsdatum</th>
+              <th className="px-4 text-center">E-Mail</th>
+              <th className="px-4 text-center">Rolle</th>
+              <th className="px-4 text-center">Aktionen</th>
             </tr>
           </thead>
           <tbody>

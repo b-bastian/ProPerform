@@ -6,11 +6,15 @@ export type SubSubLink = {
   label: string;
 };
 
-export type SubLink = {
-  to?: string;
-  label: string;
-  subLinks?: SubSubLink[];
-};
+export type SubLink =
+  | {
+      label: string;
+      to: string;
+    }
+  | {
+      label: string;
+      subLinks: SubSubLink[];
+    };
 
 export type NavLink = {
   to: string;
@@ -21,36 +25,51 @@ export type NavLink = {
 
 export const navLinks: NavLink[] = [
   { to: "/", icon: <House size={20} />, label: "Home" },
+
   {
     to: "/docs",
     icon: <BookOpen size={20} />,
     label: "Dokumentation",
     subLinks: [
-      { to: "/docs/getting-started", label: "Getting Started" },
-      { to: "/docs/installation", label: "Installation" },
-      { to: "/docs/configuration", label: "Konfiguration" },
+      {
+        label: "Allgemein",
+        subLinks: [
+          { to: "/docs/getting-started", label: "Getting Started" },
+          { to: "/docs/installation", label: "Installation" },
+          { to: "/docs/configuration", label: "Konfiguration" },
+        ],
+      },
     ],
   },
+
   {
     to: "/api",
     icon: <Code size={20} />,
     label: "API Reference",
     subLinks: [
       {
-        label: "Endpoints",
+        label: "Auth",
         subLinks: [
-          { to: "/api/auth/register", label: "POST /auth/register" },
           { to: "/api/auth/login", label: "POST /auth/login" },
-          { to: "/api/auth/check", label: "GET /auth/checkToken" },
+          { to: "/api/auth/register", label: "POST /auth/register" },
+          {
+            to: "/api/auth/admin/register",
+            label: "POST /auth/admin/register",
+          },
+          {
+            to: "/api/auth/admin/login",
+            label: "POST /auth/admin/login",
+          },
         ],
       },
       {
         label: "Users",
         subLinks: [
-          { to: "/api/users/adminLogin", label: "POST /users/adminLogin" },
-          { to: "/api/users/createUser", label: "POST /users/createUser" },
-          { to: "/api/users/get", label: "GET /users/get/:role" },
-          { to: "/api/users/deleteUser", label: "DELETE /users/:uid" },
+          { to: "/api/users", label: "GET /users" },
+          {
+            to: "/api/users/deleteUser/:uid",
+            label: "DELETE /users/deleteUser/:uid",
+          },
         ],
       },
       {
@@ -61,21 +80,22 @@ export const navLinks: NavLink[] = [
             label: "POST /trainers/createTrainer",
           },
           {
-            to: "/api/trainers/verifyCode",
-            label: "POST /trainers/verifyCode",
+            to: "/api/trainers/verify-code",
+            label: "POST /trainers/verify-code",
           },
           {
-            to: "/api/trainers/linkAthlete",
-            label: "POST /trainers/linkAthlete",
+            to: "/api/trainers/link-athlete",
+            label: "POST /trainers/link-athlete",
           },
           {
-            to: "/api/trainers/regenerateCode",
+            to: "/api/trainers/:id/regenerateCode",
             label: "PATCH /trainers/:id/regenerateCode",
           },
         ],
       },
     ],
   },
+
   { to: "/settings", icon: <Settings size={20} />, label: "Einstellungen" },
 ];
 
@@ -84,7 +104,6 @@ export const searchLinks = (() => {
 
   const walk = (links: NavLink[]) => {
     for (const link of links) {
-      // Hauptlink
       items.push({
         to: link.to,
         label: link.label,
@@ -93,15 +112,7 @@ export const searchLinks = (() => {
 
       if (link.subLinks) {
         for (const sub of link.subLinks) {
-          if (sub.to) {
-            items.push({
-              to: sub.to,
-              label: sub.label,
-              category: link.label,
-            });
-          }
-
-          if (sub.subLinks) {
+          if ("subLinks" in sub) {
             for (const subsub of sub.subLinks) {
               items.push({
                 to: subsub.to,
@@ -116,6 +127,5 @@ export const searchLinks = (() => {
   };
 
   walk(navLinks);
-
   return items;
 })();

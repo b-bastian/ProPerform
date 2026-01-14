@@ -3,43 +3,49 @@ import Text from "../../../components/docs/Text";
 import CodeBlock from "../../../components/docs/CodeBlock";
 import Label from "../../../components/Label";
 
-export default function AdminLogin() {
+export default function UserLogin() {
   return (
     <div className="px-6 py-8 space-y-6">
-      {/* Titel + Label */}
       <div className="space-y-2 mb-4">
         <div className="flex items-center gap-3">
-          <code>POST /users/adminLogin</code>
+          <code>POST /auth/login</code>
           <Label text="Public route" color="#22C55E" />
         </div>
       </div>
 
       <Text>
-        This endpoint allows administrators to log in. On success, a JWT token
-        is returned, which must be included in the Authorization header for all
-        protected admin routes.
+        Logs in a regular user account. On success, a JWT token is returned.
+        Depending on the stayLoggedIn flag, the token expiration time differs.
       </Text>
 
       <Heading>Request Body</Heading>
       <CodeBlock
         language="json"
         code={`{
-  "email": "admin@example.com",
-  "password": "yourPassword123"
+  "email": "user@example.com",
+  "password": "SecurePassword123!",
+  "stayLoggedIn": true
 }`}
       />
+
+      <Heading>Request Body Fields</Heading>
+      <Text>
+        stayLoggedIn is optional. If set to true, the token will have a longer
+        expiration time.
+      </Text>
 
       <Heading>Example Request</Heading>
       <CodeBlock
         language="javascript"
-        code={`fetch("https://api.properform.app/users/adminLogin", {
+        code={`fetch("https://api.properform.app/auth/login", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
-    email: "admin@example.com",
-    password: "yourPassword123"
+    email: "user@example.com",
+    password: "SecurePassword123!",
+    stayLoggedIn: true
   })
 })
   .then(res => res.json())
@@ -50,8 +56,9 @@ export default function AdminLogin() {
       <CodeBlock
         language="json"
         code={`{
-  "message": "Admin-Login erfolgreich",
-  "token": "eyJhbGciOiJIUzI1NiIsInR..."
+  "message": "Login erfolgreich",
+  "token": "eyJhbGciOiJIUzI1NiIsInR...",
+  "uid": 17
 }`}
       />
     </div>

@@ -41,16 +41,16 @@ export default function Sidebar() {
     }`;
 
   const subSubLinkClass = (path: string) =>
-    `flex items-center justify-start gap-3 pl-12 pr-4 py-2 rounded-lg mb-1 transition-colors duration-200 ${
+    `flex items-center justify-start gap-3 pl-16 pr-4 py-2 rounded-lg mb-1 transition-colors duration-200 ${
       pathname === path
         ? "bg-blue-600 text-white"
         : "text-gray-500 hover:bg-blue-900 hover:text-gray-300"
     }`;
 
-  const renderSubSubLinks = (subLink: SubLink, parentLabel: string) => {
+  const renderSubLinks = (subLink: SubLink, parentLabel: string) => {
     const id = `${parentLabel}-${subLink.label}`;
 
-    if (subLink.subLinks) {
+    if ("subLinks" in subLink) {
       return (
         <div key={id}>
           <button
@@ -87,8 +87,8 @@ export default function Sidebar() {
     return (
       <Link
         key={subLink.to}
-        to={subLink.to!}
-        className={subLinkClass(subLink.to!)}
+        to={subLink.to}
+        className={subLinkClass(subLink.to)}
       >
         <span className="text-sm">{subLink.label}</span>
       </Link>
@@ -131,10 +131,10 @@ export default function Sidebar() {
                   )}
                 </button>
 
-                {expandedItems.includes(link.label) && !collapsed && (
+                {expandedItems.includes(link.label) && (
                   <div className="mt-1">
                     {link.subLinks.map((sub) =>
-                      renderSubSubLinks(sub, link.label)
+                      renderSubLinks(sub, link.label)
                     )}
                   </div>
                 )}

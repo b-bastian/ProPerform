@@ -7,7 +7,7 @@ export default function Login() {
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
 
-    const res = await fetch("https://api.properform.app/users/adminLogin", {
+    const res = await fetch("https://api.properform.app/auth/admin/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),

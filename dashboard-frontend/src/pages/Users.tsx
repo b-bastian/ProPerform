@@ -77,7 +77,7 @@ export default function Users() {
   const fetchUsers = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    const res = await fetch("https://api.properform.app/users/getAllUsers", {
+    const res = await fetch("https://api.properform.app/users/users", {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) return;
@@ -88,7 +88,7 @@ export default function Users() {
   const fetchTrainers = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    const res = await fetch("https://api.properform.app/users/getAllTrainers", {
+    const res = await fetch("https://api.properform.app/users/trainers", {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) return;
@@ -164,7 +164,7 @@ export default function Users() {
       </div>
 
       {/* TRAINER TABLE */}
-      <div className="bg-gray-800 rounded-2xl shadow-lg p-8 w-[90%] max-w-6xl">
+      <div className="bg-gray-800 rounded-2xl shadow-lg p-8 w-[90%] mt-8 max-w-6xl">
         <h1 className="text-4xl font-bold text-blue-400 mb-6 text-center">
           Trainerverwaltung
         </h1>
@@ -195,8 +195,8 @@ export default function Users() {
                 <td className="px-4 py-3 text-gray-300 bg-gray-700 group-hover:bg-gray-600">
                   {t.email}
                 </td>
-                <td className="px-4 py-3 text-green-400 font-semibold bg-gray-700 group-hover:bg-gray-600 first:rounded-l-2xl last:rounded-r-2xl">
-                  Nutzer
+                <td className="px-4 py-3 text-orange-400 font-semibold bg-gray-700 group-hover:bg-gray-600 first:rounded-l-2xl last:rounded-r-2xl">
+                  Trainer
                 </td>
                 <td className="px-4 py-3 bg-gray-700 group-hover:bg-gray-600 first:rounded-l-2xl last:rounded-r-2xl">
                   <div className="flex items-center justify-center w-full h-full">

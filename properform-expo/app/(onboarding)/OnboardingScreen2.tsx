@@ -2,15 +2,15 @@ import React from "react";
 import { ScrollView, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { View, Text, StyleSheet, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../../components/header";
-import SecondaryButton from "../../components/secondaryButton";
-import { useNavigation } from "@react-navigation/native";
-import InputField from "../../components/input";
+import Header from "@/src/components/header";
+import SecondaryButton from "@/src/components/secondaryButton";
+import InputField from "@/src/components/input";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { useRouter } from "expo-router";
 
 export default function OnboardingScreen2() {
-  const navigation = useNavigation<any>();
+  const router = useRouter();
 
   const [firstName, setFirstName] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -114,12 +114,12 @@ Backend erwartet password → wird automatisch gehasht.
       await AsyncStorage.setItem("onboarding_birthDate", birthDate);
 
       Alert.alert("Erfolg", "Dein Account wurde erfolgreich erstellt!");
-      navigation.navigate("OnboardingScreen3");
+      router.push("/(onboarding)/OnboardingScreen3");
     } catch (error: any) {
       console.error(error);
       Alert.alert(
         "Fehler",
-        error.response?.data?.error || "Registrierung fehlgeschlagen."
+        error.response?.data?.error || "Registrierung fehlgeschlagen.",
       );
     }
   };

@@ -9,10 +9,10 @@ import {
   Button,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../components/header";
-import PrimaryButton from "../components/primaryButton";
+import Header from "../../src/components/header";
+import PrimaryButton from "../../src/components/primaryButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { OnboardingContext } from "../context/OnboardingContext";
+import { OnboardingContext } from "../../src/context/OnboardingContext";
 
 export default function ProfileScreen() {
   const { resetOnboarding } = React.useContext(OnboardingContext);

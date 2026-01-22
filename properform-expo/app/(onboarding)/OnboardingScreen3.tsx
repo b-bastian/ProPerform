@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from "react";
 import {
   View,
   Text,
@@ -7,21 +7,21 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   Button,
-} from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import { parseDecimal } from '../../utils/number';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Header from '../../components/header';
-import SecondaryButton from '../../components/secondaryButton';
-import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import InputField from '../../components/input';
-import PrimaryButton from '../../components/primaryButton';
-import { OnboardingContext } from '../../context/OnboardingContext';
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import { parseDecimal } from "../../src/utils/number";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Header from "../../src/components/header";
+import SecondaryButton from "../../src/components/secondaryButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import InputField from "../../src/components/input";
+import PrimaryButton from "../../src/components/primaryButton";
+import { OnboardingContext } from "../../src/context/OnboardingContext";
+import { useRouter } from "expo-router";
 
 export default function OnboardingScreen3() {
-  const navigation = useNavigation<any>();
+  const router = useRouter();
   const { finishOnboarding } = useContext(OnboardingContext);
 
   const [firstName, setFirstName] = useState<string | null>(null);
@@ -31,52 +31,52 @@ export default function OnboardingScreen3() {
 
   useEffect(function () {
     async function loadData() {
-      setFirstName(await AsyncStorage.getItem('onboarding_firstName'));
-      setEmail(await AsyncStorage.getItem('onboarding_email'));
-      setBirthDate(await AsyncStorage.getItem('onboarding_birthDate'));
-      setPassword(await AsyncStorage.getItem('onboarding_password'));
+      setFirstName(await AsyncStorage.getItem("onboarding_firstName"));
+      setEmail(await AsyncStorage.getItem("onboarding_email"));
+      setBirthDate(await AsyncStorage.getItem("onboarding_birthDate"));
+      setPassword(await AsyncStorage.getItem("onboarding_password"));
     }
 
     loadData();
   }, []);
 
-  const [weight, setWeight] = useState('');
-  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
   const [gender, setGender] = useState<
-    'male' | 'female' | 'other' | 'not specified'
-  >('not specified');
+    "male" | "female" | "other" | "not specified"
+  >("not specified");
 
-  const [fitnessLevel, setFitnessLevel] = useState('');
+  const [fitnessLevel, setFitnessLevel] = useState("");
   const [trainingFrequency, setTrainingFrequency] = useState<number | null>(
     null,
   );
-  const [primaryGoal, setPrimaryGoal] = useState('');
+  const [primaryGoal, setPrimaryGoal] = useState("");
 
   async function submitOnboarding() {
     if (!firstName || !email || !password || !birthDate) {
-      console.log('missing base fields ');
+      console.log("missing base fields ");
       return;
     }
     const weightNum = parseDecimal(weight);
     const heightNum = parseDecimal(height);
 
     if (weightNum === null || heightNum === null) {
-      console.log('invalid weight or height');
+      console.log("invalid weight or height");
       return;
     }
 
     if (!fitnessLevel) {
-      console.log('missing fitness level');
+      console.log("missing fitness level");
       return;
     }
 
     if (trainingFrequency === null) {
-      console.log('missing training frequency');
+      console.log("missing training frequency");
       return;
     }
 
     if (!primaryGoal) {
-      console.log('missing primary goal');
+      console.log("missing primary goal");
       return;
     }
 
@@ -95,22 +95,20 @@ export default function OnboardingScreen3() {
     };
 
     try {
-      console.log('sending data to api', requestBody);
+      console.log("sending data to api", requestBody);
 
-      await axios.post(
-        'https://api.properform.app/users/createUser',
-        requestBody,
-      );
+      await axios.post("https://api.properform.app/auth/register", requestBody);
 
-      await AsyncStorage.setItem('onboardingFinished', 'true');
+      await AsyncStorage.setItem("onboardingFinished", "true");
       finishOnboarding();
+      router.replace("/(tabs)/HomeScreen");
     } catch (error: any) {
       if (error.response) {
-        console.log('STATUS:', error.response.status);
-        console.log('DATA:', error.response.data);
-        console.log('HEADERS:', error.response.headers);
+        console.log("STATUS:", error.response.status);
+        console.log("DATA:", error.response.data);
+        console.log("HEADERS:", error.response.headers);
       } else {
-        console.log('ERROR:', error.message);
+        console.log("ERROR:", error.message);
       }
     }
   }
@@ -120,7 +118,7 @@ export default function OnboardingScreen3() {
   // better design
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <ScrollView
           contentContainerStyle={{
@@ -152,7 +150,7 @@ export default function OnboardingScreen3() {
             <Text style={styles.label}>Geschlecht</Text>
             <Picker
               selectedValue={gender}
-              onValueChange={value => setGender(value)}
+              onValueChange={(value) => setGender(value)}
             >
               <Picker.Item label="Keine Angabe" value="not specified" />
               <Picker.Item label="Männlich" value="male" />
@@ -163,7 +161,7 @@ export default function OnboardingScreen3() {
             <Text style={styles.label}>Fitness-Level</Text>
             <Picker
               selectedValue={fitnessLevel}
-              onValueChange={value => setFitnessLevel(value)}
+              onValueChange={(value) => setFitnessLevel(value)}
             >
               <Picker.Item label="Anfänger" value="beginner" />
               <Picker.Item label="Fortgeschritten" value="intermediate" />
@@ -173,7 +171,7 @@ export default function OnboardingScreen3() {
             <Text style={styles.label}>Trainingshäufigkeit</Text>
             <Picker
               selectedValue={trainingFrequency}
-              onValueChange={value => setTrainingFrequency(value)}
+              onValueChange={(value) => setTrainingFrequency(value)}
             >
               <Picker.Item label="Bitte wählen" value={null} />
               <Picker.Item label="1–2x pro Woche" value={2} />
@@ -184,7 +182,7 @@ export default function OnboardingScreen3() {
             <Text style={styles.label}>Primäres Ziel</Text>
             <Picker
               selectedValue={primaryGoal}
-              onValueChange={value => setPrimaryGoal(value)}
+              onValueChange={(value) => setPrimaryGoal(value)}
             >
               <Picker.Item label="Bitte wählen" value={null} />
               <Picker.Item label="Muskelaufbau" value="build muscle" />
@@ -206,7 +204,7 @@ export default function OnboardingScreen3() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   content: {
     flex: 1,
@@ -215,21 +213,21 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 36,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    fontFamily: 'Inter',
+    fontWeight: "bold",
+    textAlign: "center",
+    fontFamily: "Inter",
   },
   text: {
     fontSize: 20,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 20,
-    color: '#555',
-    fontFamily: 'Inter',
-    fontWeight: '500',
+    color: "#555",
+    fontFamily: "Inter",
+    fontWeight: "500",
   },
   label: {
     marginTop: 20,
     marginBottom: 4,
-    fontWeight: '500',
+    fontWeight: "500",
   },
 });

@@ -1,18 +1,18 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Header from '../../components/header';
-import SecondaryButton from '../../components/secondaryButton';
-import { useNavigation } from '@react-navigation/native';
+import React from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Header from "@/src/components/header";
+import SecondaryButton from "@/src/components/secondaryButton";
+import { useRouter } from "expo-router";
 
 export default function OnboardingScreen() {
-  const navigation = useNavigation<any>();
+  const router = useRouter();
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.content}>
         <Header />
-        <Text style={styles.title}>Willkommen bei {'\n'}ProPerform</Text>
+        <Text style={styles.title}>Willkommen bei {"\n"}ProPerform</Text>
         <Text style={styles.text}>
           Erstelle dein Trainingsprofil um einen passenden Trainingsplan zu
           erhalten und direkt loszulegen!
@@ -21,7 +21,7 @@ export default function OnboardingScreen() {
         <SecondaryButton
           text="LOS GEHT'S!"
           onPress={() => {
-            navigation.navigate('OnboardingScreen2');
+            router.push("/(onboarding)/OnboardingScreen2");
           }}
         />
 
@@ -42,7 +42,7 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   content: {
     flex: 1,
@@ -51,24 +51,24 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 36,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    fontFamily: 'Inter',
+    fontWeight: "bold",
+    textAlign: "center",
+    fontFamily: "Inter",
   },
   text: {
     fontSize: 20,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 20,
-    color: '#555',
-    fontFamily: 'Inter',
-    fontWeight: '500',
+    color: "#555",
+    fontFamily: "Inter",
+    fontWeight: "500",
   },
   secondaryText: {
     fontSize: 18,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 25,
-    color: '#555',
-    fontFamily: 'Inter',
-    fontWeight: '500',
+    color: "#555",
+    fontFamily: "Inter",
+    fontWeight: "500",
   },
 });

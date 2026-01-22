@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -8,8 +8,8 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Button,
-} from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+} from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 interface SmartInputProps {
   title: string;
@@ -28,16 +28,16 @@ const SmartInput: React.FC<SmartInputProps> = ({
   const [tempDate, setTempDate] = useState<Date>(new Date()); // nur zwischenspeicher
   const [confirmedDate, setConfirmedDate] = useState<Date | null>(null);
 
-  const lowerTitle = title?.toLowerCase?.() || '';
+  const lowerTitle = title?.toLowerCase?.() || "";
   const isPassword =
-    lowerTitle === 'passwort' || lowerTitle === 'passwort wiederholen';
-  const isDate = lowerTitle === 'geburtsdatum' || lowerTitle === 'datum';
+    lowerTitle === "passwort" || lowerTitle === "passwort wiederholen";
+  const isDate = lowerTitle === "geburtsdatum" || lowerTitle === "datum";
 
   const onDateChange = (_: any, selectedDate?: Date) => {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === "android") {
       if (selectedDate) {
         setConfirmedDate(selectedDate);
-        onChange(selectedDate.toISOString().split('T')[0]);
+        onChange(selectedDate.toISOString().split("T")[0]);
       }
       setShowPicker(false);
     } else {
@@ -47,12 +47,12 @@ const SmartInput: React.FC<SmartInputProps> = ({
 
   const confirmIOSDate = () => {
     setConfirmedDate(tempDate);
-    onChange(tempDate.toISOString().split('T')[0]);
+    onChange(tempDate.toISOString().split("T")[0]);
     setShowPicker(false);
   };
 
   const formattedDate =
-    confirmedDate?.toISOString().split('T')[0] || value || placeholder;
+    confirmedDate?.toISOString().split("T")[0] || value || placeholder;
 
   return (
     <TouchableWithoutFeedback
@@ -60,7 +60,7 @@ const SmartInput: React.FC<SmartInputProps> = ({
       accessible={false}
     >
       <View style={{ marginVertical: 8 }}>
-        <Text style={{ fontWeight: '600', marginBottom: 4 }}>{title}</Text>
+        <Text style={{ fontWeight: "600", marginBottom: 4 }}>{title}</Text>
 
         {isDate ? (
           <>
@@ -71,12 +71,12 @@ const SmartInput: React.FC<SmartInputProps> = ({
               }}
               style={{
                 borderWidth: 1,
-                borderColor: '#ccc',
+                borderColor: "#ccc",
                 borderRadius: 8,
                 padding: 10,
               }}
             >
-              <Text style={{ color: value ? '#000' : '#999' }}>
+              <Text style={{ color: value ? "#000" : "#999" }}>
                 {formattedDate}
               </Text>
             </Pressable>
@@ -84,7 +84,7 @@ const SmartInput: React.FC<SmartInputProps> = ({
             {showPicker && (
               <View
                 style={{
-                  backgroundColor: '#f9f9f9',
+                  backgroundColor: "#f9f9f9",
                   borderRadius: 10,
                   marginTop: 10,
                 }}
@@ -92,11 +92,12 @@ const SmartInput: React.FC<SmartInputProps> = ({
                 <DateTimePicker
                   value={tempDate}
                   mode="date"
-                  display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
                   onChange={onDateChange}
                   locale="de-DE"
+                  themeVariant="light"
                 />
-                {Platform.OS === 'ios' && (
+                {Platform.OS === "ios" && (
                   <Button title="Fertig" onPress={confirmIOSDate} />
                 )}
               </View>
@@ -107,12 +108,14 @@ const SmartInput: React.FC<SmartInputProps> = ({
             value={value}
             onChangeText={onChange}
             placeholder={placeholder}
+            placeholderTextColor={"#9CA3AF"}
             secureTextEntry={isPassword}
             style={{
               borderWidth: 1,
-              borderColor: '#ccc',
+              borderColor: "#ccc",
               borderRadius: 8,
               padding: 10,
+              color: "#000",
             }}
           />
         )}

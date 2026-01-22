@@ -47,9 +47,7 @@ export default function OnboardingScreen3() {
   >("not specified");
 
   const [fitnessLevel, setFitnessLevel] = useState("");
-  const [trainingFrequency, setTrainingFrequency] = useState<number | null>(
-    null,
-  );
+  const [trainingFrequency, setTrainingFrequency] = useState<number | "">("");
   const [primaryGoal, setPrimaryGoal] = useState("");
 
   async function submitOnboarding() {
@@ -148,47 +146,63 @@ export default function OnboardingScreen3() {
             ></InputField>
 
             <Text style={styles.label}>Geschlecht</Text>
-            <Picker
-              selectedValue={gender}
-              onValueChange={(value) => setGender(value)}
-            >
-              <Picker.Item label="Keine Angabe" value="not specified" />
-              <Picker.Item label="Männlich" value="male" />
-              <Picker.Item label="Weiblich" value="female" />
-              <Picker.Item label="Divers" value="other" />
-            </Picker>
+
+            <View style={styles.pickerWrapper}>
+              <Picker
+                selectedValue={gender}
+                onValueChange={(value) => setGender(value)}
+                itemStyle={styles.pickerItem}
+              >
+                <Picker.Item label="Keine Angabe" value="not specified" />
+                <Picker.Item label="Männlich" value="male" />
+                <Picker.Item label="Weiblich" value="female" />
+                <Picker.Item label="Divers" value="other" />
+              </Picker>
+            </View>
 
             <Text style={styles.label}>Fitness-Level</Text>
-            <Picker
-              selectedValue={fitnessLevel}
-              onValueChange={(value) => setFitnessLevel(value)}
-            >
-              <Picker.Item label="Anfänger" value="beginner" />
-              <Picker.Item label="Fortgeschritten" value="intermediate" />
-              <Picker.Item label="Experte" value="advanced" />
-            </Picker>
+
+            <View style={styles.pickerWrapper}>
+              <Picker
+                selectedValue={fitnessLevel}
+                onValueChange={(value) => setFitnessLevel(value)}
+                itemStyle={styles.pickerItem}
+              >
+                <Picker.Item label="Anfänger" value="beginner" />
+                <Picker.Item label="Fortgeschritten" value="intermediate" />
+                <Picker.Item label="Experte" value="advanced" />
+              </Picker>
+            </View>
 
             <Text style={styles.label}>Trainingshäufigkeit</Text>
-            <Picker
-              selectedValue={trainingFrequency}
-              onValueChange={(value) => setTrainingFrequency(value)}
-            >
-              <Picker.Item label="Bitte wählen" value={null} />
-              <Picker.Item label="1–2x pro Woche" value={2} />
-              <Picker.Item label="3–4x pro Woche" value={4} />
-              <Picker.Item label="5+ pro Woche" value={7} />
-            </Picker>
+
+            <View style={styles.pickerWrapper}>
+              <Picker
+                selectedValue={trainingFrequency}
+                onValueChange={(value) => setTrainingFrequency(value)}
+                itemStyle={styles.pickerItem}
+              >
+                <Picker.Item label="Bitte wählen" value={""} />
+                <Picker.Item label="1–2x pro Woche" value={2} />
+                <Picker.Item label="3–4x pro Woche" value={4} />
+                <Picker.Item label="5+ pro Woche" value={7} />
+              </Picker>
+            </View>
 
             <Text style={styles.label}>Primäres Ziel</Text>
-            <Picker
-              selectedValue={primaryGoal}
-              onValueChange={(value) => setPrimaryGoal(value)}
-            >
-              <Picker.Item label="Bitte wählen" value={null} />
-              <Picker.Item label="Muskelaufbau" value="build muscle" />
-              <Picker.Item label="Abnehmen" value="lose weight" />
-              <Picker.Item label="Gewicht halten" value="stay at weight" />
-            </Picker>
+
+            <View style={styles.pickerWrapper}>
+              <Picker
+                selectedValue={primaryGoal}
+                onValueChange={(value) => setPrimaryGoal(value)}
+                itemStyle={styles.pickerItem}
+              >
+                <Picker.Item label="Bitte wählen" value={""} />
+                <Picker.Item label="Muskelaufbau" value="build muscle" />
+                <Picker.Item label="Abnehmen" value="lose weight" />
+                <Picker.Item label="Gewicht halten" value="stay at weight" />
+              </Picker>
+            </View>
 
             <SecondaryButton
               text="LOS GEHT'S!"
@@ -229,5 +243,15 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 4,
     fontWeight: "500",
+  },
+  pickerWrapper: {
+    borderWidth: 1,
+    borderColor: "#D1D5DB",
+    borderRadius: 8,
+    backgroundColor: "#fff",
+  },
+  pickerItem: {
+    color: "#000",
+    fontSize: 16,
   },
 });

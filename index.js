@@ -8,6 +8,7 @@ import publicTrainerRoutes from "./routes/TrainerRoutes/publicTrainerRoutes.js";
 import privateTrainerRoutes from "./routes/TrainerRoutes/privateTrainerRoutes.js";
 import publicAuthRoutes from "./routes/AuthRoutes/publicAuthRoutes.js";
 import { requireAuth } from "./auth.js";
+import { requestLogger } from "./logger.js";
 
 dotenv.config();
 
@@ -84,7 +85,7 @@ function extractRoutes(router, prefix = "", isProtected = false) {
       const nestedRoutes = extractRoutes(
         middleware.handle,
         prefix + nestedPrefix,
-        isProtected
+        isProtected,
       );
       routes.push(...nestedRoutes);
     }
@@ -120,10 +121,12 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
     optionsSuccessStatus: 200,
-  })
+  }),
 );
 
 app.use(express.json());
+
+app.use(requestLogger);
 
 // Public routes
 app.use("/users", publicUserRoutes);
@@ -175,7 +178,7 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`${COLORS.green}✔ CORS configured${COLORS.reset}`);
   console.log(`${COLORS.green}✔ Database configured${COLORS.reset}`);
   console.log(
-    `${COLORS.green}✔ Authentication middleware loaded${COLORS.reset}`
+    `${COLORS.green}✔ Authentication middleware loaded${COLORS.reset}`,
   );
   console.log(`${COLORS.green}✔ Routes mounted${COLORS.reset}\n`);
 
@@ -232,7 +235,7 @@ app.listen(PORT, "0.0.0.0", () => {
     publicRoutes.forEach((route) => {
       const methodFormatted = route.method.padEnd(6);
       console.log(
-        `  ${METHOD_COLOR}${methodFormatted}${COLORS.reset} ${route.path}`
+        `  ${METHOD_COLOR}${methodFormatted}${COLORS.reset} ${route.path}`,
       );
     });
     console.log();
@@ -240,18 +243,18 @@ app.listen(PORT, "0.0.0.0", () => {
 
   if (protectedRoutes.length > 0) {
     console.log(
-      `${COLORS.magenta}🔐 PROTECTED ROUTES (require auth):${COLORS.reset}`
+      `${COLORS.magenta}🔐 PROTECTED ROUTES (require auth):${COLORS.reset}`,
     );
     protectedRoutes.forEach((route) => {
       const methodFormatted = route.method.padEnd(6);
       console.log(
-        `  ${METHOD_COLOR}${methodFormatted}${COLORS.reset} ${route.path}`
+        `  ${METHOD_COLOR}${methodFormatted}${COLORS.reset} ${route.path}`,
       );
     });
     console.log();
   }
 
   console.log(
-    `${MUTED_COLOR}Total: ${uniqueRoutes.length} routes registered${COLORS.reset}\n`
+    `${MUTED_COLOR}Total: ${uniqueRoutes.length} routes registered${COLORS.reset}\n`,
   );
 });

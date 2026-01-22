@@ -3,13 +3,14 @@ import mysql from "mysql2/promise";
 import os from "os";
 import fs from "fs";
 import { requireAuth } from "../../middleware/auth.js";
+import { requireRole } from "../../middleware/role.js";
 
 const router = express.Router();
 
 router.get(
   "/healthcheck",
-  requireAuth("owner"),
   requireAuth,
+  requireRole("owner"),
   async (req, res) => {
     const start = Date.now();
 

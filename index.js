@@ -7,7 +7,6 @@ import protectedSystemRoutes from "./routes/SystemRoutes/ProtectedSystemRoutes.j
 import publicTrainerRoutes from "./routes/TrainerRoutes/publicTrainerRoutes.js";
 import privateTrainerRoutes from "./routes/TrainerRoutes/privateTrainerRoutes.js";
 import publicAuthRoutes from "./routes/AuthRoutes/publicAuthRoutes.js";
-import { requireAuth } from "./middleware/auth.js";
 import { requestLogger } from "./logger.js";
 
 dotenv.config();

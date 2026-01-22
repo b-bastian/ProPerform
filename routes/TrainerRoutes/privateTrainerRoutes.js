@@ -15,8 +15,8 @@ const router = express.Router();
 
 router.post(
   "/createTrainer",
-  requireRole("owner"),
   requireAuth,
+  requireRole("owner"),
   async (req, res) => {
     const { firstname, lastname, password, birthdate, email, phone_number } =
       req.body;
@@ -95,8 +95,8 @@ router.post("/verify-code", requireAuth, async (req, res) => {
 
 router.delete(
   "/deleteTrainer/:tid",
-  requireRole("owner"),
   requireAuth,
+  requireRole("owner"),
   async (req, res) => {
     const { tid } = req.params;
 

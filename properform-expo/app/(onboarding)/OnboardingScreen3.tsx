@@ -101,7 +101,7 @@ export default function OnboardingScreen3() {
 
       await AsyncStorage.setItem("onboardingFinished", "true");
       finishOnboarding();
-      router.replace("/(tabs)/HomeScreen");
+      router.replace("../(tabs)/HomeScreen");
     } catch (error: any) {
       if (error.response) {
         console.log("STATUS:", error.response.status);

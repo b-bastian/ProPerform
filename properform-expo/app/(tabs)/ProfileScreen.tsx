@@ -12,14 +12,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../../src/components/header";
 import PrimaryButton from "../../src/components/primaryButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { OnboardingContext } from "../../src/context/OnboardingContext";
+import { useRouter } from "expo-router";
 
 export default function ProfileScreen() {
-  const { resetOnboarding } = React.useContext(OnboardingContext);
+  const router = useRouter();
 
   const handleResetOnboarding = async () => {
     await AsyncStorage.removeItem("onboardingFinished");
-    resetOnboarding();
+
+    router.replace("../(onboarding)/OnboardingScreen");
   };
 
   return (

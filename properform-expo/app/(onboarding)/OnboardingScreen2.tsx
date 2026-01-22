@@ -114,7 +114,7 @@ Backend erwartet password → wird automatisch gehasht.
       await AsyncStorage.setItem("onboarding_birthDate", birthDate);
 
       Alert.alert("Erfolg", "Dein Account wurde erfolgreich erstellt!");
-      router.push("/(onboarding)/OnboardingScreen3");
+      router.push("../(onboarding)/OnboardingScreen3");
     } catch (error: any) {
       console.error(error);
       Alert.alert(

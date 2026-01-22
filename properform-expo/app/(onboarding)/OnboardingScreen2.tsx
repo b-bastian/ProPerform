@@ -8,6 +8,7 @@ import InputField from "@/src/components/input";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useRouter } from "expo-router";
+import {typography} from "@/src/theme/typography";
 
 export default function OnboardingScreen2() {
   const router = useRouter();
@@ -137,7 +138,7 @@ Backend erwartet password → wird automatisch gehasht.
           showsVerticalScrollIndicator={false}
         >
           <Header />
-          <Text style={styles.title}>Persönliche Daten</Text>
+          <Text style={typography.title}>Persönliche Daten</Text>
 
           <InputField
             title="Vorname"
@@ -146,7 +147,7 @@ Backend erwartet password → wird automatisch gehasht.
             onChange={setFirstName}
           />
           {errors.firstName ? (
-            <Text style={styles.error}>{errors.firstName}</Text>
+            <Text style={typography.error}>{errors.firstName}</Text>
           ) : (
             <Text style={styles.emptyError}> </Text>
           )}
@@ -158,7 +159,7 @@ Backend erwartet password → wird automatisch gehasht.
             onChange={setEmail}
           />
           {errors.email ? (
-            <Text style={styles.error}>{errors.email}</Text>
+            <Text style={typography.error}>{errors.email}</Text>
           ) : (
             <Text style={styles.emptyError}> </Text>
           )}
@@ -170,7 +171,7 @@ Backend erwartet password → wird automatisch gehasht.
             onChange={setPassword}
           />
           {errors.password ? (
-            <Text style={styles.error}>{errors.password}</Text>
+            <Text style={typography.error}>{errors.password}</Text>
           ) : (
             <Text style={styles.emptyError}> </Text>
           )}
@@ -182,7 +183,7 @@ Backend erwartet password → wird automatisch gehasht.
             onChange={setPasswordRepeat}
           />
           {errors.passwordRepeat ? (
-            <Text style={styles.error}>{errors.passwordRepeat}</Text>
+            <Text style={typography.error}>{errors.passwordRepeat}</Text>
           ) : (
             <Text style={styles.emptyError}> </Text>
           )}
@@ -194,7 +195,7 @@ Backend erwartet password → wird automatisch gehasht.
             onChange={setBirthDate}
           />
           {errors.birthDate ? (
-            <Text style={styles.error}>{errors.birthDate}</Text>
+            <Text style={typography.error}>{errors.birthDate}</Text>
           ) : (
             <Text style={styles.emptyError}> </Text>
           )}
@@ -209,12 +210,6 @@ Backend erwartet password → wird automatisch gehasht.
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   content: { flex: 1, paddingHorizontal: 20, paddingTop: 30 },
-  title: {
-    fontSize: 36,
-    fontWeight: "bold",
-    textAlign: "center",
-    fontFamily: "Inter",
-  },
   error: { color: "red", fontSize: 13, marginTop: 2, marginLeft: 4 },
   emptyError: {
     color: "transparent",

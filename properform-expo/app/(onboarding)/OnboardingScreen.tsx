@@ -4,6 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/src/components/header";
 import SecondaryButton from "@/src/components/secondaryButton";
 import { useRouter } from "expo-router";
+import {typography} from "@/src/theme/typography";
+import {spacing} from "@/src/theme/spacing";
 
 export default function OnboardingScreen() {
   const router = useRouter();
@@ -12,8 +14,8 @@ export default function OnboardingScreen() {
     <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.content}>
         <Header />
-        <Text style={styles.title}>Willkommen bei {"\n"}ProPerform</Text>
-        <Text style={styles.text}>
+        <Text style={typography.title}>Willkommen bei {"\n"}ProPerform</Text>
+        <Text style={[typography.body, {marginTop: spacing.lg}]}>
           Erstelle dein Trainingsprofil um einen passenden Trainingsplan zu
           erhalten und direkt loszulegen!
         </Text>
@@ -25,7 +27,7 @@ export default function OnboardingScreen() {
           }}
         />
 
-        <Text style={styles.secondaryText}>Haben Sie bereits ein Konto?</Text>
+        <Text style={[typography.secondary, {marginTop: spacing.lg}]}>Haben Sie bereits ein Konto?</Text>
 
         <SecondaryButton
           text="ANMELDEN"
@@ -48,27 +50,5 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 30,
-  },
-  title: {
-    fontSize: 36,
-    fontWeight: "bold",
-    textAlign: "center",
-    fontFamily: "Inter",
-  },
-  text: {
-    fontSize: 20,
-    textAlign: "center",
-    marginTop: 20,
-    color: "#555",
-    fontFamily: "Inter",
-    fontWeight: "500",
-  },
-  secondaryText: {
-    fontSize: 18,
-    textAlign: "center",
-    marginTop: 25,
-    color: "#555",
-    fontFamily: "Inter",
-    fontWeight: "500",
   },
 });

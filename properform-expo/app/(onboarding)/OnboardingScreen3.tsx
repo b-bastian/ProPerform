@@ -19,6 +19,7 @@ import InputField from "../../src/components/input";
 import PrimaryButton from "../../src/components/primaryButton";
 import { OnboardingContext } from "../../src/context/OnboardingContext";
 import { useRouter } from "expo-router";
+import {typography} from "@/src/theme/typography";
 
 export default function OnboardingScreen3() {
   const router = useRouter();
@@ -129,7 +130,7 @@ export default function OnboardingScreen3() {
         >
           <View style={styles.content}>
             <Header />
-            <Text style={styles.title}>Fast fertig!</Text>
+            <Text style={typography.title}>Fast fertig!</Text>
 
             <InputField
               title="Größe (cm)"
@@ -224,20 +225,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 30,
-  },
-  title: {
-    fontSize: 36,
-    fontWeight: "bold",
-    textAlign: "center",
-    fontFamily: "Inter",
-  },
-  text: {
-    fontSize: 20,
-    textAlign: "center",
-    marginTop: 20,
-    color: "#555",
-    fontFamily: "Inter",
-    fontWeight: "500",
   },
   label: {
     marginTop: 20,

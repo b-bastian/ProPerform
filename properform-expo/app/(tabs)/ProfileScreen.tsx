@@ -13,6 +13,8 @@ import Header from "../../src/components/header";
 import PrimaryButton from "../../src/components/primaryButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import {typography} from "@/src/theme/typography";
+import {spacing} from "@/src/theme/spacing";
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -45,8 +47,8 @@ export default function ProfileScreen() {
           </View>
 
           <View>
-            <Text style={styles.welcomeTitle}>Hi, Max!</Text>
-            <Text style={styles.welcomeText}>
+            <Text style={[typography.greeting, {marginBottom: spacing.xs}]}>Hi, Max!</Text>
+            <Text style={typography.secondary}>
               Du trainierst seit 2 Monaten!
             </Text>
           </View>
@@ -93,12 +95,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 30,
   },
-  title: {
-    fontSize: 36,
-    fontWeight: "bold",
-    textAlign: "center",
-    fontFamily: "Inter",
-  },
   profileImage: {
     width: 120,
     height: 120,
@@ -107,15 +103,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 20,
-  },
-  welcomeTitle: {
-    fontSize: 32,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  welcomeText: {
-    fontSize: 15,
-    textAlign: "center",
   },
   infoCard: {
     marginTop: 30,

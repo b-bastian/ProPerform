@@ -5,6 +5,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Header from "../../src/components/header";
 import PrimaryButton from "../../src/components/primaryButton";
 import SecondaryButton from "../../src/components/secondaryButton";
+import {typography} from "@/src/theme/typography";
+import {spacing} from "@/src/theme/spacing";
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -35,7 +37,10 @@ export default function HomeScreen({ navigation }: Props) {
       >
         <View style={styles.content}>
           <Header></Header>
-          <Text style={styles.greeting}>Hallo, Max!</Text>
+          <Text style={[typography.greeting, {
+            marginTop: spacing.lg, marginBottom: spacing.lg
+          }]}>Hallo, Max!</Text>
+
           {/* Wöchentliches Ziel, TODO: Fortschritt Kreis mit API*/}
           <View style={styles.goalCard}>
             <Text style={styles.cardValue}>50 %</Text>
@@ -72,21 +77,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 30,
-  },
-  title: {
-    fontSize: 36,
-    fontWeight: "bold",
-    textAlign: "center",
-    fontFamily: "Inter",
-  },
-  greeting: {
-    fontSize: 24,
-    fontWeight: "600",
-    marginTop: 20,
-    marginBottom: 20,
-    fontFamily: "Inter",
-    color: "#111",
-    textAlign: "center",
   },
   goalCard: {
     backgroundColor: "#FFFFFF",

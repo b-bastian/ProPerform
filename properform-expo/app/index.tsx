@@ -3,6 +3,8 @@ import { useContext, useEffect, useState } from "react";
 import { OnboardingContext } from "@/src/context/OnboardingContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const DEV_MODE_STATUS = true; // false setzen für normal, true dev mode
+
 export default function Index() {
   const [ready, setReady] = useState(false);
   const [finished, setFinished] = useState(false);
@@ -16,6 +18,10 @@ export default function Index() {
   }, []);
 
   if (!ready) return null;
+
+  if (__DEV__ && DEV_MODE_STATUS) {
+    return <Redirect href="/dev-menu" />;
+  }
 
   if (!finished) {
     return <Redirect href="/(onboarding)/OnboardingScreen" />;

@@ -18,7 +18,7 @@ router.post("/admin/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password_hash, saltRounds);
     await db.execute(
       "INSERT INTO users (firstname, birthdate, email, password_hash, role_id) VALUES (?, ?, ?, ?, 1)",
-      [firstname, birthdate || null, email, hashedPassword]
+      [firstname, birthdate || null, email, hashedPassword],
     );
     res.status(201).json({ message: `Admin ${firstname} registriert.` });
   } catch (error) {
@@ -37,7 +37,7 @@ router.post("/admin/login", async (req, res) => {
   try {
     const [rows] = await db.execute(
       "SELECT * FROM users WHERE email = ? AND role_id = 1",
-      [email]
+      [email],
     );
 
     if (rows.length === 0)
@@ -51,7 +51,7 @@ router.post("/admin/login", async (req, res) => {
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role_id },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1h" },
     );
 
     res.json({ message: "Admin-Login erfolgreich", token });
@@ -130,7 +130,7 @@ router.post("/register", async (req, res) => {
         training_frequency,
         primary_goal,
         role_id,
-      ]
+      ],
     );
 
     res
@@ -168,7 +168,7 @@ router.post("/login", async (req, res) => {
   try {
     const [rows] = await db.query(
       "SELECT * FROM users WHERE email = ? LIMIT 1",
-      [email]
+      [email],
     );
 
     if (rows.length === 0) {
@@ -192,7 +192,7 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign(
       { id: user.id, role: user.role_id },
       process.env.JWT_SECRET,
-      { expiresIn: tokenExpiresIn }
+      { expiresIn: tokenExpiresIn },
     );
 
     return res.json({
@@ -202,6 +202,59 @@ router.post("/login", async (req, res) => {
     });
   } catch (err) {
     console.error("Fehler beim Login:", err);
+    return res.status(500).json({
+      error: "Interner Serverfehler",
+    });
+  }
+});
+
+router.post("/trainers/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      error: "Bitte alle erforderlichen Felder ausfüllen",
+    });
+  }
+
+  try {
+    const [rows] = await db.query(
+      "SELECT * FROM trainers WHERE email = ? LIMIT 1",
+      [email],
+    );
+
+    if (rows.length === 0) {
+      return res.status(401).json({
+        error: "Ungültige Zugangsdaten",
+      });
+    }
+
+    const trainer = rows[0];
+
+    const passwordIsValid = await bcrypt.compare(
+      password,
+      trainer.password_hash,
+    );
+
+    if (!passwordIsValid) {
+      return res.status(401).json({
+        error: "Ungültige Zugangsdaten",
+      });
+    }
+
+    const token = jwt.sign(
+      { id: trainer.tid, role: "trainer" },
+      process.env.JWT_SECRET,
+      { expiresIn: "3d" },
+    );
+
+    return res.json({
+      message: "Login erfolgreich",
+      token,
+      tid: trainer.tid,
+    });
+  } catch (err) {
+    console.error("Fehler beim Trainer-Login:", err);
     return res.status(500).json({
       error: "Interner Serverfehler",
     });

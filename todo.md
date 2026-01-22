@@ -2,11 +2,11 @@
 
 ## HIGH PRIORITY
 
-- [ ] **MISSING: User Login** – Kein `/auth/userLogin` Endpoint
+- [x] **MISSING: User Login** – Kein `/auth/userLogin` Endpoint
   - User können sich nicht einloggen (nur Admin)
   - **Lösung:** `POST /auth/userLogin` mit Email/Passwort
 
-- [ ] **MISSING: Trainer Login** – Kein `/auth/trainerLogin` Endpoint
+- [x] **MISSING: Trainer Login** – Kein `/auth/trainerLogin` Endpoint
   - Trainer können sich nicht authentifizieren
   - **Lösung:** `POST /auth/trainerLogin` mit Email/Passwort
 

@@ -1,7 +1,7 @@
 import express from "express";
 import mysql from "mysql2/promise";
 import { db } from "../../db.js";
-import { requireAuth } from "../../auth.js";
+import { requireAuth } from "../../middleware/auth.js";
 import { generateTrainerCode } from "../../functions/TrainerFunctions.js";
 
 const router = express.Router();
@@ -14,7 +14,7 @@ router.patch("/:id/regenerateCode", async (req, res) => {
 
     const [result] = await db.execute(
       "UPDATE trainers SET invite_code = ? WHERE tid = ?",
-      [newCode, id]
+      [newCode, id],
     );
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Trainer nicht gefunden." });
@@ -41,7 +41,7 @@ router.post("/link-athlete", async (req, res) => {
     // Trainer anhand Code finden
     const [trainerRows] = await db.execute(
       "SELECT tid FROM trainers WHERE invite_code = ?",
-      [invite_code.trim()]
+      [invite_code.trim()],
     );
 
     if (trainerRows.length === 0) {
@@ -53,7 +53,7 @@ router.post("/link-athlete", async (req, res) => {
     // Prüfen, ob Athlet schon einen Trainer hat
     const [existing] = await db.execute(
       "SELECT * FROM trainer_athletes WHERE athlete_uid = ?",
-      [athlete_id]
+      [athlete_id],
     );
 
     if (existing.length > 0) {
@@ -64,7 +64,7 @@ router.post("/link-athlete", async (req, res) => {
 
     await db.execute(
       "INSERT INTO trainer_athletes (tid, athlete_uid, assigned_date) VALUES (?, ?, CURDATE())",
-      [trainerId, athlete_id]
+      [trainerId, athlete_id],
     );
 
     res.status(200).json({

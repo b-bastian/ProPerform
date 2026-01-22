@@ -2,7 +2,7 @@ import express from "express";
 import mysql from "mysql2/promise";
 import os from "os";
 import fs from "fs";
-import { requireAuth } from "../../auth.js";
+import { requireAuth } from "../../middleware/auth.js";
 
 const router = express.Router();
 

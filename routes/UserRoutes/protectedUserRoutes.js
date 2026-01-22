@@ -1,6 +1,6 @@
 import express from "express";
 import { db } from "../../db.js";
-import { requireAuth } from "../../auth.js";
+import { requireAuth } from "../../middleware/auth.js";
 
 const router = express.Router();
 
@@ -28,10 +28,10 @@ const getUsers = async (req, res, role) => {
     if (!roleParam || roleParam === "owners") {
       const [owners] = await db.execute(
         "SELECT uid, firstname, birthdate, email, role_id FROM users WHERE role_id = ?",
-        [ROLES.OWNER]
+        [ROLES.OWNER],
       );
       allUsers = allUsers.concat(
-        owners.map((owner) => ({ ...owner, type: "owner" }))
+        owners.map((owner) => ({ ...owner, type: "owner" })),
       );
     }
 
@@ -39,17 +39,17 @@ const getUsers = async (req, res, role) => {
     if (!roleParam || roleParam === "users") {
       const [users] = await db.execute(
         "SELECT uid, firstname, birthdate, email, role_id FROM users WHERE role_id = ?",
-        [ROLES.USER]
+        [ROLES.USER],
       );
       allUsers = allUsers.concat(
-        users.map((user) => ({ ...user, type: "user" }))
+        users.map((user) => ({ ...user, type: "user" })),
       );
     }
 
     // Trainers abrufen
     if (!roleParam || roleParam === "trainers") {
       const [trainers] = await db.execute(
-        "SELECT tid, firstname, lastname, birthdate, email, phone_number FROM trainers"
+        "SELECT tid, firstname, lastname, birthdate, email, phone_number FROM trainers",
       );
       allUsers = allUsers.concat(
         trainers.map((trainer) => ({
@@ -61,7 +61,7 @@ const getUsers = async (req, res, role) => {
           phone_number: trainer.phone_number,
           type: "trainer",
           source: "trainers",
-        }))
+        })),
       );
     }
 
@@ -95,11 +95,11 @@ router.get("/stats", requireAuth, async (req, res) => {
         SUM(role_id = ?) AS users
       FROM users
     `,
-      [ROLES.OWNER, ROLES.USER]
+      [ROLES.OWNER, ROLES.USER],
     );
 
     const [[trainerStats]] = await db.execute(
-      "SELECT COUNT(*) AS trainers FROM trainers"
+      "SELECT COUNT(*) AS trainers FROM trainers",
     );
 
     const total =

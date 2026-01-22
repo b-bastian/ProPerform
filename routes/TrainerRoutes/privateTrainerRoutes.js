@@ -1,7 +1,7 @@
 import express from "express";
 import mysql from "mysql2/promise";
 import { db } from "../../db.js";
-import { requireAuth } from "../../auth.js";
+import { requireAuth } from "../../middleware/auth.js";
 import { generateTrainerCode } from "../../functions/TrainerFunctions.js";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
@@ -42,7 +42,7 @@ router.post("/createTrainer", requireAuth, async (req, res) => {
         hashedPassword,
         phone_number,
         trainerCode,
-      ]
+      ],
     );
     res.status(201).json({
       message: `Trainer ${firstname} ${lastname} erstellt.`,
@@ -70,7 +70,7 @@ router.post("/verify-code", requireAuth, async (req, res) => {
   try {
     const [rows] = await db.execute(
       "SELECT tid, firstname, lastname, email, invite_code FROM trainers WHERE invite_code = ?",
-      [invite_code.trim()]
+      [invite_code.trim()],
     );
 
     if (rows.length === 0) {

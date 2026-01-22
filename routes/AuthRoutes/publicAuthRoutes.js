@@ -49,7 +49,7 @@ router.post("/admin/login", async (req, res) => {
       return res.status(401).json({ error: "Ungültige Anmeldeinformationen" });
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role_id },
+      { id: user.id, email: user.email, role: "admin" },
       process.env.JWT_SECRET,
       { expiresIn: "1h" },
     );
@@ -190,7 +190,7 @@ router.post("/login", async (req, res) => {
     const tokenExpiresIn = stayLoggedInSafe ? "60d" : "3d";
 
     const token = jwt.sign(
-      { id: user.id, role: user.role_id },
+      { id: user.id, role: "user" },
       process.env.JWT_SECRET,
       { expiresIn: tokenExpiresIn },
     );

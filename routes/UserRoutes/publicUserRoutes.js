@@ -1,7 +1,6 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import { db } from "../../db.js";
-import jwt from "jsonwebtoken";
 
 const router = express.Router();
 const saltRounds = parseInt(process.env.SALT_ROUNDS) || 10;

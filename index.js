@@ -12,6 +12,8 @@ import { requestLogger } from "./logger.js";
 
 dotenv.config();
 
+app.set("trust proxy", true);
+
 const routeMap = new Map();
 
 const COLORS = {

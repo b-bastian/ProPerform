@@ -13,6 +13,7 @@ export function requestLogger(req, res, next) {
 
   res.on("finish", () => {
     const duration = Date.now() - start;
+    const ip = req.headers["x-forwarded-for"]?.split(",")[0] || req.ip;
 
     const logLine = [
       new Date().toISOString(),
@@ -20,7 +21,7 @@ export function requestLogger(req, res, next) {
       req.originalUrl,
       res.statusCode,
       `${duration}ms`,
-      req.ip,
+      ip,
     ].join(" | ");
 
     fs.appendFile(logFile, logLine + "\n", (err) => {

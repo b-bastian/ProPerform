@@ -108,23 +108,22 @@ const allowedOrigins = [
   "https://dashboard.properform.app",
   "https://properform.app",
   "https://www.properform.app",
+  "http://localhost:8081",
+  "http://localhost:8080",
 ];
 
 app.use(
   cors({
-    origin: true,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    optionsSuccessStatus: 204,
-  }),
-);
-
-app.options(
-  "*",
-  cors({
-    origin: true,
-    credentials: true,
+    optionsSuccessStatus: 200,
   }),
 );
 

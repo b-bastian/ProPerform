@@ -45,6 +45,14 @@ export default function DevMenu() {
       </View>
 
       <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Auth</Text>
+        <Button
+          title="LoginScreen"
+          onPress={() => router.push("/(auth)/LoginScreen")}
+        />
+      </View>
+
+      <View style={styles.section}>
         <Text style={styles.sectionTitle}>Reset</Text>
         <Button
           title="Reset AsyncStorage"

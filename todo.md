@@ -80,9 +80,9 @@
 
 - [x] User Login Endpoint
 - [x] Trainer Login Endpoint
-- [ ] Role-Check Middleware
+- [x] Role-Check Middleware
 - [ ] requireAuth auf /trainer/link-athlete
-- [ ] Rate-Limiting auf /auth/\* Routes
+- [x] Rate-Limiting auf /auth/\* Routes
 
 ### Diese Woche:
 

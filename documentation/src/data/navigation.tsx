@@ -60,6 +60,14 @@ export const navLinks: NavLink[] = [
             to: "/api/auth/admin/login",
             label: "POST /auth/admin/login",
           },
+          {
+            to: "/api/auth/trainers/login",
+            label: "POST /auth/trainers/login",
+          },
+          {
+            to: "/api/auth/check-verification-code",
+            label: "POST /auth/check-verification-code",
+          },
         ],
       },
       {
@@ -70,6 +78,7 @@ export const navLinks: NavLink[] = [
             to: "/api/users/deleteUser/:uid",
             label: "DELETE /users/deleteUser/:uid",
           },
+          { to: "/api/users/me", label: "GET /users/me" },
         ],
       },
       {

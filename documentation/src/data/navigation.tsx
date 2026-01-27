@@ -35,8 +35,7 @@ export const navLinks: NavLink[] = [
         label: "Allgemein",
         subLinks: [
           { to: "/docs/getting-started", label: "Getting Started" },
-          { to: "/docs/installation", label: "Installation" },
-          { to: "/docs/configuration", label: "Konfiguration" },
+          { to: "/docs/error-responses", label: "Error Responses" },
         ],
       },
     ],

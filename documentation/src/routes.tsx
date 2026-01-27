@@ -23,6 +23,8 @@ import VerifyCode from "./pages/api-reference/trainers/post-verifyCode";
 import LinkAthlete from "./pages/api-reference/trainers/post-linkAthlete";
 import RegenerateCode from "./pages/api-reference/trainers/patch-regenCode";
 
+import ErrorResponses from "./pages/docs/error-responses";
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -52,6 +54,8 @@ export default function AppRoutes() {
           path="api/trainers/:id/regenerateCode"
           element={<RegenerateCode />}
         />
+
+        <Route path="docs/error-responses" element={<ErrorResponses />} />
 
         {/* ✅ 404 – JETZT FUNKTIONIERT ES */}
         <Route path="*" element={<NotFound />} />

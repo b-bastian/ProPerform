@@ -1,14 +1,16 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import Header from '../components/header';
-import PrimaryButton from '../components/primaryButton';
-import SecondaryButton from '../components/secondaryButton';
+import React from "react";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import Header from "../../src/components/header";
+import PrimaryButton from "../../src/components/primaryButton";
+import SecondaryButton from "../../src/components/secondaryButton";
+import {typography} from "@/src/theme/typography";
+import {spacing} from "@/src/theme/spacing";
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
-  'Home'
+  "Home"
 >;
 
 type Props = {
@@ -23,7 +25,7 @@ export type RootStackParamList = {
 
 export default function HomeScreen({ navigation }: Props) {
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
@@ -35,7 +37,10 @@ export default function HomeScreen({ navigation }: Props) {
       >
         <View style={styles.content}>
           <Header></Header>
-          <Text style={styles.greeting}>Hallo, Max!</Text>
+          <Text style={[typography.greeting, {
+            marginTop: spacing.lg, marginBottom: spacing.lg
+          }]}>Hallo, Max!</Text>
+
           {/* Wöchentliches Ziel, TODO: Fortschritt Kreis mit API*/}
           <View style={styles.goalCard}>
             <Text style={styles.cardValue}>50 %</Text>
@@ -66,90 +71,75 @@ export default function HomeScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   content: {
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 30,
   },
-  title: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    fontFamily: 'Inter',
-  },
-  greeting: {
-    fontSize: 24,
-    fontWeight: '600',
-    marginTop: 20,
-    marginBottom: 20,
-    fontFamily: 'Inter',
-    color: '#111',
-    textAlign: 'center',
-  },
   goalCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 15,
     padding: 16,
     marginBottom: 16,
     borderWidth: 10,
-    borderColor: '#ff7700ff',
+    borderColor: "#ff7700ff",
   },
   cardTitle: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#111',
+    fontWeight: "bold",
+    color: "#111",
     marginBottom: 6,
-    fontFamily: 'Inter',
-    textAlign: 'center',
+    fontFamily: "Inter",
+    textAlign: "center",
   },
   cardValue: {
     fontSize: 32,
-    fontWeight: '700',
-    color: '#111',
-    fontFamily: 'Inter',
-    textAlign: 'center',
+    fontWeight: "700",
+    color: "#111",
+    fontFamily: "Inter",
+    textAlign: "center",
   },
   trainCard: {
-    backgroundColor: '#1c3a8a',
+    backgroundColor: "#1c3a8a",
     borderRadius: 15,
     padding: 16,
     marginBottom: 16,
     borderWidth: 10,
-    borderColor: '#1c3a8a',
+    borderColor: "#1c3a8a",
   },
   trainTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#ffffffff',
-    fontFamily: 'Inter',
+    fontWeight: "bold",
+    color: "#ffffffff",
+    fontFamily: "Inter",
   },
   trainText: {
     fontSize: 12,
-    fontWeight: 'bold',
-    color: '#ffffffff',
-    fontFamily: 'Inter',
+    fontWeight: "bold",
+    color: "#ffffffff",
+    fontFamily: "Inter",
   },
   quoteCard: {
-    backgroundColor: '#ffffffff',
+    backgroundColor: "#ffffffff",
     borderRadius: 15,
     padding: 16,
     marginBottom: 16,
     borderWidth: 10,
-    borderColor: '#ffffffff',
+    borderColor: "#ffffffff",
   },
   quoteTitle: {
     fontSize: 30,
-    fontWeight: 'bold',
-    color: '#000000ff',
-    fontFamily: 'Inter',
-    textAlign: 'center',
+    fontWeight: "bold",
+    color: "#000000ff",
+    fontFamily: "Inter",
+    textAlign: "center",
   },
   quote: {
     fontSize: 15,
-    color: '#000000ff',
-    fontFamily: 'Inter',
-    textAlign: 'center',
+    color: "#000000ff",
+    fontFamily: "Inter",
+    textAlign: "center",
   },
 });

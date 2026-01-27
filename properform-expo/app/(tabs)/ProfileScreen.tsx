@@ -9,17 +9,20 @@ import {
   Button,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../components/header";
-import PrimaryButton from "../components/primaryButton";
+import Header from "../../src/components/header";
+import PrimaryButton from "../../src/components/primaryButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { OnboardingContext } from "../context/OnboardingContext";
+import { useRouter } from "expo-router";
+import { typography } from "@/src/theme/typography";
+import { spacing } from "@/src/theme/spacing";
 
 export default function ProfileScreen() {
-  const { resetOnboarding } = React.useContext(OnboardingContext);
+  const router = useRouter();
 
   const handleResetOnboarding = async () => {
     await AsyncStorage.removeItem("onboardingFinished");
-    resetOnboarding();
+
+    router.replace("../(onboarding)/OnboardingScreen");
   };
 
   return (
@@ -44,8 +47,10 @@ export default function ProfileScreen() {
           </View>
 
           <View>
-            <Text style={styles.welcomeTitle}>Hi, Max!</Text>
-            <Text style={styles.welcomeText}>
+            <Text style={[typography.greeting, { marginBottom: spacing.xs }]}>
+              Hi, Max!
+            </Text>
+            <Text style={typography.secondary}>
               Du trainierst seit 2 Monaten!
             </Text>
           </View>
@@ -64,17 +69,16 @@ export default function ProfileScreen() {
 
           <View>
             <TouchableOpacity style={styles.logoutButton}>
-              <Text style={styles.buttonText}>Abmelden</Text>
+              <Text style={styles.buttonText} onPress={handleResetOnboarding}>
+                Abmelden
+              </Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.seperator} />
 
           <View>
-            <Button
-              title="Onboarding erneut starten"
-              onPress={handleResetOnboarding}
-            />
+        
           </View>
         </View>
       </ScrollView>
@@ -92,12 +96,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 30,
   },
-  title: {
-    fontSize: 36,
-    fontWeight: "bold",
-    textAlign: "center",
-    fontFamily: "Inter",
-  },
   profileImage: {
     width: 120,
     height: 120,
@@ -106,15 +104,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 20,
-  },
-  welcomeTitle: {
-    fontSize: 32,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  welcomeText: {
-    fontSize: 15,
-    textAlign: "center",
   },
   infoCard: {
     marginTop: 30,

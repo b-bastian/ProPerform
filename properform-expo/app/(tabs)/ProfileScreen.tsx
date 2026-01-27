@@ -13,8 +13,8 @@ import Header from "../../src/components/header";
 import PrimaryButton from "../../src/components/primaryButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import {typography} from "@/src/theme/typography";
-import {spacing} from "@/src/theme/spacing";
+import { typography } from "@/src/theme/typography";
+import { spacing } from "@/src/theme/spacing";
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -47,7 +47,9 @@ export default function ProfileScreen() {
           </View>
 
           <View>
-            <Text style={[typography.greeting, {marginBottom: spacing.xs}]}>Hi, Max!</Text>
+            <Text style={[typography.greeting, { marginBottom: spacing.xs }]}>
+              Hi, Max!
+            </Text>
             <Text style={typography.secondary}>
               Du trainierst seit 2 Monaten!
             </Text>
@@ -67,17 +69,16 @@ export default function ProfileScreen() {
 
           <View>
             <TouchableOpacity style={styles.logoutButton}>
-              <Text style={styles.buttonText}>Abmelden</Text>
+              <Text style={styles.buttonText} onPress={handleResetOnboarding}>
+                Abmelden
+              </Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.seperator} />
 
           <View>
-            <Button
-              title="Onboarding erneut starten"
-              onPress={handleResetOnboarding}
-            />
+        
           </View>
         </View>
       </ScrollView>

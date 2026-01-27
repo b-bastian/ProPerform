@@ -6,13 +6,16 @@ import NotFound from "./pages/404";
 
 // Auth
 import UserLogin from "./pages/api-reference/auth/post-login";
-import UserRegister from "./pages/api-reference/auth/post-createUser";
+import UserRegister from "./pages/api-reference/auth/post-register";
 import AdminLogin from "./pages/api-reference/auth/post-adminLogin";
 import AdminRegister from "./pages/api-reference/auth/post-adminRegister";
+import TrainerLogin from "./pages/api-reference/auth/post-trainerLogin";
+import CheckVerificationCode from "./pages/api-reference/auth/post-check-verify-code";
 
 // Users
 import GetAllUsers from "./pages/api-reference/users/get-getAllUsers";
 import DeleteUser from "./pages/api-reference/users/delete-deleteUser";
+import GetMe from "./pages/api-reference/users/get-me";
 
 // Trainers
 import CreateTrainer from "./pages/api-reference/trainers/post-createTrainer";
@@ -32,9 +35,15 @@ export default function AppRoutes() {
         <Route path="api/auth/register" element={<UserRegister />} />
         <Route path="api/auth/admin/login" element={<AdminLogin />} />
         <Route path="api/auth/admin/register" element={<AdminRegister />} />
+        <Route path="api/auth/trainers/login" element={<TrainerLogin />} />
+        <Route
+          path="api/auth/check-verification-code"
+          element={<CheckVerificationCode />}
+        />
 
         <Route path="api/users" element={<GetAllUsers />} />
         <Route path="api/users/deleteUser/:uid" element={<DeleteUser />} />
+        <Route path="api/users/me" element={<GetMe />} />
 
         <Route path="api/trainers/createTrainer" element={<CreateTrainer />} />
         <Route path="api/trainers/verify-code" element={<VerifyCode />} />

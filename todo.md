@@ -81,13 +81,13 @@
 - [x] User Login Endpoint
 - [x] Trainer Login Endpoint
 - [x] Role-Check Middleware
-- [ ] requireAuth auf /trainer/link-athlete
+- [x] requireAuth auf /trainer/link-athlete
 - [x] Rate-Limiting auf /auth/\* Routes
 
 ### Diese Woche:
 
 - [ ] Passwort-Reset Flow
-- [ ] Email-Verification
+- [x] Email-Verification
 - [ ] Pagination auf /admin/users
 - [ ] Input-Validation mit express-validator
 - [ ] Strukturiertes Logging

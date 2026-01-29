@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { Trash } from "lucide-react";
+import { Trash, ChevronLeft, ChevronRight } from "lucide-react";
+
+import authFetch from "../functions/authFetch";
 
 export default function Users() {
   const [users, setUsers] = useState<any[]>([]);
@@ -13,17 +15,16 @@ export default function Users() {
     }
 
     const response = confirm(
-      `Möchten Sie den Benutzer mit UID ${uid} wirklich löschen?`
+      `Möchten Sie den Benutzer mit UID ${uid} wirklich löschen?`,
     );
     if (!response) return;
 
     try {
-      const res = await fetch(
+      const res = await authFetch(
         `https://api.properform.app/users/deleteUser/${uid}`,
         {
           method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       if (res.ok) {
@@ -48,18 +49,17 @@ export default function Users() {
     }
 
     const response = confirm(
-      `Möchten Sie den Trainer mit TID ${tid} wirklich löschen?`
+      `Möchten Sie den Trainer mit TID ${tid} wirklich löschen?`,
     );
 
     if (!response) return;
 
     try {
-      const res = await fetch(
+      const res = await authFetch(
         `https://api.properform.app/trainers/deleteTrainer/${tid}`,
         {
           method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       if (res.ok) {
@@ -75,33 +75,53 @@ export default function Users() {
     }
   };
 
+  const limit = 10;
+
+  const [usersPage, setUsersPage] = useState(1);
+  const [totalUsersPages, setTotalUsersPages] = useState(1);
+
   const fetchUsers = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    const res = await fetch("https://api.properform.app/users/users", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const res = await authFetch(
+      `https://api.properform.app/users/users?page=${usersPage}&limit=${limit}`,
+    );
+
     if (!res.ok) return;
+
     const data = await res.json();
     setUsers(data.users || []);
+    setTotalUsersPages(data.totalPages || 1);
   };
+
+  const [trainersPage, setTrainersPage] = useState(1);
+  const [totalTrainerPages, setTotalTrainerPages] = useState(1);
 
   const fetchTrainers = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    const res = await fetch("https://api.properform.app/users/trainers", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const res = await authFetch(
+      `https://api.properform.app/users/trainers?page=${trainersPage}&limit=${limit}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+
     if (!res.ok) return;
+
     const data = await res.json();
     setTrainers(data.users || []);
+    setTotalTrainerPages(data.totalPages || 1);
   };
 
   useEffect(() => {
     fetchUsers();
+  }, [usersPage, limit]);
+
+  useEffect(() => {
     fetchTrainers();
-  }, []);
+  }, [trainersPage, limit]);
 
   const formatDate = (isoString: string) => {
     const d = new Date(isoString);
@@ -163,6 +183,32 @@ export default function Users() {
             ))}
           </tbody>
         </table>
+
+        <div className="flex justify-center items-center gap-6 mt-8">
+          <button
+            disabled={usersPage === 1}
+            onClick={() => setUsersPage((p) => p - 1)}
+            className="p-2 rounded-lg bg-gray-700 hover:bg-blue-600 disabled:bg-gray-800 disabled:text-gray-500 text-blue-400 transition duration-200 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+
+          <div className="flex items-center gap-3 px-6 py-2 bg-gray-700 rounded-lg">
+            <span className="text-gray-200 font-bold text-lg">{usersPage}</span>
+            <span className="text-blue-400 font-bold text-lg">...</span>
+            <span className="text-gray-400 font-semibold text-lg">
+              {totalUsersPages}
+            </span>
+          </div>
+
+          <button
+            disabled={usersPage === totalUsersPages}
+            onClick={() => setUsersPage((p) => p + 1)}
+            className="p-2 rounded-lg bg-gray-700 hover:bg-blue-600 disabled:bg-gray-800 disabled:text-gray-500 text-blue-400 transition duration-200 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       {/* TRAINER TABLE */}
@@ -214,6 +260,34 @@ export default function Users() {
             ))}
           </tbody>
         </table>
+
+        <div className="flex justify-center items-center gap-6 mt-8">
+          <button
+            disabled={trainersPage === 1}
+            onClick={() => setTrainersPage((p) => p - 1)}
+            className="p-2 rounded-lg bg-gray-700 hover:bg-blue-600 disabled:bg-gray-800 disabled:text-gray-500 text-blue-400 transition duration-200 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+
+          <div className="flex items-center gap-3 px-6 py-2 bg-gray-700 rounded-lg">
+            <span className="text-gray-200 font-bold text-lg">
+              {trainersPage}
+            </span>
+            <span className="text-blue-400 font-bold text-lg">...</span>
+            <span className="text-gray-400 font-semibold text-lg">
+              {totalTrainerPages}
+            </span>
+          </div>
+
+          <button
+            disabled={trainersPage === totalTrainerPages}
+            onClick={() => setTrainersPage((p) => p + 1)}
+            className="p-2 rounded-lg bg-gray-700 hover:bg-blue-600 disabled:bg-gray-800 disabled:text-gray-500 text-blue-400 transition duration-200 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       <p className="text-center text-gray-500 text-sm mt-10">

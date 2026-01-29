@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
+import authFetch from "../functions/authFetch";
 
 export default function Stats() {
   const [numberAll, setNumberAll] = useState(0);
   const [numberOfUsers, setNumberOfUsers] = useState(0);
   const [numberOfTrainers, setNumberOfTrainers] = useState(0);
-  const [numberofOwners, setNumberOfOwners] = useState(0);
+  const [numberOfOwners, setNumberOfOwners] = useState(0);
 
   const fetchStats = async () => {
     const token = localStorage.getItem("token");
@@ -24,43 +25,38 @@ export default function Stats() {
       ]);
       */
 
-      const allRes = await fetch("https://api.properform.app/users", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const allRes = await authFetch("https://api.properform.app/users");
 
-      const trainersRes = await fetch(
+      const trainersRes = await authFetch(
         "https://api.properform.app/users/trainers",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
       );
 
-      const usersRes = await fetch("https://api.properform.app/users/users", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const usersRes = await authFetch(
+        "https://api.properform.app/users/users",
+      );
 
-      const ownersRes = await fetch("https://api.properform.app/users/owners", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const ownersRes = await authFetch(
+        "https://api.properform.app/users/owners",
+      );
 
       if (allRes.ok) {
         const usersData = await allRes.json();
-        setNumberAll(usersData.count || 3000);
+        setNumberAll(usersData.total ?? 3000);
       }
 
       if (trainersRes.ok) {
         const trainerData = await trainersRes.json();
-        setNumberOfTrainers(trainerData.count || 2000);
+        setNumberOfTrainers(trainerData.total ?? 2000);
       }
 
       if (usersRes.ok) {
         const userData = await usersRes.json();
-        setNumberOfUsers(userData.count || 1000);
+        setNumberOfUsers(userData.total ?? 1000);
       }
 
       if (ownersRes.ok) {
         const ownerData = await ownersRes.json();
-        setNumberOfOwners(ownerData.count || 500);
+        setNumberOfOwners(ownerData.total ?? 500);
       }
     } catch (error) {
       console.error("Error fetching stats:", error);
@@ -81,7 +77,7 @@ export default function Stats() {
       value: numberOfUsers,
     },
     { label: "Trainer", value: numberOfTrainers },
-    { label: "Owners", value: numberofOwners },
+    { label: "Owners", value: numberOfOwners },
   ];
 
   const allOwners = stats.find((s) => s.label === "Owners");

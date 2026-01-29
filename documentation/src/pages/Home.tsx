@@ -19,7 +19,7 @@ export default function Home() {
             href="https://properform.app"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-medium transition-colors"
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-medium transition-all duration-300 hover:scale-110 hover:-rotate-2 cursor-pointer"
           >
             <Globe size={18} />
             Website
@@ -28,7 +28,7 @@ export default function Home() {
             href="https://github.com/b-bastian/ProPerform"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-xl font-medium transition-colors"
+            className="flex items-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-xl font-medium transition-all duration-300 hover:scale-110 hover:rotate-2 cursor-pointer"
           >
             <Github size={18} />
             GitHub

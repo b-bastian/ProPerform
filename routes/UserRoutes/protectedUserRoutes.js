@@ -23,52 +23,65 @@ const getUsers = async (req, res, role) => {
       });
     }
 
+    // Pagination
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.min(parseInt(req.query.limit) || 10, 100);
+    const offset = (page - 1) * limit;
+
     let allUsers = [];
 
-    // Owners abrufen
+    // Owners
     if (!roleParam || roleParam === "owners") {
       const [owners] = await db.execute(
         "SELECT uid, firstname, birthdate, email, role_id FROM users WHERE role_id = ?",
         [ROLES.OWNER],
       );
-      allUsers = allUsers.concat(
-        owners.map((owner) => ({ ...owner, type: "owner" })),
-      );
+      allUsers.push(...owners.map((o) => ({ ...o, type: "owner" })));
     }
 
-    // Users abrufen
+    // Users
     if (!roleParam || roleParam === "users") {
       const [users] = await db.execute(
         "SELECT uid, firstname, birthdate, email, role_id FROM users WHERE role_id = ?",
         [ROLES.USER],
       );
-      allUsers = allUsers.concat(
-        users.map((user) => ({ ...user, type: "user" })),
-      );
+      allUsers.push(...users.map((u) => ({ ...u, type: "user" })));
     }
 
-    // Trainers abrufen
+    // Trainers
     if (!roleParam || roleParam === "trainers") {
       const [trainers] = await db.execute(
         "SELECT tid, firstname, lastname, birthdate, email, phone_number FROM trainers",
       );
-      allUsers = allUsers.concat(
-        trainers.map((trainer) => ({
-          tid: trainer.tid,
-          firstname: trainer.firstname,
-          lastname: trainer.lastname,
-          birthdate: trainer.birthdate,
-          email: trainer.email,
-          phone_number: trainer.phone_number,
+      allUsers.push(
+        ...trainers.map((t) => ({
+          tid: t.tid,
+          firstname: t.firstname,
+          lastname: t.lastname,
+          birthdate: t.birthdate,
+          email: t.email,
+          phone_number: t.phone_number,
           type: "trainer",
-          source: "trainers",
         })),
       );
     }
 
+    // Optional: sortieren (wichtig!)
+    allUsers.sort((a, b) => {
+      const aId = a.uid ?? a.tid;
+      const bId = b.uid ?? b.tid;
+      return bId - aId;
+    });
+
+    const total = allUsers.length;
+    const paginatedUsers = allUsers.slice(offset, offset + limit);
+
     res.json({
-      count: allUsers.length,
-      users: allUsers,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+      users: paginatedUsers,
     });
   } catch (err) {
     console.error("Fehler beim Abrufen der Benutzer:", err);

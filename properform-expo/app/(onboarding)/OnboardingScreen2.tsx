@@ -1,14 +1,22 @@
 import React from "react";
-import { ScrollView, Keyboard, TouchableWithoutFeedback } from "react-native";
-import { View, Text, StyleSheet, Alert } from "react-native";
+import {
+  ScrollView,
+  Keyboard,
+  TouchableWithoutFeedback,
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/src/components/header";
 import SecondaryButton from "@/src/components/secondaryButton";
 import InputField from "@/src/components/input";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import { useRouter } from "expo-router";
-import {typography} from "@/src/theme/typography";
+import { typography } from "@/src/theme/typography";
+import { spacing } from "@/src/theme/spacing";
+import { colors } from "@/src/theme/colors";
 
 export default function OnboardingScreen2() {
   const router = useRouter();
@@ -138,7 +146,7 @@ Backend erwartet password → wird automatisch gehasht.
           showsVerticalScrollIndicator={false}
         >
           <Header />
-          <Text style={typography.title}>Persönliche Daten</Text>
+          <Text style={styles.title}>Persönliche Daten</Text>
 
           <InputField
             title="Vorname"
@@ -147,7 +155,7 @@ Backend erwartet password → wird automatisch gehasht.
             onChange={setFirstName}
           />
           {errors.firstName ? (
-            <Text style={typography.error}>{errors.firstName}</Text>
+            <Text style={styles.errorText}>{errors.firstName}</Text>
           ) : (
             <Text style={styles.emptyError}> </Text>
           )}
@@ -159,7 +167,7 @@ Backend erwartet password → wird automatisch gehasht.
             onChange={setEmail}
           />
           {errors.email ? (
-            <Text style={typography.error}>{errors.email}</Text>
+            <Text style={styles.errorText}>{errors.email}</Text>
           ) : (
             <Text style={styles.emptyError}> </Text>
           )}
@@ -171,7 +179,7 @@ Backend erwartet password → wird automatisch gehasht.
             onChange={setPassword}
           />
           {errors.password ? (
-            <Text style={typography.error}>{errors.password}</Text>
+            <Text style={styles.errorText}>{errors.password}</Text>
           ) : (
             <Text style={styles.emptyError}> </Text>
           )}
@@ -183,10 +191,16 @@ Backend erwartet password → wird automatisch gehasht.
             onChange={setPasswordRepeat}
           />
           {errors.passwordRepeat ? (
-            <Text style={typography.error}>{errors.passwordRepeat}</Text>
+            <Text style={styles.errorText}>{errors.passwordRepeat}</Text>
           ) : (
             <Text style={styles.emptyError}> </Text>
           )}
+
+          <View style={styles.hintBox}>
+            <Text style={styles.hintText}>• Mind. 8 Zeichen</Text>
+            <Text style={styles.hintText}>• 1 Sonderzeichen</Text>
+            <Text style={styles.hintText}>• 1 Großbuchstabe</Text>
+          </View>
 
           <InputField
             title="Geburtsdatum"
@@ -195,7 +209,7 @@ Backend erwartet password → wird automatisch gehasht.
             onChange={setBirthDate}
           />
           {errors.birthDate ? (
-            <Text style={typography.error}>{errors.birthDate}</Text>
+            <Text style={styles.errorText}>{errors.birthDate}</Text>
           ) : (
             <Text style={styles.emptyError}> </Text>
           )}
@@ -208,13 +222,34 @@ Backend erwartet password → wird automatisch gehasht.
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
+  container: { flex: 1, backgroundColor: colors.primaryBlue },
   content: { flex: 1, paddingHorizontal: 20, paddingTop: 30 },
   error: { color: "red", fontSize: 13, marginTop: 2, marginLeft: 4 },
+  title: {
+    ...typography.title,
+    color: colors.white,
+    marginVertical: spacing.lg,
+  },
+  errorText: {
+    ...typography.error,
+    marginTop: 4,
+    marginBottom: 8,
+    marginLeft: 4,
+  },
   emptyError: {
     color: "transparent",
     fontSize: 13,
-    marginTop: 2,
+    marginTop: 6,
+    marginBottom: 8,
     marginLeft: 4,
+  },
+  hintBox: {
+    marginBottom: spacing.lg,
+    marginTop: -spacing.xs,
+    paddingLeft: spacing.md,
+  },
+  hintText: {
+    ...typography.hint,
+    color: "#ffffffb3",
   },
 });

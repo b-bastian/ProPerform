@@ -8,8 +8,11 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Button,
+  StyleSheet,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { colors } from "@/src/theme/colors";
+import { typography } from "@/src/theme/typography";
 
 interface SmartInputProps {
   title: string;
@@ -59,8 +62,8 @@ const SmartInput: React.FC<SmartInputProps> = ({
       onPress={() => setShowPicker(false)}
       accessible={false}
     >
-      <View style={{ marginVertical: 8 }}>
-        <Text style={{ fontWeight: "600", marginBottom: 4 }}>{title}</Text>
+      <View style={styles.inputWrapper}>
+        <Text style={styles.label}>{title}</Text>
 
         {isDate ? (
           <>
@@ -69,14 +72,9 @@ const SmartInput: React.FC<SmartInputProps> = ({
                 Keyboard.dismiss();
                 setShowPicker(true);
               }}
-              style={{
-                borderWidth: 1,
-                borderColor: "#ccc",
-                borderRadius: 8,
-                padding: 10,
-              }}
+              style={styles.inputContainer}
             >
-              <Text style={{ color: value ? "#000" : "#999" }}>
+              <Text style={{ color: value ? "#333" : "#A0A0A0" }}>
                 {formattedDate}
               </Text>
             </Pressable>
@@ -104,24 +102,50 @@ const SmartInput: React.FC<SmartInputProps> = ({
             )}
           </>
         ) : (
+          <View style={styles.inputContainer}>
           <TextInput
             value={value}
             onChangeText={onChange}
             placeholder={placeholder}
-            placeholderTextColor={"#9CA3AF"}
+            placeholderTextColor={"#A0A0A0"}
             secureTextEntry={isPassword}
-            style={{
-              borderWidth: 1,
-              borderColor: "#ccc",
-              borderRadius: 8,
-              padding: 10,
-              color: "#000",
-            }}
+            style={styles.input}
           />
+          </View>
         )}
       </View>
     </TouchableWithoutFeedback>
   );
 };
+
+const styles = StyleSheet.create({
+  inputWrapper: {
+    marginBottom: 8,
+  },
+  label: {
+    ...typography.label,
+    color: colors.white,
+    marginBottom: 8,
+    marginLeft: 4,
+  },
+  inputContainer: {
+    backgroundColor: colors.white,
+    borderRadius: 15,
+    borderWidth: 2,
+    borderColor: "transparent",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+  },
+  input: {
+    fontSize: 16,
+    color: "#333",
+    fontFamily: "Inter",
+  },
+});
 
 export default SmartInput;

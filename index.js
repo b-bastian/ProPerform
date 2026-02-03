@@ -7,6 +7,7 @@ import protectedSystemRoutes from "./routes/SystemRoutes/ProtectedSystemRoutes.j
 import publicTrainerRoutes from "./routes/TrainerRoutes/publicTrainerRoutes.js";
 import privateTrainerRoutes from "./routes/TrainerRoutes/privateTrainerRoutes.js";
 import publicAuthRoutes from "./routes/AuthRoutes/publicAuthRoutes.js";
+import publicSystemRoutes from "./routes/SystemRoutes/publicSystemRoutes.js";
 import { requestLogger } from "./logger.js";
 
 dotenv.config();
@@ -135,6 +136,7 @@ app.use(requestLogger);
 app.use("/users", publicUserRoutes);
 app.use("/trainers", publicTrainerRoutes);
 app.use("/auth", publicAuthRoutes);
+app.use("/system", publicSystemRoutes);
 
 // Protected routes
 app.use("/users", protectedUserRoutes);

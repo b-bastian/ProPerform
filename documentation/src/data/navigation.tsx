@@ -78,6 +78,7 @@ export const navLinks: NavLink[] = [
             label: "DELETE /users/deleteUser/:uid",
           },
           { to: "/api/users/me", label: "GET /users/me" },
+          { to: "/api/logs/weight", label: "POST /logs/weight" },
         ],
       },
       {

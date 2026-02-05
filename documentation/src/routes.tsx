@@ -24,6 +24,7 @@ import LinkAthlete from "./pages/api-reference/trainers/post-linkAthlete";
 import RegenerateCode from "./pages/api-reference/trainers/patch-regenCode";
 
 import ErrorResponses from "./pages/docs/error-responses";
+import PostWeightLog from "./pages/api-reference/users/post-weightLog";
 
 export default function AppRoutes() {
   return (
@@ -46,6 +47,7 @@ export default function AppRoutes() {
         <Route path="api/users" element={<GetAllUsers />} />
         <Route path="api/users/deleteUser/:uid" element={<DeleteUser />} />
         <Route path="api/users/me" element={<GetMe />} />
+        <Route path="api/logs/weight" element={<PostWeightLog />} />
 
         <Route path="api/trainers/createTrainer" element={<CreateTrainer />} />
         <Route path="api/trainers/verify-code" element={<VerifyCode />} />
@@ -57,7 +59,6 @@ export default function AppRoutes() {
 
         <Route path="docs/error-responses" element={<ErrorResponses />} />
 
-        {/* ✅ 404 – JETZT FUNKTIONIERT ES */}
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

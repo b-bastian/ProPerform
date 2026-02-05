@@ -15,6 +15,7 @@ import CreateTrainer from "./pages/api-reference/trainers/post-createTrainer";
 import VerifyCode from "./pages/api-reference/trainers/post-verifyCode";
 import LinkAthlete from "./pages/api-reference/trainers/post-linkAthlete";
 import RegenerateCode from "./pages/api-reference/trainers/patch-regenCode";
+import PostCreateExercise from "./pages/api-reference/admin/post-exerciseCreate";
 
 export const apiRoutes = [
   { path: "api/auth/login", element: <UserLogin /> },
@@ -40,4 +41,5 @@ export const apiRoutes = [
     path: "api/trainers/:id/regenerateCode",
     element: <RegenerateCode />,
   },
+  { path: "api/admin/exercises/create", element: <PostCreateExercise /> },
 ];

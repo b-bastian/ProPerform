@@ -83,6 +83,15 @@ export const navLinks: NavLink[] = [
         ],
       },
       {
+        label: "Admin",
+        subLinks: [
+          {
+            to: "/api/admin/exercises/create",
+            label: "POST /admin/exercises/create",
+          },
+        ],
+      },
+      {
         label: "Trainers",
         subLinks: [
           {

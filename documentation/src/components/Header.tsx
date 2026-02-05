@@ -11,7 +11,7 @@ export default function Header() {
         <h2 className="text-lg font-semibold">Dokumentation</h2>
         <button
           onClick={() => setSearchOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg transition-colors cursor-pointer"
         >
           <Search size={18} />
           <span className="text-sm">Search</span>

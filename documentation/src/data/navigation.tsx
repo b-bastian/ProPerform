@@ -79,6 +79,7 @@ export const navLinks: NavLink[] = [
           },
           { to: "/api/users/me", label: "GET /users/me" },
           { to: "/api/logs/weight", label: "POST /logs/weight" },
+          { to: "/api/logs/weight/all", label: "GET /logs/weight" },
         ],
       },
       {

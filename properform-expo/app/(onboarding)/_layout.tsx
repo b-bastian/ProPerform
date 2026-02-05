@@ -11,6 +11,7 @@ export default function OnboardingLayout() {
       <Stack.Screen name="OnboardingScreen" />
       <Stack.Screen name="OnboardingScreen2" />
       <Stack.Screen name="OnboardingScreen3" />
+      <Stack.Screen name="OnboardingStep2" />
     </Stack>
   );
 }

@@ -6,7 +6,6 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
-  Button,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { parseDecimal } from "../../src/utils/number";
@@ -16,10 +15,9 @@ import SecondaryButton from "../../src/components/secondaryButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import InputField from "../../src/components/input";
-import PrimaryButton from "../../src/components/primaryButton";
 import { OnboardingContext } from "../../src/context/OnboardingContext";
 import { useRouter } from "expo-router";
-import {typography} from "@/src/theme/typography";
+import { typography } from "@/src/theme/typography";
 
 export default function OnboardingScreen3() {
   const router = useRouter();

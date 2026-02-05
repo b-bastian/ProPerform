@@ -23,7 +23,7 @@ export default function OnboardingScreen() {
         <SecondaryButton
           text="LOS GEHT'S!"
           onPress={() => {
-            router.push("/(onboarding)/OnboardingScreen2");
+            router.push("/(onboarding)/OnboardingStep2");
           }}
         />
 

@@ -89,6 +89,22 @@ export const navLinks: NavLink[] = [
             to: "/api/admin/exercises/create",
             label: "POST /admin/exercises/create",
           },
+          {
+            to: "/api/admin/exercises/getExercise",
+            label: "GET /admin/exercises/getExercise",
+          },
+          {
+            to: "/api/admin/exercises/updateExercise",
+            label: "PUT /admin/exercises/updateExercise",
+          },
+          {
+            to: "/api/admin/exercises/deleteExercise",
+            label: "DELETE /admin/exercises/deleteExercise",
+          },
+          {
+            to: "/api/admin/exercises/listExercises",
+            label: "GET /admin/exercises/listExercises",
+          },
         ],
       },
       {

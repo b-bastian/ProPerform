@@ -16,6 +16,10 @@ import VerifyCode from "./pages/api-reference/trainers/post-verifyCode";
 import LinkAthlete from "./pages/api-reference/trainers/post-linkAthlete";
 import RegenerateCode from "./pages/api-reference/trainers/patch-regenCode";
 import PostCreateExercise from "./pages/api-reference/admin/post-exerciseCreate";
+import DeleteExercise from "./pages/api-reference/admin/delete-exercises-eid";
+import GetExerciseById from "./pages/api-reference/admin/get-exercises-eid";
+import GetExercises from "./pages/api-reference/admin/get-exercises";
+import UpdateExercise from "./pages/api-reference/admin/put-exercises-eid";
 
 export const apiRoutes = [
   { path: "api/auth/login", element: <UserLogin /> },
@@ -42,4 +46,8 @@ export const apiRoutes = [
     element: <RegenerateCode />,
   },
   { path: "api/admin/exercises/create", element: <PostCreateExercise /> },
+  { path: "api/admin/exercises/getExercise", element: <GetExerciseById /> },
+  { path: "api/admin/exercises/updateExercise", element: <UpdateExercise /> },
+  { path: "api/admin/exercises/deleteExercise", element: <DeleteExercise /> },
+  { path: "api/admin/exercises/listExercises", element: <GetExercises /> },
 ];

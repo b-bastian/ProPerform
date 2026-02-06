@@ -1,83 +1,66 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 
 import { navLinks, type NavLink, type SubLink } from "../data/navigation";
 
 export default function Sidebar() {
   const { pathname } = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
-  const toggleExpanded = (label: string) => {
-    setExpandedItems((prev) =>
-      prev.includes(label)
-        ? prev.filter((item) => item !== label)
-        : [...prev, label]
+  const toggleGroup = (label: string) => {
+    setExpandedGroups((prev) =>
+      prev.includes(label) ? prev.filter((g) => g !== label) : [...prev, label],
     );
   };
 
-  const linkClass = (path: string) =>
+  const isActive = (path?: string) => path === pathname;
+
+  const linkClass = (path?: string) =>
     `flex items-center ${
       collapsed ? "justify-center" : "justify-start gap-3 px-4"
-    } py-3 rounded-lg mb-1 transition-colors duration-200 ${
-      pathname === path
+    } py-3 rounded-lg mb-2 transition-colors duration-200 ${
+      isActive(path)
         ? "bg-blue-600 text-white"
         : "text-gray-300 hover:bg-blue-900"
     }`;
 
-  const subLinkClass = (path: string, isButton = false) =>
-    `flex items-center justify-start gap-3 pl-12 pr-4 py-2.5 rounded-lg mb-1 transition-colors duration-200 ${
-      isButton ? "cursor-pointer" : ""
-    } ${
-      pathname === path
-        ? "bg-blue-600 text-white"
-        : "text-gray-400 hover:bg-blue-900 hover:text-gray-200"
-    }`;
+  const groupButtonClass = () =>
+    `flex items-center ${
+      collapsed ? "justify-center" : "justify-between"
+    } w-full ${
+      collapsed ? "justify-center" : "justify-start gap-3 px-4"
+    } py-3 rounded-lg mb-2 transition-colors duration-200 text-gray-300 hover:bg-blue-900 cursor-pointer`;
 
-  const subSubLinkClass = (path: string) =>
-    `flex items-center justify-start gap-3 pl-16 pr-4 py-2 rounded-lg mb-1 transition-colors duration-200 ${
-      pathname === path
-        ? "bg-blue-600 text-white"
-        : "text-gray-500 hover:bg-blue-900 hover:text-gray-300"
-    }`;
-
-  const renderSubLinks = (subLink: SubLink, parentLabel: string) => {
+  const renderSubLink = (subLink: SubLink, parentLabel: string) => {
     const id = `${parentLabel}-${subLink.label}`;
+    const isExpanded = expandedGroups.includes(id);
+    const hasSubLinks = "subLinks" in subLink;
 
-    if ("subLinks" in subLink) {
+    if (hasSubLinks) {
       return (
         <div key={id}>
           <button
-            onClick={() => toggleExpanded(id)}
-            className={`w-full ${subLinkClass("", true)}`}
+            onClick={() => toggleGroup(id)}
+            className={`flex items-center justify-between w-full px-4 py-2 rounded-lg mb-2 transition-colors duration-200 text-gray-300 hover:bg-blue-900 cursor-pointer text-sm`}
           >
-            <span className="flex-1 text-left text-sm font-medium">
-              {subLink.label}
-            </span>
-            {expandedItems.includes(id) ? (
-              <ChevronUp size={14} />
-            ) : (
-              <ChevronDown size={14} />
+            <span className="flex-1 text-left">{subLink.label}</span>
+            {!collapsed && (
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-200 ${
+                  isExpanded ? "rotate-180" : ""
+                }`}
+              />
             )}
           </button>
 
-          {expandedItems.includes(id) && (
-            <div className="mt-1">
-              {subLink.subLinks.map((subSub) => (
-                <Link
-                  key={subSub.to}
-                  to={subSub.to}
-                  className={subSubLinkClass(subSub.to)}
-                >
-                  <span className="text-xs font-mono">{subSub.label}</span>
-                </Link>
-              ))}
+          {isExpanded && !collapsed && (
+            <div className="ml-4 border-l border-gray-700 pl-2">
+              {(subLink as any).subLinks.map((sub: SubLink) =>
+                renderSubLink(sub, parentLabel),
+              )}
             </div>
           )}
         </div>
@@ -86,12 +69,60 @@ export default function Sidebar() {
 
     return (
       <Link
-        key={subLink.to}
-        to={subLink.to}
-        className={subLinkClass(subLink.to)}
+        key={(subLink as any).to}
+        to={(subLink as any).to}
+        className={`flex items-center gap-3 px-4 py-2 rounded-lg mb-2 transition-colors duration-200 text-gray-300 hover:bg-blue-900 text-sm ${
+          isActive((subLink as any).to) ? "bg-blue-600 text-white" : ""
+        }`}
       >
-        <span className="text-sm">{subLink.label}</span>
+        <span>{subLink.label}</span>
       </Link>
+    );
+  };
+
+  const renderMenuItem = (link: NavLink, index: number) => {
+    const isExpanded = expandedGroups.includes(link.label);
+    const hasChildren = link.subLinks && link.subLinks.length > 0;
+
+    if (!hasChildren) {
+      return (
+        <Link
+          key={`${link.label}-${index}`}
+          to={link.to}
+          className={linkClass(link.to)}
+        >
+          <span className="text-xl">{link.icon}</span>
+          {!collapsed && <span>{link.label}</span>}
+        </Link>
+      );
+    }
+
+    return (
+      <div key={`${link.label}-${index}`}>
+        <button
+          onClick={() => toggleGroup(link.label)}
+          className={groupButtonClass()}
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-xl">{link.icon}</span>
+            {!collapsed && <span>{link.label}</span>}
+          </div>
+          {!collapsed && (
+            <ChevronDown
+              size={16}
+              className={`transition-transform duration-200 ${
+                isExpanded ? "rotate-180" : ""
+              }`}
+            />
+          )}
+        </button>
+
+        {isExpanded && !collapsed && (
+          <div className="ml-4 border-l border-gray-700 pl-2">
+            {link.subLinks?.map((sub) => renderSubLink(sub, link.label))}
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -102,7 +133,7 @@ export default function Sidebar() {
       }`}
     >
       <h1
-        className={`text-2xl font-bold mb-8 text-white transition-opacity duration-300 ${
+        className={`text-2xl font-bold mb-6 text-white transition-opacity duration-300 ${
           collapsed ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
       >
@@ -110,43 +141,7 @@ export default function Sidebar() {
       </h1>
 
       <div className="flex-1 overflow-y-auto sidebar-scroll">
-        {navLinks.map((link: NavLink) => (
-          <div key={link.to} className="mb-2">
-            {link.subLinks && !collapsed ? (
-              <>
-                <button
-                  onClick={() => toggleExpanded(link.label)}
-                  className={`w-full ${linkClass(link.to)} cursor-pointer`}
-                >
-                  <span className="text-xl">{link.icon}</span>
-                  {!collapsed && (
-                    <>
-                      <span className="flex-1 text-left">{link.label}</span>
-                      {expandedItems.includes(link.label) ? (
-                        <ChevronUp size={16} />
-                      ) : (
-                        <ChevronDown size={16} />
-                      )}
-                    </>
-                  )}
-                </button>
-
-                {expandedItems.includes(link.label) && (
-                  <div className="mt-1">
-                    {link.subLinks.map((sub) =>
-                      renderSubLinks(sub, link.label)
-                    )}
-                  </div>
-                )}
-              </>
-            ) : (
-              <Link to={link.to} className={linkClass(link.to)}>
-                <span className="text-xl">{link.icon}</span>
-                {!collapsed && <span>{link.label}</span>}
-              </Link>
-            )}
-          </div>
-        ))}
+        {navLinks.map((link, index) => renderMenuItem(link, index))}
       </div>
 
       <button

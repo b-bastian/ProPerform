@@ -7,6 +7,9 @@ import CreateTrainer from "./pages/CreateTrainer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CreateOwner from "./pages/CreateOwner";
 import SystemStatus from "./pages/System";
+import NotFound from "./pages/404";
+import AddExercise from "./pages/exercises/AddExercise";
+import ExerciseList from "./pages/exercises/List";
 
 export default function AppRoutes() {
   return (
@@ -60,7 +63,12 @@ export default function AppRoutes() {
         }
       />
 
+      <Route path="/exercises/create" element={<AddExercise />} />
+      <Route path="/exercises/list" element={<ExerciseList />} />
+
       <Route path="/login" element={<Login />} />
+
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

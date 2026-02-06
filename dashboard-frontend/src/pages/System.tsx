@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { CircleQuestionMark, LoaderCircle, Check } from "lucide-react";
+import {
+  CircleQuestionMark,
+  LoaderCircle,
+  Check,
+  RotateCw,
+} from "lucide-react";
 
 type Health = {
   status: string;
@@ -78,7 +83,7 @@ export default function SystemStatus() {
               onClick={fetchHealth}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm shadow-sm"
             >
-              Jetzt aktualisieren
+              <RotateCw className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -177,7 +182,7 @@ export default function SystemStatus() {
               <div
                 style={{
                   width: `${percentToBar(
-                    health?.system?.memory?.used_percent
+                    health?.system?.memory?.used_percent,
                   )}%`,
                 }}
                 className="h-3 rounded-full bg-linear-to-r from-blue-500 to-blue-500 transition-all"

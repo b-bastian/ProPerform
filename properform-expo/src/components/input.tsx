@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   },
   label: {
     ...typography.label,
-    color: colors.white,
+    color: colors.black,
     marginBottom: 8,
     marginLeft: 4,
   },

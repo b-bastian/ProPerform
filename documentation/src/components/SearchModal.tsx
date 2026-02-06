@@ -17,7 +17,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
     ? searchLinks.filter(
         (link) =>
           link.label.toLowerCase().includes(query.toLowerCase()) ||
-          link.category.toLowerCase().includes(query.toLowerCase())
+          link.category.toLowerCase().includes(query.toLowerCase()),
       )
     : [];
 
@@ -77,7 +77,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                   <button
                     key={index}
                     onClick={() => handleSelect(res.to)}
-                    className="w-full px-4 py-3 hover:bg-blue-900 transition-colors text-left flex flex-col gap-1"
+                    className="w-full px-4 py-3 hover:bg-blue-900 transition-colors text-left flex flex-col gap-1 cursor-pointer"
                   >
                     <span className="text-white font-medium">{res.label}</span>
                     <span className="text-gray-400 text-sm">

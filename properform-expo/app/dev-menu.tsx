@@ -45,6 +45,10 @@ export default function DevMenu() {
             title="OnboardingStep2"
             onPress={() => router.push("/OnboardingStep2")}
           />
+          <Button
+            title="OnboardingStep3"
+            onPress={() => router.push("/OnboardingStep3")}
+          />
         </View>
       </View>
 

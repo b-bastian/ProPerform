@@ -22,63 +22,43 @@ import { spacing } from "@/src/theme/spacing";
 import { colors } from "@/src/theme/colors";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 
-export default function OnboardingStep2() {
+export default function OnboardingStep3() {
   const router = useRouter();
 
-  const [firstName, setFirstName] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [passwordRepeat, setPasswordRepeat] = React.useState("");
-  const [email, setEmail] = React.useState("");
-
-  const [errors, setErrors] = React.useState({
-    firstName: "",
-    password: "",
-    passwordRepeat: "",
-    email: "",
-  });
+  const [birthDate, setBirthDate] = React.useState("");
+  const [birthDateError, setBirthDateError] = React.useState("");
 
   const handleContinue = async () => {
     const newErrors = {
-      firstName: "",
-      password: "",
-      passwordRepeat: "",
-      email: "",
+      birthDate: "",
     };
     let hasError = false;
 
-    if (!firstName.trim()) {
-      newErrors.firstName = "Bitte gib deinen Vornamen ein.";
+    if (!birthDate) {
+      newErrors.birthDate = "Bitte gib dein Geburtsdatum ein.";
       hasError = true;
+    } else {
+      const selectedDate = new Date(birthDate);
+      const today = new Date();
+      if (selectedDate >= today) {
+        newErrors.birthDate = "Bitte gib ein gültiges Geburtsdatum ein.";
+        hasError = true;
+      } else {
+        const tenYearsAgo = new Date();
+        tenYearsAgo.setFullYear(today.getFullYear() - 10);
+        if (selectedDate > tenYearsAgo) {
+          newErrors.birthDate = "Du musst mindestens 10 Jahre alt sein.";
+          hasError = true;
+        }
+      }
     }
-
-    if (!email.includes("@")) {
-      newErrors.email = "Bitte gib eine gültige E-Mail-Adresse ein.";
-      hasError = true;
-    }
-
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-
-    if (!passwordRegex.test(password)) {
-      newErrors.password =
-        "Passwort muss mind. 8 Zeichen, 1 Großbuchstaben, 1 Kleinbuchstaben, 1 Zahl und 1 Sonderzeichen enthalten.";
-      hasError = true;
-    }
-
-    if (password !== passwordRepeat) {
-      newErrors.passwordRepeat = "Passwörter stimmen nicht überein.";
-      hasError = true;
-    }
-
-    setErrors(newErrors);
+    setBirthDateError(newErrors.birthDate);
     if (hasError) return;
 
     try {
-      await AsyncStorage.setItem("onboarding_firstName", firstName);
-      await AsyncStorage.setItem("onboarding_email", email);
-      await AsyncStorage.setItem("onboarding_password", password);
+      await AsyncStorage.setItem("onboarding_birthDate", birthDate);
 
-      router.push("../(onboarding)/OnboardingStep3");
+      router.push("../(onboarding)/OnboardingStep4");
     } catch (error: any) {
       console.error(error);
       Alert.alert(
@@ -94,7 +74,7 @@ export default function OnboardingStep2() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      <Header />
+      <Header></Header>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -103,61 +83,26 @@ export default function OnboardingStep2() {
           <ScrollView
             contentContainerStyle={styles.scrollContent}
             keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
           >
             <View style={styles.header}>
-              <Text style={typography.title}>Account erstellen</Text>
+              <Text style={typography.title}>Geburtsdatum eingeben</Text>
               <Text style={[typography.body, styles.subheader]}>
-                Bitte gib deine persönlichen Daten ein
+                Wann wurdest du geboren?
               </Text>
             </View>
 
             <View style={styles.card}>
               <InputField
-                title="Vorname"
-                value={firstName}
-                placeholder="Max Mustermann"
-                onChange={setFirstName}
-              />
-              {errors.firstName ? (
-                <Text style={styles.errorText}>{errors.firstName}</Text>
-              ) : null}
+                title="Geburtsdatum"
+                value={birthDate}
+                placeholder="TT.MM.JJJJ"
+                onChange={setBirthDate}
+              ></InputField>
 
-              <InputField
-                title="E-Mail"
-                value={email}
-                placeholder="max@beispiel.at"
-                onChange={setEmail}
-              />
-              {errors.email ? (
-                <Text style={styles.errorText}>{errors.email}</Text>
+              {birthDateError ? (
+                <Text style={styles.errorText}>{birthDateError}</Text>
               ) : null}
-
-              <InputField
-                title="Passwort"
-                value={password}
-                placeholder="********"
-                onChange={setPassword}
-              />
-              {errors.password ? (
-                <Text style={styles.errorText}>{errors.password}</Text>
-              ) : null}
-
-              <InputField
-                title="Passwort wiederholen"
-                value={passwordRepeat}
-                placeholder="********"
-                onChange={setPasswordRepeat}
-              />
-              {errors.passwordRepeat ? (
-                <Text style={styles.errorText}>{errors.passwordRepeat}</Text>
-              ) : null}
-
-              <View style={styles.hintBox}>
-                <Text style={styles.hintText}>• Mind. 8 Zeichen</Text>
-                <Text style={styles.hintText}>• 1 Sonderzeichen</Text>
-                <Text style={styles.hintText}>• 1 Großbuchstabe</Text>
-              </View>
             </View>
 
             <View style={styles.navigation}>
@@ -165,7 +110,7 @@ export default function OnboardingStep2() {
                 <Icon name="arrow-back" size={24} color={colors.white} />
               </TouchableOpacity>
 
-              <ProgressDots total={5} current={1} />
+              <ProgressDots total={5} current={2} />
 
               <TouchableOpacity
                 style={styles.arrowButton}
@@ -180,7 +125,6 @@ export default function OnboardingStep2() {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -213,14 +157,6 @@ const styles = StyleSheet.create({
     ...typography.error,
     marginTop: -spacing.xs,
     marginLeft: spacing.xs,
-  },
-  hintBox: {
-    marginTop: -spacing.xs,
-    paddingLeft: spacing.xs,
-  },
-  hintText: {
-    ...typography.hint,
-    color: colors.textSecondary,
   },
   navigation: {
     flexDirection: "row",

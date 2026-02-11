@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ScrollView,
   Keyboard,
@@ -21,44 +21,59 @@ import { typography } from "@/src/theme/typography";
 import { spacing } from "@/src/theme/spacing";
 import { colors } from "@/src/theme/colors";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
+import { parseDecimal } from "@/src/utils/number";
+import { Picker } from "@react-native-picker/picker";
 
-export default function OnboardingStep3() {
+export default function OnboardingStep4() {
   const router = useRouter();
 
-  const [birthDate, setBirthDate] = React.useState("");
-  const [birthDateError, setBirthDateError] = React.useState("");
+  const [weight, setWeight] = React.useState("");
+  const [height, setHeight] = React.useState("");
+  const [gender, setGender] = React.useState<
+    "male" | "female" | "other" | "not specified"
+  >("not specified");
+
+  const [heightError, setHeightError] = React.useState("");
+  const [weightError, setWeightError] = React.useState("");
 
   const handleContinue = async () => {
     const newErrors = {
-      birthDate: "",
+      height: "",
+      weight: "",
     };
     let hasError = false;
 
-    if (!birthDate) {
-      newErrors.birthDate = "Bitte gib dein Geburtsdatum ein.";
+    const heightNum = parseDecimal(height);
+    const weightNum = parseDecimal(weight);
+
+    if (heightNum === null || heightNum < 100 || heightNum > 250) {
+      newErrors.height = "Bitte gib eine gültige Größe ein.";
       hasError = true;
-    } else {
-      const selectedDate = new Date(birthDate);
-      const today = new Date();
-      if (selectedDate >= today) {
-        newErrors.birthDate = "Bitte gib ein gültiges Geburtsdatum ein.";
-        hasError = true;
-      } else {
-        const tenYearsAgo = new Date();
-        tenYearsAgo.setFullYear(today.getFullYear() - 10);
-        if (selectedDate > tenYearsAgo) {
-          newErrors.birthDate = "Du musst mindestens 10 Jahre alt sein.";
-          hasError = true;
-        }
-      }
     }
-    setBirthDateError(newErrors.birthDate);
+
+    if (weightNum === null || weightNum < 30 || weightNum > 300) {
+      newErrors.weight = "Bitte gib eine gültiges Gewicht ein.";
+      hasError = true;
+    }
+
+    setHeightError(newErrors.height);
+    setWeightError(newErrors.weight);
+
     if (hasError) return;
 
-    try {
-      await AsyncStorage.setItem("onboarding_birthDate", birthDate);
+    // checks bestanden, heightNum und weightNum können nicht null sein
+    const safeHeight = heightNum as number;
+    const safeWeight = weightNum as number;
 
-      router.push("../(onboarding)/OnboardingStep4");
+
+    try {
+      await AsyncStorage.multiSet([
+        ["onboarding_height", safeHeight.toString()],
+        ["onboarding_weight", safeWeight.toString()],
+        ["onboarding_gender", gender],
+      ]);
+
+      router.push("../(onboarding)/OnboardingStep5");
     } catch (error: any) {
       console.error(error);
       Alert.alert(
@@ -70,7 +85,7 @@ export default function OnboardingStep3() {
 
   const handleBack = () => {
     router.back();
-  };
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -86,23 +101,49 @@ export default function OnboardingStep3() {
             showsHorizontalScrollIndicator={false}
           >
             <View style={styles.header}>
-              <Text style={typography.title}>Geburtsdatum</Text>
+              <Text style={typography.title}>Über dich</Text>
               <Text style={[typography.body, styles.subheader]}>
-                Wann wurdest du geboren?
+                Gewicht, Größe & Geschlecht
               </Text>
             </View>
 
             <View style={styles.card}>
               <InputField
-                title="Geburtsdatum"
-                value={birthDate}
-                placeholder="TT.MM.JJJJ"
-                onChange={setBirthDate}
+                title="Größe (cm)"
+                value={height}
+                placeholder="z.B. 180.4"
+                onChange={setHeight}
               ></InputField>
 
-              {birthDateError ? (
-                <Text style={styles.errorText}>{birthDateError}</Text>
+              {heightError ? (
+                <Text style={styles.errorText}>{heightError}</Text>
               ) : null}
+
+              <InputField
+                title="Gewicht (kg)"
+                value={weight}
+                placeholder="z.B. 80.7"
+                onChange={setWeight}
+              ></InputField>
+
+              {weightError ? (
+                <Text style={styles.errorText}>{weightError}</Text>
+              ) : null}
+
+              <Text style={styles.labelPicker}>Geschlecht</Text>
+
+              <View style={styles.inputContainer}>
+                <Picker
+                  selectedValue={gender}
+                  onValueChange={(value) => setGender(value)}
+                  itemStyle={styles.pickerItem}
+                >
+                  <Picker.Item label="Keine Angabe" value="not specified" />
+                  <Picker.Item label="Männlich" value="male" />
+                  <Picker.Item label="Weiblich" value="female" />
+                  <Picker.Item label="Divers" value="other" />
+                </Picker>
+              </View>
             </View>
 
             <View style={styles.navigation}>
@@ -110,7 +151,7 @@ export default function OnboardingStep3() {
                 <Icon name="arrow-back" size={24} color={colors.white} />
               </TouchableOpacity>
 
-              <ProgressDots total={4} current={2} />
+              <ProgressDots total={4} current={3} />
 
               <TouchableOpacity
                 style={styles.arrowButton}
@@ -125,6 +166,7 @@ export default function OnboardingStep3() {
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -173,5 +215,27 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primaryBlue,
     alignItems: "center",
     justifyContent: "center",
+  },
+  labelPicker: {
+    ...typography.label,
+    color: colors.black,
+    marginBottom: 8,
+    marginLeft: 4,
+  },
+  inputContainer: {
+    backgroundColor: colors.white,
+    borderRadius: 15,
+    borderWidth: 2,
+    borderColor: "transparent",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
+  },
+
+  pickerItem: {
+    fontSize: 16,
+    color: "#333",
   },
 });

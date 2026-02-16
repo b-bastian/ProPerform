@@ -42,7 +42,7 @@ export default function Sidebar() {
         : "text-gray-300 hover:bg-blue-900"
     }`;
 
-  const groupButtonClass = (label: string) =>
+  const groupButtonClass = () =>
     `flex items-center ${
       collapsed ? "justify-center" : "justify-between"
     } w-full ${
@@ -118,7 +118,7 @@ export default function Sidebar() {
       <div key={`${item.label}-${index}`}>
         <button
           onClick={() => toggleGroup(item.label)}
-          className={groupButtonClass(item.label)}
+          className={groupButtonClass()}
         >
           <div className="flex items-center gap-3">
             <span className="text-xl">{item.icon}</span>

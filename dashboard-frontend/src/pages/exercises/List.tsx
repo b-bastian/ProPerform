@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Trash, ChevronLeft, ChevronRight, Pencil, X } from "lucide-react";
 import authFetch from "../../functions/authFetch";
 
-//const BASE_URL = "https://api.properform.app";
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://api.properform.app";
+//const BASE_URL = "http://localhost:3000";
 
 interface Exercise {
   eid: string;

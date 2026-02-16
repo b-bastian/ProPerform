@@ -78,7 +78,7 @@ export default function FileUpload() {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-          errorData.error || `Upload fehlgeschlagen (${response.status})`,
+          errorData.message || `Upload fehlgeschlagen (${response.status})`,
         );
       }
 

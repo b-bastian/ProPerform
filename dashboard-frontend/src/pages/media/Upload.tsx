@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Upload, CheckCircle, AlertCircle, X, FileIcon } from "lucide-react";
-import authFetch from "../functions/authFetch";
+import authFetch from "../../functions/authFetch";
 
 const BASE_URL = "https://api.properform.app";
 

@@ -10,7 +10,8 @@ import SystemStatus from "./pages/System";
 import NotFound from "./pages/404";
 import AddExercise from "./pages/exercises/AddExercise";
 import ExerciseList from "./pages/exercises/List";
-import FileUpload from "./pages/Upload";
+import FileUpload from "./pages/media/Upload";
+import FileList from "./pages/media/List";
 
 export default function AppRoutes() {
   return (
@@ -69,7 +70,8 @@ export default function AppRoutes() {
 
       <Route path="/login" element={<Login />} />
 
-      <Route path="/upload" element={<FileUpload />} />
+      <Route path="/media/upload" element={<FileUpload />} />
+      <Route path="/media/list" element={<FileList />} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -11,6 +11,8 @@ import {
   ChevronsLeftRightEllipsis,
   ChevronDown,
   Upload,
+  CloudUpload,
+  Router,
 } from "lucide-react";
 
 interface MenuItem {
@@ -85,9 +87,20 @@ export default function Sidebar() {
       ],
     },
     {
-      to: "/upload",
       icon: <Upload size={20} />,
       label: "Upload",
+      children: [
+        {
+          to: "/media/list",
+          icon: <Router size={20} />,
+          label: "Dateiübersicht",
+        },
+        {
+          to: "/media/upload",
+          icon: <CloudUpload size={20} />,
+          label: "Datei hochladen",
+        },
+      ],
     },
     { to: "/stats", icon: <ChartColumn size={20} />, label: "Stats" },
     {

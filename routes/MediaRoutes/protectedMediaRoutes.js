@@ -60,6 +60,12 @@ router.post(
         mid: result.mid,
       });
     } catch (err) {
+      if (err.code === "ER_DUP_ENTRY") {
+        return res.status(409).json({
+          message: "File already exists",
+        });
+      }
+
       res.status(500).json({
         message: "Error uploading file",
         error: err.message,

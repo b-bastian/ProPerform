@@ -60,7 +60,11 @@ router.post(
         mid: result.mid,
       });
     } catch (err) {
-      if (err.code === "ER_DUP_ENTRY") {
+      if (
+        err.code === "ER_DUP_ENTRY" ||
+        err.message === "File already exists" ||
+        err.message === "Error: File already exists"
+      ) {
         return res.status(409).json({
           message: "File already exists",
         });

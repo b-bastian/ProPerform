@@ -25,8 +25,8 @@ const storage = multer.diskStorage({
         .parse(file.originalname)
         .name.replace(/[^a-z0-9_-]/gi, "_");
 
-      const customName = req.body?.filename
-        ? req.body.filename.replace(/[^a-z0-9_-]/gi, "_")
+      const customName = req.query.filename
+        ? sanitizeFilename(req.query.filename)
         : null;
 
       const finalName = (customName || originalBase) + ext;

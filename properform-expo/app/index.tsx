@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { OnboardingContext } from "@/src/context/OnboardingContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const DEV_MODE_STATUS = false; // false setzen für normal, true dev mode
+const DEV_MODE_STATUS = true; // false setzen für normal, true dev mode
 
 export default function Index() {
   const [ready, setReady] = useState(false);

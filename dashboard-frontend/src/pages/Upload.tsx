@@ -113,8 +113,8 @@ export default function FileUpload() {
   };
 
   return (
-    <div className="flex items-center justify-center w-full h-screen overflow-hidden">
-      <div className="bg-gray-800 rounded-2xl shadow-lg p-8 w-[90%] max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="flex justify-center w-full mt-20">
+      <div className="bg-gray-800 rounded-2xl shadow-lg p-8 w-[90%] max-w-2xl max-h-[90vh] overflow-y-auto no-scrollbar">
         <h1 className="text-3xl font-bold text-blue-400 mb-8 text-center">
           Datei hochladen
         </h1>
@@ -126,12 +126,25 @@ export default function FileUpload() {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-xl p-10 transition-all duration-300 cursor-pointer ${
+            className={`border-2 border-dashed rounded-xl p-10 transition-all duration-300 cursor-pointer relative ${
               isDragging
                 ? "border-blue-400 bg-blue-500/10"
                 : "border-gray-600 hover:border-blue-400"
             }`}
           >
+            {/* X Button oben rechts */}
+            {file && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClearFile();
+                }}
+                className="absolute top-3 right-3 bg-red-600 hover:bg-red-700 text-white p-1.5 rounded-full transition-all cursor-pointer hover:scale-110"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
             <div className="flex flex-col items-center justify-center space-y-4">
               <div
                 className={`p-4 rounded-lg transition-all duration-300 ${
@@ -174,18 +187,6 @@ export default function FileUpload() {
               className="hidden"
             />
           </div>
-
-          {/* Clear Button when file is selected */}
-          {file && (
-            <button
-              type="button"
-              onClick={handleClearFile}
-              className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-              Datei entfernen
-            </button>
-          )}
 
           {/* Filename Input */}
           <div className="flex flex-col">
@@ -270,6 +271,16 @@ export default function FileUpload() {
           </div>
         )}
       </div>
+
+      <style>{`
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 }

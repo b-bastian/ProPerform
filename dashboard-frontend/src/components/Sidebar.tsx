@@ -10,6 +10,7 @@ import {
   UserPlus,
   ChevronsLeftRightEllipsis,
   ChevronDown,
+  Upload,
 } from "lucide-react";
 
 interface MenuItem {
@@ -82,6 +83,11 @@ export default function Sidebar() {
           label: "Exercise hinzufügen",
         },
       ],
+    },
+    {
+      to: "/upload",
+      icon: <Upload size={20} />,
+      label: "Upload",
     },
     { to: "/stats", icon: <ChartColumn size={20} />, label: "Stats" },
     {

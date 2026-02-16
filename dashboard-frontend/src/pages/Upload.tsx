@@ -49,6 +49,12 @@ export default function FileUpload() {
     }
   };
 
+  const handleClearFile = () => {
+    setFile(null);
+    setFilename("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -107,8 +113,8 @@ export default function FileUpload() {
   };
 
   return (
-    <div className="flex flex-col items-center w-full min-h-screen overflow-y-auto pt-10">
-      <div className="bg-gray-800 rounded-2xl shadow-lg p-8 w-[90%] max-w-2xl">
+    <div className="flex items-center justify-center w-full h-screen overflow-hidden">
+      <div className="bg-gray-800 rounded-2xl shadow-lg p-8 w-[90%] max-w-2xl max-h-[90vh] overflow-y-auto">
         <h1 className="text-3xl font-bold text-blue-400 mb-8 text-center">
           Datei hochladen
         </h1>
@@ -168,6 +174,18 @@ export default function FileUpload() {
               className="hidden"
             />
           </div>
+
+          {/* Clear Button when file is selected */}
+          {file && (
+            <button
+              type="button"
+              onClick={handleClearFile}
+              className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+              Datei entfernen
+            </button>
+          )}
 
           {/* Filename Input */}
           <div className="flex flex-col">

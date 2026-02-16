@@ -57,6 +57,11 @@ export default function FileUpload() {
       return;
     }
 
+    if (file.size > 75 * 1024 * 1024) {
+      setUploadError("Datei ist zu groß (max. 75MB)");
+      return;
+    }
+
     setUploading(true);
     setUploadError(null);
     setShowSuccess(false);

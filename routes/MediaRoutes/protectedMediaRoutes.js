@@ -154,27 +154,68 @@ router.delete("/:mid", requireAuth, requireRole("owner"), async (req, res) => {
 router.put("/:mid", requireAuth, requireRole("owner"), async (req, res) => {
   try {
     const { mid } = req.params;
-    const { filename, url } = req.body;
+    const { filename } = req.body;
 
-    const [result] = await db.query(
+    if (!filename || !filename.trim()) {
+      return res.status(400).json({ error: "filename is required" });
+    }
+
+    const cleanFilename = filename.trim();
+
+    const [rows] = await db.query(
+      `
+        SELECT filename, type
+        FROM media
+        WHERE mid = ?
+      `,
+      [mid],
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "media not found" });
+    }
+
+    const media = rows[0];
+
+    const folder = media.type === "image" ? "images" : "videos";
+
+    const oldPath = path.join(
+      "/var/www/html/media.properform.app",
+      folder,
+      media.filename,
+    );
+
+    const newPath = path.join(
+      "/var/www/html/media.properform.app",
+      folder,
+      cleanFilename,
+    );
+
+    try {
+      await fs.rename(oldPath, newPath);
+    } catch (err) {
+      if (err.code !== "ENOENT") {
+        throw err;
+      }
+    }
+
+    const newUrl = `https://media.properform.app/${folder}/${cleanFilename}`;
+
+    await db.query(
       `
         UPDATE media
         SET filename = ?, url = ?
         WHERE mid = ?
       `,
-      [filename, url, mid],
+      [cleanFilename, newUrl, mid],
     );
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "media not found" });
-    }
 
     return res.json({
       status: "ok",
       message: `media with id ${mid} updated`,
     });
   } catch (err) {
-    console.error("update media failed: ", err);
+    console.error("update media failed:", err);
     return res.status(500).json({ error: "internal server error" });
   }
 });

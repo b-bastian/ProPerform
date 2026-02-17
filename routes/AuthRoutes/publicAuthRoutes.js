@@ -276,6 +276,7 @@ Falls du dich nicht registriert hast, kannst du diese E-Mail ignorieren.
   },
 );
 
+// TODO: add last login timestamp to user table and update it on login
 router.post(
   "/login",
   createRateLimiter({ windowMs: 15 * 60 * 1000, max: 5 }),
@@ -413,7 +414,7 @@ router.post("/check-verification-code", async (req, res) => {
 
   try {
     const [rows] = await db.execute(
-      `SELECT email_verification_code, email_verification_expires
+      `SELECT email_verification_code, email_verification_expires, email_verified
        FROM users
        WHERE email = ?
        LIMIT 1`,
@@ -426,13 +427,23 @@ router.post("/check-verification-code", async (req, res) => {
       });
     }
 
-    const { email_verification_code, email_verification_expires } = rows[0];
+    const {
+      email_verification_code,
+      email_verification_expires,
+      email_verified,
+    } = rows[0];
+
+    if (email_verified === 1) {
+      return res.status(400).json({
+        error: "E-Mail bereits verifiziert",
+      });
+    }
 
     const codeHash = crypto.createHash("sha256").update(code).digest("hex");
 
     if (email_verification_code !== codeHash) {
       return res.status(401).json({
-        error: "Verifikationscode ist ungültig",
+        error: "Verifikationscode ist ungültig oder abgelaufen",
       });
     }
 
@@ -440,9 +451,18 @@ router.post("/check-verification-code", async (req, res) => {
 
     if (expiresAt <= new Date()) {
       return res.status(410).json({
-        error: "Verifikationscode ist abgelaufen",
+        error: "Verifikationscode ist ungültig oder abgelaufen",
       });
     }
+
+    await db.execute(
+      `UPDATE users
+   SET email_verified = 1,
+       email_verification_code = NULL,
+       email_verification_expires = NULL
+   WHERE email = ?`,
+      [email],
+    );
 
     return res.status(200).json({
       message: "Verifikationscode gültig",
@@ -450,6 +470,87 @@ router.post("/check-verification-code", async (req, res) => {
   } catch (err) {
     return res.status(500).json({
       error: "Fehler bei der Code-Überprüfung",
+    });
+  }
+});
+
+import crypto from "crypto";
+
+router.post("/resend-verification-code", async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({
+      error: "E-Mail ist erforderlich",
+    });
+  }
+
+  try {
+    const [rows] = await db.execute(
+      `SELECT id, firstname, email_verified
+       FROM users
+       WHERE email = ?
+       LIMIT 1`,
+      [email],
+    );
+
+    // ✅ Enumeration-safe response
+    if (rows.length === 0) {
+      return res.status(200).json({
+        message: "Falls der Account existiert, wurde eine E-Mail gesendet",
+      });
+    }
+
+    const { id, firstname, email_verified } = rows[0];
+
+    if (email_verified === 1) {
+      return res.status(400).json({
+        error: "E-Mail bereits verifiziert",
+      });
+    }
+
+    // ✅ Neuer Code
+    const rawCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const codeHash = crypto.createHash("sha256").update(rawCode).digest("hex");
+
+    await db.execute(
+      `UPDATE users
+       SET email_verification_code = ?,
+           email_verification_expires = DATE_ADD(NOW(), INTERVAL 15 MINUTE)
+       WHERE id = ?`,
+      [codeHash, id],
+    );
+
+    await mailer.sendMail({
+      from: '"ProPerform" <no-reply@properform.app>',
+      to: email,
+      subject: "Neuer Bestätigungscode",
+
+      text: `
+Hallo ${firstname},
+
+hier ist dein neuer Bestätigungscode:
+
+${rawCode}
+
+Der Code ist 15 Minuten gültig.
+`,
+
+      html: `
+<p>Hallo ${firstname},</p>
+<p>hier ist dein neuer Bestätigungscode:</p>
+<h2>${rawCode}</h2>
+<p>Der Code ist 15 Minuten gültig.</p>
+`,
+    });
+
+    return res.status(200).json({
+      message: "Verifikationscode erneut gesendet",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      error: "Fehler beim erneuten Senden des Codes",
     });
   }
 });

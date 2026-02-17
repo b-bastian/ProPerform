@@ -174,10 +174,25 @@ router.post(
           from: '"ProPerform" <no-reply@properform.app>',
           to: email,
           subject: "Bestätige deine E-Mail",
+
+          text: `
+Hallo ${firstname},
+
+Vielen Dank für deine Registrierung bei ProPerform.
+
+Dein Bestätigungscode lautet:
+
+${rawCode}
+
+Wichtig: Der Code ist 15 Minuten gültig.
+
+Falls du dich nicht registriert hast, kannst du diese E-Mail ignorieren.
+`,
+
           html: `
-    <!DOCTYPE html>
-    <html>
-      <head>
+  <!DOCTYPE html>
+  <html>
+    <head>
         <meta charset="utf-8">
         <style>
           body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; margin: 0; padding: 0; }
@@ -204,7 +219,7 @@ router.post(
             </div>
             
             <div class="content">
-              <p class="greeting">Hey ${firstname},</p>
+              <p class="greeting">Hallo ${firstname},</p>
               
               <p style="font-size: 15px; color: #555; line-height: 1.6;">
                 vielen Dank für deine Registrierung! Um dein Konto zu aktivieren, nutze bitte den folgenden Code:

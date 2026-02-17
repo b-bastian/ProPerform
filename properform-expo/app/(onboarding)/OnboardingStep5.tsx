@@ -13,7 +13,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/src/components/header";
-import InputField from "@/src/components/input";
 import ProgressDots from "@/src/components/ProgressDots";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
@@ -21,14 +20,11 @@ import { typography } from "@/src/theme/typography";
 import { spacing } from "@/src/theme/spacing";
 import { colors } from "@/src/theme/colors";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
-import { parseDecimal } from "@/src/utils/number";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
-import { OnboardingContext } from "@/src/context/OnboardingContext";
 
 export default function OnboardingStep5() {
   const router = useRouter();
-  const { finishOnboarding } = useContext(OnboardingContext);
 
   const [fitnessLevel, setFitnessLevel] = React.useState("");
   const [trainingFrequency, setTrainingFrequency] = React.useState<number | "">(
@@ -114,14 +110,9 @@ export default function OnboardingStep5() {
         primary_goal: primaryGoal,
       };
 
-      // TODO: change code for email verification
       await axios.post("https://api.properform.app/auth/register", requestBody);
 
-      await AsyncStorage.setItem("onboardingFinished", "true");
-      finishOnboarding();
-      router.replace("../(tabs)/HomeScreen");
-
-      // TODO: ---------------
+      router.replace("../(auth)/VerifyEmailScreen");
     } catch (error: any) {
       if (error.response) {
         console.log("STATUS:", error.response.status);

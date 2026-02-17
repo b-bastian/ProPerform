@@ -38,8 +38,6 @@ export default function DevMenu() {
             onPress={() => router.push("/OnboardingStep2")}
           />
           <Button
-
-          
             title="OnboardingStep3"
             onPress={() => router.push("/OnboardingStep3")}
           />
@@ -51,6 +49,10 @@ export default function DevMenu() {
             title="OnboardingStep5"
             onPress={() => router.push("/OnboardingStep5")}
           />
+          <Button
+            title="VerifyEmailScreen"
+            onPress={() => router.push("/(onboarding)/VerifyEmailScreen")}
+          />
         </View>
       </View>
 
@@ -59,10 +61,6 @@ export default function DevMenu() {
         <Button
           title="LoginScreen"
           onPress={() => router.push("/(auth)/LoginScreen")}
-        />
-        <Button
-          title="VerifyEmailScreen"
-          onPress={() => router.push("/(auth)/VerifyEmailScreen")}
         />
       </View>
 

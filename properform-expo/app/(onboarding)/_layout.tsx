@@ -13,6 +13,7 @@ export default function OnboardingLayout() {
       <Stack.Screen name="OnboardingStep3" />
       <Stack.Screen name="OnboardingStep4" />
       <Stack.Screen name="OnboardingStep5" />
+      <Stack.Screen name="VerifyEmailScreen" />
     </Stack>
   );
 }

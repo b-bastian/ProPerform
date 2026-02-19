@@ -1,110 +1,135 @@
+import React from "react";
 import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableWithoutFeedback,
   ScrollView,
+  Keyboard,
+  TouchableWithoutFeedback,
+  View,
+  Text,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableOpacity,
 } from "react-native";
-import Header from "@/src/components/header";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useState } from "react";
-import { useRouter } from "expo-router";
+import Header from "@/src/components/header";
+import InputField from "@/src/components/input";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import axios from "axios";
 import { typography } from "@/src/theme/typography";
-import { colors } from "@/src/theme/colors";
 import { spacing } from "@/src/theme/spacing";
-import InputField from "../../src/components/input";
-import SecondaryButton from "@/src/components/secondaryButton";
+import { colors } from "@/src/theme/colors";
+import { MaterialIcons as Icon } from "@expo/vector-icons";
 
 export default function LoginScreen() {
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [stayloggedIn, setStayLoggedIn] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [stayLoggedIn, setStayLoggedIn] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   const handleLogin = async () => {
-    const requestBody = {
-      email: email.trim().toLowerCase(),
-      password: password,
-      stayloggedIn,
-    };
-
     try {
-      setLoading(true);
       setError(null);
 
-      console.log("sending login data to api:", requestBody);
-
-      const res = await axios.post(
+      const response = await axios.post(
         "https://api.properform.app/auth/login",
-        requestBody,
+        {
+          email: email.trim().toLowerCase(),
+          password,
+          stayLoggedIn,
+        },
       );
 
-      const { token, uid } = res.data;
-      console.log("login success");
+      const { token, uid } = response.data;
+      console.log("Login success");
 
       await AsyncStorage.setItem("auth_token", token);
       await AsyncStorage.setItem("user_id", String(uid));
 
-      
-      // wird noch nicht verwendet
-      if (stayloggedIn) await AsyncStorage.setItem("stay_logged_in", "true");
-      else {
-        await AsyncStorage.removeItem("stay_logged_in");
-      }
-      
+      if (stayLoggedIn) await AsyncStorage.setItem("stay_logged_in", "true");
 
       router.replace("/(tabs)/HomeScreen");
-    } catch (error: any) {
-      if (error.response) {
-        console.log("STATUS:", error.response.status);
-        console.log("DATA:", error.response.data);
-        console.log("HEADERS:", error.response.headers);
-        setError(error.response.data?.message || "Login fehlgeschlagen");
-      } else {
-        console.log("ERROR:", error.message);
-        setError("Netzwerkfehler");
-      }
-    } finally {
-      setLoading(false);
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Login fehlgeschlagen.");
     }
   };
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      <View style={styles.content}>
-        <Header></Header>
-        <Text style={typography.secondary}>
-          Melde dich mit deinem Account an
-        </Text>
+      <Header />
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={styles.headerSection}>
+              <Text style={typography.title}>Willkommen zurück</Text>
+              <Text style={[typography.body, styles.subheader]}>
+                Melde dich mit deinem Account an
+              </Text>
+            </View>
 
-        <View style={{ marginTop: spacing.xl, gap: spacing.md }}>
-          <InputField
-            title="Email"
-            value={email}
-            placeholder="z.B. max@mustermann.de"
-            onChange={setEmail}
-          ></InputField>
-        </View>
+            <View style={styles.card}>
+              <InputField
+                title="E-Mail"
+                value={email}
+                placeholder="max@beispiel.at"
+                onChange={setEmail}
+              />
 
-        <View style={{ marginTop: spacing.sm, gap: spacing.md }}>
-          <InputField
-            title="Password"
-            value={password}
-            placeholder="••••••••"
-            onChange={setPassword}
-          ></InputField>
-        </View>
+              <InputField
+                title="Passwort"
+                value={password}
+                placeholder="********"
+                onChange={setPassword}
+              />
 
-        <SecondaryButton
-          text="Anmelden"
-          onPress={handleLogin}
-        ></SecondaryButton>
-      </View>
+              <TouchableOpacity
+                style={styles.checkboxContainer}
+                onPress={() => setStayLoggedIn(!stayLoggedIn)}
+                activeOpacity={0.7}
+              >
+                <View
+                  style={[
+                    styles.checkbox,
+                    stayLoggedIn && styles.checkboxChecked,
+                  ]}
+                >
+                  {stayLoggedIn && (
+                    <Icon name="check" size={16} color={colors.white} />
+                  )}
+                </View>
+                <Text style={styles.checkboxLabel}>Angemeldet bleiben</Text>
+              </TouchableOpacity>
+
+              {error ? <Text style={styles.errorText}>{error}</Text> : null}
+            </View>
+
+            <View style={styles.navigation}>
+              <TouchableOpacity
+                style={styles.arrowButton}
+                onPress={() => router.back()}
+              >
+                <Icon name="arrow-back" size={24} color={colors.white} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.arrowButton}
+                onPress={handleLogin}
+              >
+                <Icon name="arrow-forward" size={24} color={colors.white} />
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -112,11 +137,73 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: colors.background,
+    paddingHorizontal: spacing.screenPaddingHorizontal,
   },
-  content: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 30,
+  scrollContent: {
+    flexGrow: 1,
+    paddingTop: spacing.md,
+  },
+  headerSection: {
+    marginBottom: spacing.lg,
+  },
+  subheader: {
+    fontSize: 18,
+    marginTop: spacing.md,
+  },
+  card: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    padding: spacing.md,
+    gap: spacing.sm,
+    shadowColor: colors.black,
+    shadowOpacity: 0.04,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: spacing.xs,
+    paddingVertical: spacing.xs,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: colors.primaryBlue,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: spacing.sm,
+  },
+  checkboxChecked: {
+    backgroundColor: colors.primaryBlue,
+  },
+  checkboxLabel: {
+    ...typography.body,
+    fontSize: 14,
+  },
+  errorText: {
+    ...typography.error,
+    textAlign: "center",
+    marginTop: spacing.sm,
+  },
+  navigation: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingBottom: spacing.lg,
+    marginTop: "auto",
+    paddingTop: spacing.lg,
+  },
+  arrowButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.primaryBlue,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

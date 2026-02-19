@@ -300,7 +300,7 @@ router.post("/reset-password/:token", async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
-    await db.query(`UPDATE users SET password = ? WHERE email = ?`, [
+    await db.query(`UPDATE users SET password_hash = ? WHERE email = ?`, [
       hashedPassword,
       reset.email,
     ]);

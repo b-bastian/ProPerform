@@ -1,15 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Trash,
-  ChevronLeft,
-  ChevronRight,
-  Pencil,
-  X,
-  FileIcon,
-  Image,
-  Video,
-  ExternalLink,
-} from "lucide-react";
+import { Trash, Pencil, X, Image, Video, ExternalLink } from "lucide-react";
 import authFetch from "../../functions/authFetch";
 
 const BASE_URL = "https://api.properform.app";

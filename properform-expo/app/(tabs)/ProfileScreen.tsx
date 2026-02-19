@@ -20,9 +20,15 @@ export default function ProfileScreen() {
   const router = useRouter();
 
   const handleResetOnboarding = async () => {
-    await AsyncStorage.removeItem("onboardingFinished");
+    try {
+      await AsyncStorage.removeItem("onboardingFinished");
 
-    router.replace("../(onboarding)/OnboardingScreen");
+      console.log("Onboarding-Status zurückgesetzt");
+
+      router.replace("../(onboarding)/OnboardingScreen");
+    } catch (error) {
+      console.log("Fehler beim Zurücksetzen des Onboarding-Status:", error);
+    }
   };
 
   return (
@@ -77,9 +83,7 @@ export default function ProfileScreen() {
 
           <View style={styles.seperator} />
 
-          <View>
-        
-          </View>
+          <View></View>
         </View>
       </ScrollView>
     </SafeAreaView>

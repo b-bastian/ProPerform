@@ -112,7 +112,7 @@ export default function OnboardingStep5() {
 
       await axios.post("https://api.properform.app/auth/register", requestBody);
 
-      router.push("../(auth)/VerifyEmailScreen");
+      router.push("../(onboarding)/VerifyEmailScreen");
     } catch (error: any) {
       if (error.response) {
         console.log("STATUS:", error.response.status);

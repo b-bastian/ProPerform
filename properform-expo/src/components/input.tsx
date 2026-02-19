@@ -103,14 +103,14 @@ const SmartInput: React.FC<SmartInputProps> = ({
           </>
         ) : (
           <View style={styles.inputContainer}>
-          <TextInput
-            value={value}
-            onChangeText={onChange}
-            placeholder={placeholder}
-            placeholderTextColor={"#A0A0A0"}
-            secureTextEntry={isPassword}
-            style={styles.input}
-          />
+            <TextInput
+              value={value}
+              onChangeText={onChange}
+              placeholder={placeholder}
+              placeholderTextColor={"#A0A0A0"}
+              secureTextEntry={isPassword}
+              style={styles.input}
+            />
           </View>
         )}
       </View>

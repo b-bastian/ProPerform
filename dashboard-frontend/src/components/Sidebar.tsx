@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -24,8 +24,27 @@ interface MenuItem {
 
 export default function Sidebar() {
   const { pathname } = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
-  const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
+  const [collapsed, setCollapsed] = useState(() => {
+    const saved = localStorage.getItem("sidebarCollapsed");
+    return saved ? JSON.parse(saved) : false;
+  });
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(() => {
+    const saved = localStorage.getItem("sidebarExpandedGroups");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Save collapsed state to localStorage
+  useEffect(() => {
+    localStorage.setItem("sidebarCollapsed", JSON.stringify(collapsed));
+  }, [collapsed]);
+
+  // Save expandedGroups to localStorage
+  useEffect(() => {
+    localStorage.setItem(
+      "sidebarExpandedGroups",
+      JSON.stringify(expandedGroups),
+    );
+  }, [expandedGroups]);
 
   const toggleGroup = (label: string) => {
     setExpandedGroups((prev) =>

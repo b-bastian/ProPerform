@@ -6,20 +6,22 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
+        tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: "#1c3a8a",
-          borderTopWidth: 1,
-          borderTopColor: "#E5E7EB",
+          backgroundColor: "#F9FAFB",
+          borderRadius: 40,
+          marginHorizontal: 20,
+          marginBottom: 6,
           height: 70,
-          paddingBottom: 10,
-          paddingTop: 10,
+          paddingBottom: 0,
+          paddingTop: 18,
+          position: "absolute",
+          shadowColor: "#000",
+          shadowRadius: 12,
+          shadowOpacity: 0.1,
+          elevation: 8,
         },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          marginBottom: 4,
-          fontWeight: "500",
-        },
-        tabBarActiveTintColor: "#ffffffff",
+        tabBarActiveTintColor: "#F97316",
         tabBarInactiveTintColor: "#8899bb",
       }}
     >
@@ -36,7 +38,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="ProfileScreen"
         options={{
-          title: "ProfileScreen",
+          title: "Profile",
           tabBarIcon: ({ color }) => (
             <Icon name="person" color={color} size={28} />
           ),

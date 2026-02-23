@@ -8,6 +8,7 @@ const router = express.Router();
 router.delete(
   "/deleteUser/:uid",
   requireAuth,
+  requireRole("owner"),
   createRateLimiter({ windowMs: 15 * 60 * 1000, max: 10 }),
   async (req, res) => {
     const { uid } = req.params;

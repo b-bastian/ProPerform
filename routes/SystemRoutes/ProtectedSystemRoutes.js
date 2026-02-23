@@ -1,7 +1,6 @@
 import express from "express";
-import mysql from "mysql2/promise";
 import os from "os";
-import fs from "fs";
+import { db } from "../../db.js";
 import { requireAuth } from "../../middleware/auth.js";
 import { requireRole } from "../../middleware/role.js";
 
@@ -23,31 +22,33 @@ router.get(
     const freeMem = os.freemem();
     const usedMemPercent = (((totalMem - freeMem) / totalMem) * 100).toFixed(1);
 
-    // Disk (optional – Linux)
+    // Disk – Linux only via /proc/statvfs fallback
     let diskInfo = null;
     try {
-      const df = fs.statSync("/");
+      const { execSync } = await import("child_process");
+      const dfOutput = execSync("df -k / --output=size,avail,pcent")
+        .toString()
+        .trim()
+        .split("\n")[1]
+        .trim()
+        .split(/\s+/);
+
       diskInfo = {
         root: "/",
-        available: df.blksize,
+        total_gb: (parseInt(dfOutput[0]) / 1024 / 1024).toFixed(2),
+        available_gb: (parseInt(dfOutput[1]) / 1024 / 1024).toFixed(2),
+        used_percent: dfOutput[2],
       };
     } catch {
-      diskInfo = "Not supported";
+      diskInfo = "not supported";
     }
 
-    // DB-Status
+    // DB-Status – nutzt bestehenden Pool
     let dbStatus = "disconnected";
     try {
-      const connection = await mysql.createConnection({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        database: process.env.DB_NAME,
-      });
-      await connection.execute("SELECT 1");
-      await connection.end();
+      await db.execute("SELECT 1");
       dbStatus = "connected";
-    } catch (err) {
+    } catch {
       dbStatus = "error";
     }
 

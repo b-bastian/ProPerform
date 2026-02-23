@@ -12,25 +12,21 @@ router.get(
   requireAuth,
   requireRole("user"),
   async (req, res) => {
-    async (req, res) => {
-      try {
-        const page = Math.max(1, parseInt(req.query.page) || 1);
-        const limit = Math.max(
-          1,
-          Math.min(100, parseInt(req.query.limit) || 10),
-        );
+    try {
+      const page = Math.max(1, parseInt(req.query.page) || 1);
+      const limit = Math.max(1, Math.min(100, parseInt(req.query.limit) || 10));
 
-        const offset = (page - 1) * limit;
+      const offset = (page - 1) * limit;
 
-        const [countResult] = await db.query(
-          `SELECT COUNT(*) as total FROM exercises`,
-        );
+      const [countResult] = await db.query(
+        `SELECT COUNT(*) as total FROM exercises`,
+      );
 
-        const total = countResult[0].total;
-        const totalPages = Math.ceil(total / limit);
+      const total = countResult[0].total;
+      const totalPages = Math.ceil(total / limit);
 
-        const [rows] = await db.query(
-          `
+      const [rows] = await db.query(
+        `
         SELECT
           e.*,
 
@@ -45,22 +41,21 @@ router.get(
         ORDER BY e.created_at DESC
         LIMIT ? OFFSET ?
       `,
-          [limit, offset],
-        );
+        [limit, offset],
+      );
 
-        return res.json({
-          count: rows.length,
-          total,
-          page,
-          limit,
-          totalPages,
-          exercises: rows,
-        });
-      } catch (err) {
-        console.error("fetch exercises failed:", err);
-        return res.status(500).json({ error: "internal server error" });
-      }
-    };
+      return res.json({
+        count: rows.length,
+        total,
+        page,
+        limit,
+        totalPages,
+        exercises: rows,
+      });
+    } catch (err) {
+      console.error("fetch exercises failed:", err);
+      return res.status(500).json({ error: "internal server error" });
+    }
   },
 );
 

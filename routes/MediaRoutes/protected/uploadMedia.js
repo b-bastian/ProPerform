@@ -13,9 +13,9 @@ const router = express.Router();
 
 router.post(
   "/upload",
-  upload.single("file"),
   requireAuth,
   requireRole("owner"),
+  upload.single("file"),
   createRateLimiter({ windowMs: 15 * 60 * 1000, max: 30 }),
   async (req, res) => {
     try {

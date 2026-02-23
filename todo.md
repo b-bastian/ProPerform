@@ -1,96 +1,102 @@
-# 🚨 Kritische Issues & Bugs – ProPerform Backend
+# ProPerform Backend – TODO
 
-## HIGH PRIORITY
+## 🟡 Kurzfristig (Qualität & Vollständigkeit)
 
-- [x] **MISSING: User Login** – Kein `/auth/userLogin` Endpoint
-  - User können sich nicht einloggen (nur Admin)
-  - **Lösung:** `POST /auth/userLogin` mit Email/Passwort
+### 10. `register` – Mailer-Fehler bricht den Flow falsch ab
 
-- [x] **MISSING: Trainer Login** – Kein `/auth/trainerLogin` Endpoint
-  - Trainer können sich nicht authentifizieren
-  - **Lösung:** `POST /auth/trainerLogin` mit Email/Passwort
+Wenn die Verification-Mail fehlschlägt, wird `res.json(...)` ohne Status-Code aufgerufen (kein 500) und der User wurde trotzdem erstellt. Der Client bekommt kein Token.
 
-- [x] **NO Role-Check auf `/trainer/createTrainer`** – Jeder mit JWT kann Trainer erstellen
-  - **Lösung:** `requireRole(OWNER)` Middleware hinzufügen
-
-- [ ] **NO Role-Check auf `/admin/deleteUser`** – Jeder mit JWT kann User löschen
-  - **Lösung:** `requireRole(OWNER)` Middleware hinzufügen
-
-- [ ] **`/trainer/link-athlete` hat kein `requireAuth`** – Öffentlich zugänglich!
-  - Jeder kann Athlete mit Code verknüpfen ohne Token
-  - **Lösung:** `requireAuth` Middleware vor Handler
-
-- [ ] **Softdelete fehlt** – `DELETE FROM users` ist permanent
-  - Datenverlust bei Unfällen
-  - **Lösung:** `deleted_at` Timestamp + `WHERE deleted_at IS NULL` in SELECT Queries
-
-- [ ] **NO Email-Verification** – Fake Emails können sich registrieren
-  - **Lösung:** Verification-Email mit Token nach `/auth/createUser`
-
-- [ ] **Keine Input-Validation** – Nur Email & Passwort, alles andere unkontrolliert
-  - firstname, lastname, phone_number sind nicht validiert
-  - **Lösung:** `express-validator` auf alle Felder
-
-## MEDIUM PRIORITY
-
-- [ ] **NO Rate-Limiting** – Brute-Force auf `/auth/adminLogin` möglich
-  - **Lösung:** `express-rate-limit` (max 5 Versuche pro 15 Min)
-
-- [ ] **NO Pagination auf `/admin/users`** – Könnte 10.000+ User zurückgeben
-  - **Lösung:** `?page=1&limit=20` Query-Parameter
-
-- [ ] **NO User Password Reset** – User können Passwort nicht zurücksetzen
-  - **Lösung:** `POST /auth/forgot-password` + Token-basierter Reset-Link
-
-- [ ] **NO Refresh Token** – JWT läuft nach 1h ab, kein automatisches Erneuern
-  - **Lösung:** Separate Refresh-Token mit längerer Expiration
-
-- [ ] **Minimales Error-Logging** – Keine strukturierten Logs
-  - **Lösung:** `winston` oder `pino` Logger implementieren
-
-- [ ] **NO User Self-Update** – User können ihr Profil nicht ändern
-  - **Lösung:** `PUT /user/profile` für Selbst-Updates
-
-- [ ] **NO Trainer-Athlete Relations abfragen** – Trainer sieht eigene Athletes nicht
-  - **Lösung:** `GET /trainer/athletes` Endpoint
-
-- [ ] **Keine Audit-Logs** – Admin-Aktionen werden nicht nachverfolgbar
-  - **Lösung:** Separate `audit_logs` Tabelle
-
-## LOW PRIORITY
-
-- [ ] **NO API Documentation** – Swagger/OpenAPI wäre hilfreich
-  - **Lösung:** `swagger-jsdoc` + `swagger-ui-express`
-
-- [ ] **NO CORS Configuration** – Frontend kann nicht requests senden
-  - **Lösung:** `express.cors()` mit whitelist Origins
-
-- [ ] **NO Request Size Limit** – Theoretisch unbegrenzte Uploads möglich
-  - **Lösung:** `express.json({ limit: '10mb' })`
-
-- [ ] **Token im Cookie statt Header** – Sicherer gegen XSS
-  - **Lösung:** HttpOnly Cookies statt Authorization Header
+```js
+// Fix: Status-Code setzen + Flow klarmachen
+return res
+  .status(500)
+  .json({ message: "User created but failed to send email." });
+```
 
 ---
 
-## Checklist für schnelle Fixes (< 2 Stunden)
+### 11. `exercises` – `video_url` / `thumbnail_url` direkte Strings statt Media-FK
 
-```markdown
-### Sofort implementieren:
+Die Admin-Exercise-Routes speichern `video_url` und `thumbnail_url` als direkte Strings.
+Die User-Route (`/exercises/all`) macht aber einen JOIN auf `e.video_mid` und `e.thumbnail_mid`.
+**Das ist ein Schema-Widerspruch** – entweder alles auf FK migrieren oder die User-Route anpassen.
 
-- [x] User Login Endpoint
-- [x] Trainer Login Endpoint
-- [x] Role-Check Middleware
-- [x] requireAuth auf /trainer/link-athlete
-- [x] Rate-Limiting auf /auth/\* Routes
+---
 
-### Diese Woche:
+### 12. `getUsers` – Pagination funktioniert nur teilweise
 
-- [ ] Passwort-Reset Flow
-- [x] Email-Verification
-- [ ] Pagination auf /admin/users
-- [ ] Input-Validation mit express-validator
-- [ ] Strukturiertes Logging
+Alle User werden erst in Memory geladen, dann gepaginiert (`allUsers.slice`). Bei vielen Usern ist das ein Memory-Problem. Besser: Pagination direkt in SQL mit `LIMIT/OFFSET` per Rolle.
+
+---
+
+### 13. `exercises/create` – `created_by` nutzt `req.user.id` statt `req.user.uid`
+
+Je nachdem wie der JWT-Payload aussieht (`uid` vs `id`) kann `createdBy` immer `undefined` sein.
+
+```js
+// Checken: JWT wird mit { uid: ... } signiert, also
+const createdBy = req.user.uid;
 ```
 
-eine route bitte die einem user seine eigenen daten zurückgibt
+---
+
+### 14. `media/upload` – `result.mid` existiert nicht
+
+```js
+mid: result.mid; // ❌ – insertId ist das korrekte Feld
+mid: result.insertId; // ✅
+```
+
+---
+
+### 15. Einheitliche Sprache in API-Responses
+
+Manche Fehlermeldungen sind Deutsch (`"Benutzer nicht gefunden"`), manche Englisch (`"user not found"`). Alles auf Englisch vereinheitlichen für konsistente API.
+
+---
+
+### 16. `SALT_ROUNDS` – doppelt importiert in `reset-password.js`
+
+`SALT_ROUNDS` wird definiert aber nie für bcrypt genutzt – bcrypt kommt im File nicht vor (nur sha256 für Tokens). Unnötiger Import.
+
+---
+
+## 🟢 Langfristig / Nice-to-have
+
+### 17. Rate Limiting auf `check-verification-code` und `reset-password/:token`
+
+Aktuell kein Brute-Force-Schutz auf den Token/Code-Prüf-Endpoints.
+
+### 18. Refresh Token System
+
+JWTs laufen nach 3d/60d ab, aber es gibt keinen Refresh-Token-Flow. User werden einfach ausgeloggt.
+
+### 19. Logging-Strategie
+
+`console.log` / `console.error` überall, aber kein strukturiertes Logging (kein Log-Level, kein JSON-Format für Production, kein zentrales Error-Tracking).
+
+### 20. Disk-Usage im Healthcheck
+
+`fs.statSync("/")` gibt keine sinnvollen Disk-Infos zurück. Für Linux: `statvfs` oder `df`-Output parsen.
+
+### 21. Input-Validierung zentralisieren
+
+Jede Route macht eigene manuelle Checks. Besser: `zod` oder `express-validator` einführen für konsistente, wartbare Validation.
+
+### 22. Media-Cleanup bei gelöschten Exercises
+
+Wenn eine Exercise gelöscht wird, bleiben die Media-Dateien auf dem Server. Cascading Delete oder expliziten Cleanup-Job einbauen.
+
+### 23. Trainer-Login fehlt
+
+Es gibt `createTrainer` und `deleteTrainer`, aber keinen Login-Endpoint für Trainer. Trainer können sich also aktuell nicht einloggen.
+
+---
+
+## Zusammenfassung
+
+| Priorität      | Anzahl | Was                                 |
+| -------------- | ------ | ----------------------------------- |
+| 🔴 Kritisch    | 9      | Bugs, Auth-Lücken, Sicherheit       |
+| 🟡 Kurzfristig | 7      | Qualität, Konsistenz, kleinere Bugs |
+| 🟢 Langfristig | 7      | Features, Architektur, DX           |

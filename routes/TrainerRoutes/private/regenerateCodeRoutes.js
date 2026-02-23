@@ -3,11 +3,13 @@ import { db } from "../../../db.js";
 import { generateTrainerCode } from "../../../helpers/TrainerFunctions.js";
 import { requireRole } from "../../../middleware/role.js";
 import { createRateLimiter } from "../../../middleware/rate.js";
+import { requireAuth } from "../../../middleware/auth.js";
 
 const router = express.Router();
 
 router.patch(
   "/:id/regenerateCode",
+  requireAuth,
   requireRole("trainer"),
   createRateLimiter({ windowMs: 15 * 60 * 1000, max: 5 }),
   async (req, res) => {

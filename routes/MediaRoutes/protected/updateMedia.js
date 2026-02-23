@@ -19,7 +19,9 @@ router.put("/:mid", requireAuth, requireRole("owner"), async (req, res) => {
       return res.status(400).json({ error: "filename is required" });
     }
 
-    const cleanFilename = filename.trim();
+    const cleanFilename = path
+      .basename(filename.trim())
+      .replace(/[^a-zA-Z0-9._-]/g, "_");
 
     const [rows] = await db.query(
       `

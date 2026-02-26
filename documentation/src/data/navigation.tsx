@@ -31,13 +31,9 @@ export const navLinks: NavLink[] = [
     icon: <BookOpen size={20} />,
     label: "Dokumentation",
     subLinks: [
-      {
-        label: "Allgemein",
-        subLinks: [
-          { to: "/docs/getting-started", label: "Getting Started" },
-          { to: "/docs/error-responses", label: "Error Responses" },
-        ],
-      },
+      { to: "/docs/error-responses", label: "Error Responses" },
+      //{ to: "/docs/request-bodys", label: "Request Bodys" },
+      { to: "/docs/test-users", label: "Test Users" },
     ],
   },
 
@@ -66,6 +62,18 @@ export const navLinks: NavLink[] = [
           {
             to: "/api/auth/check-verification-code",
             label: "POST /auth/check-verification-code",
+          },
+          {
+            to: "/api/auth/resend-verification-code",
+            label: "POST /auth/resend-verification-code",
+          },
+          {
+            to: "/api/auth/reset-password",
+            label: "POST /auth/reset-password",
+          },
+          {
+            to: "/api/auth/reset-password/:token",
+            label: "POST /auth/reset-password/:token",
           },
         ],
       },
@@ -125,6 +133,27 @@ export const navLinks: NavLink[] = [
           {
             to: "/api/trainers/:id/regenerateCode",
             label: "PATCH /trainers/:id/regenerateCode",
+          },
+        ],
+      },
+      {
+        label: "Media",
+        subLinks: [
+          {
+            to: "/api/media/uploadMedia",
+            label: "POST /media/uploadMedia",
+          },
+          {
+            to: "/api/media/getAllMedia",
+            label: "GET /media/getAllMedia",
+          },
+          {
+            to: "/api/media/deleteMedia",
+            label: "DELETE /media/deleteMedia",
+          },
+          {
+            to: "/api/media/updatedMedia",
+            label: "PUT /media/updatedMedia",
           },
         ],
       },

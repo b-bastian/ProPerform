@@ -15,7 +15,7 @@ export default function CreateOwner() {
       return;
     }
 
-    const res = await fetch("https://api.properform.app/users/adminRegister", {
+    const res = await fetch("https://api.properform.app/auth/admin/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -108,7 +108,7 @@ export default function CreateOwner() {
           <div className="md:col-span-2 flex justify-center">
             <button
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 transition text-white py-4 px-12 text-lg rounded-xl font-semibold tracking-wide shadow-lg hover:shadow-blue-700/40 w-full"
+              className="bg-blue-600 hover:bg-blue-700 transition text-white py-4 px-12 text-lg rounded-xl font-semibold tracking-wide shadow-lg hover:shadow-blue-700/40 w-full cursor-pointer"
             >
               Owner erstellen
             </button>

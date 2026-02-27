@@ -47,7 +47,7 @@ export default function MediaList() {
     }
 
     try {
-      const res = await authFetch(`${BASE_URL}/media/all`);
+      const res = await authFetch(`${BASE_URL}/media`);
 
       if (!res.ok) {
         setError("Fehler beim Abrufen der Medien");

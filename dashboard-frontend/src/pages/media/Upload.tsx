@@ -76,7 +76,7 @@ export default function FileUpload() {
       const formData = new FormData();
       formData.append("file", file);
 
-      let uploadUrl = `${BASE_URL}/media/upload`;
+      let uploadUrl = `${BASE_URL}/media`;
       if (filename.trim()) {
         uploadUrl += `?filename=${encodeURIComponent(filename.trim())}`;
       }

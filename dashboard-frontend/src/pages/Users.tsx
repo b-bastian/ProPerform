@@ -20,12 +20,9 @@ export default function Users() {
     if (!response) return;
 
     try {
-      const res = await authFetch(
-        `https://api.properform.app/users/deleteUser/${uid}`,
-        {
-          method: "DELETE",
-        },
-      );
+      const res = await authFetch(`https://api.properform.app/users/${uid}`, {
+        method: "DELETE",
+      });
 
       if (res.ok) {
         alert(`✅ Benutzer mit UID ${uid} erfolgreich gelöscht!`);
@@ -56,7 +53,7 @@ export default function Users() {
 
     try {
       const res = await authFetch(
-        `https://api.properform.app/trainers/deleteTrainer/${tid}`,
+        `https://api.properform.app/trainers/${tid}`,
         {
           method: "DELETE",
         },

@@ -138,7 +138,7 @@ export default function AddExercise() {
     formData.append("file", renamedFile);
 
     try {
-      const res = await authFetch("https://api.properform.app/media/upload", {
+      const res = await authFetch("https://api.properform.app/media", {
         method: "POST",
         body: formData,
       });

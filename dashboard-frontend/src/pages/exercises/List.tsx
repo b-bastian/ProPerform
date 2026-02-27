@@ -71,7 +71,7 @@ export default function ExercisesList() {
 
     try {
       const res = await authFetch(
-        `${BASE_URL}/admin/exercises?page=${page}&limit=${limit}`,
+        `${BASE_URL}/exercises?page=${page}&limit=${limit}`,
       );
 
       if (!res.ok) {

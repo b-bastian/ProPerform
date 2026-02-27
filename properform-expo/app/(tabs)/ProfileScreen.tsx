@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -6,28 +6,26 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  Button,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Header from "../../src/components/header";
-import PrimaryButton from "../../src/components/primaryButton";
+import SecondaryButton from "@/src/components/secondaryButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import { typography } from "@/src/theme/typography";
 import { spacing } from "@/src/theme/spacing";
+import { colors } from "@/src/theme/colors";
 
 export default function ProfileScreen() {
   const router = useRouter();
 
-  const handleResetOnboarding = async () => {
+  const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem("onboardingFinished");
 
-      console.log("Onboarding-Status zurückgesetzt");
+      console.log("Logout erfolgreich");
 
       router.replace("../(onboarding)/OnboardingScreen");
     } catch (error) {
-      console.log("Fehler beim Zurücksetzen des Onboarding-Status:", error);
+      console.log("Fehler Logout", error);
     }
   };
 
@@ -42,49 +40,49 @@ export default function ProfileScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.content}>
-          <Header></Header>
-          <View style={styles.containerImage}>
-            <Image
-              source={require("../../assets/images/profile_picture.png")}
-              resizeMode="contain"
-              style={styles.profileImage}
-            />
-          </View>
+        <View style={styles.topSection}>
+          <Image
+            source={require("../../assets/images/profile_picture.png")}
+            resizeMode="contain"
+            style={styles.profileImage}
+          />
 
           <View>
-            <Text style={[typography.greeting, { marginBottom: spacing.xs }]}>
-              Hi, Max!
-            </Text>
-            <Text style={typography.secondary}>
-              Du trainierst seit 2 Monaten!
-            </Text>
+            <Text style={styles.goodMorning}>Guten Morgen,</Text>
+            <Text style={styles.hello}>Max!</Text>
           </View>
-
-          <View style={styles.infoCard}>
-            <Text style={styles.infoCardTitle}>Persönliche Information</Text>
-            <Text style={styles.infoCardLabel}>Benutzername: Max Bert</Text>
-            <Text style={styles.infoCardLabel}>E-Mail: •••••••••••••••••</Text>
-            <Text style={styles.infoCardLabel}>Trainiert seit 04.03.2025</Text>
-          </View>
-
-          <View>
-            <PrimaryButton text="🔑 Passwort ändern"></PrimaryButton>
-          </View>
-          <View style={styles.seperator} />
-
-          <View>
-            <TouchableOpacity style={styles.logoutButton}>
-              <Text style={styles.buttonText} onPress={handleResetOnboarding}>
-                Abmelden
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.seperator} />
-
-          <View></View>
         </View>
+
+        <View style={styles.infoSection}>
+          <Text style={styles.sectionTitle}>PERSÖNLICHE INFORMATIONEN</Text>
+
+          <View style={styles.row}>
+            <Text style={styles.label}>Benutzername</Text>
+            <Text style={styles.value}>Max Bert</Text>
+          </View>
+
+          <View style={styles.separator} />
+
+          <View style={styles.row}>
+            <Text style={styles.label}>Email</Text>
+            <Text style={styles.value}>max@example.com</Text>
+          </View>
+
+          <View style={styles.separator} />
+
+          <View style={styles.row}>
+            <Text style={styles.label}>Trainiert seit</Text>
+            <Text style={styles.value}>01.01.2024</Text>
+          </View>
+        </View>
+
+        <View style={styles.changePasswordWrap}>
+          <SecondaryButton text="Passwort ändern" />
+        </View>
+
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutWrap}>
+          <Text style={styles.logoutText}>Abmelden</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -99,10 +97,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 30,
-  },
-  profileImage: {
-    width: 120,
-    height: 120,
   },
   containerImage: {
     alignItems: "center",
@@ -133,7 +127,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   logoutButton: {
-    backgroundColor: "#D32F2F", // Rot
+    backgroundColor: "#D32F2F",
     paddingVertical: 15,
     borderRadius: 12,
     alignItems: "center",
@@ -147,5 +141,97 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  topSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: spacing.xl,
+  },
+
+  profileImage: {
+    width: 90,
+    height: 90,
+    borderRadius: 999,
+    marginRight: spacing.lg,
+  },
+
+  goodMorning: {
+    fontSize: 14,
+    fontWeight: "700",
+    letterSpacing: 1,
+    color: colors.textSecondary,
+    fontFamily: "Inter",
+  },
+
+  hello: {
+    fontSize: 28,
+    fontWeight: "900",
+    color: colors.textPrimary,
+    fontFamily: "Inter",
+  },
+
+  subline: {
+    marginTop: spacing.xs,
+    fontSize: 16,
+    color: colors.borderGray,
+    fontFamily: "Inter",
+  },
+  infoSection: {
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    padding: spacing.lg,
+    marginBottom: spacing.xl,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: "800",
+    letterSpacing: 2,
+    color: colors.borderGray,
+    marginBottom: spacing.lg,
+    fontFamily: "Inter",
+  },
+
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: spacing.md,
+  },
+
+  label: {
+    fontSize: 18,
+    color: colors.textSecondary,
+    fontFamily: "Inter",
+  },
+
+  value: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: colors.textPrimary,
+    fontFamily: "Inter",
+  },
+
+  separator: {
+    height: 1,
+    backgroundColor: "#E5E7EB",
+  },
+
+  changePasswordWrap: {
+    marginBottom: spacing.lg,
+  },
+
+  logoutWrap: {
+    alignItems: "center",
+  },
+
+  logoutText: {
+    fontSize: 16,
+    color: "#EF4444",
+    fontFamily: "Inter",
   },
 });

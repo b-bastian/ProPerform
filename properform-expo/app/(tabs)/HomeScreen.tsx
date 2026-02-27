@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { typography } from "@/src/theme/typography";
 import { spacing } from "@/src/theme/spacing";
@@ -7,7 +7,7 @@ import { colors } from "@/src/theme/colors";
 import SecondaryButton from "@/src/components/secondaryButton";
 
 export default function HomeScreen() {
- // dummy values for streak
+  // dummy values for streak
   const streakDays = 4;
   const days = ["M", "D", "M", "D", "F", "S", "S"];
   const completed = [true, true, true, true, false, false, false];
@@ -19,17 +19,17 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
-
         {/* top row (profile, greeting, name) */}
         <View style={styles.topRow}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>M</Text>
-          </View>
+          <Image
+            source={require("../../assets/images/profile_picture.png")}
+            style={styles.avatarImage}
+          />
 
           <View style={styles.greetingBlock}>
             {/* TODO: später eventuell guten morgen, guten abend je nach tageszeit*/}
             <Text style={styles.goodMorning}>Guten Morgen,</Text>
-            <Text style={styles.hello}>Hallo, Max!</Text>
+            <Text style={styles.hello}>Max!</Text>
           </View>
         </View>
 
@@ -119,21 +119,11 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
 
-  avatar: {
+  avatarImage: {
     width: 48,
     height: 48,
     borderRadius: 999,
-    backgroundColor: "#1C3A8A1A",
-    alignItems: "center",
-    justifyContent: "center",
     marginRight: spacing.md,
-  },
-
-  avatarText: {
-    fontFamily: "Inter",
-    fontSize: 18,
-    fontWeight: "700",
-    color: colors.primaryBlue,
   },
 
   greetingBlock: {

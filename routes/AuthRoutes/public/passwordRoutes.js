@@ -50,13 +50,17 @@ router.post("/reset-password", async (req, res) => {
       resetLink,
     );
 
-    await mailer.sendMail({
-      from: '"ProPerform" <no-reply@properform.app>',
-      to: email,
-      subject: subject,
-      text: text,
-      html: html,
-    });
+    mailer
+      .sendMail({
+        from: '"ProPerform" <no-reply@properform.app>',
+        to: email,
+        subject: subject,
+        text: text,
+        html: html,
+      })
+      .catch((err) => {
+        console.error("failed to send reset email:", err);
+      });
 
     return res.status(200).json({
       message: "If an account exists, a reset email has been sent.",

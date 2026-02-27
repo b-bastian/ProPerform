@@ -111,13 +111,17 @@ router.post(
           rawCode,
         );
 
-        await mailer.sendMail({
-          from: '"ProPerform" <no-reply@properform.app>',
-          to: email,
-          subject: subject,
-          text: text,
-          html: html,
-        });
+        mailer
+          .sendMail({
+            from: '"ProPerform" <no-reply@properform.app>',
+            to: email,
+            subject: subject,
+            text: text,
+            html: html,
+          })
+          .catch((err) => {
+            console.error("failed to send verification email:", err);
+          });
       } catch (err) {
         return res.status(201).json({
           message: "user created but verification email failed.",

@@ -9,7 +9,7 @@ export default function GetMe() {
     <div className="px-6 py-8">
       <div className="space-y-2 mb-4">
         <div className="flex items-center gap-3">
-          <code>GET users/me</code>
+          <code>GET /users/me</code>
           <Label text="Protected route" color="#F87171" />
           <Label text="Rate limited" color="#F59E0B" />
         </div>

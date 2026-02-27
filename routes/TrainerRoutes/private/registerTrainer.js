@@ -4,6 +4,7 @@ import { generateTrainerCode } from "../../../helpers/TrainerFunctions.js";
 import { requireRole } from "../../../middleware/role.js";
 import { createRateLimiter } from "../../../middleware/rate.js";
 import { requireAuth } from "../../../middleware/auth.js";
+import bcrypt from "bcrypt";
 
 const router = express.Router();
 

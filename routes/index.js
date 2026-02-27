@@ -7,7 +7,7 @@ import privateTrainerRoutes from "./TrainerRoutes/private/index.js";
 import authRoutes from "./AuthRoutes/index.js";
 import weightLogRoutes from "./UserRoutes/weightLogRoutes.js";
 import protectedExerciseRoutes from "./ExerciseRoutes/protected/index.js";
-import publicExercisesRoutes from "./ExerciseRoutes/publicExerciseRoutes.js";
+import listExerciseAll from "./ExerciseRoutes/protected/listExercisesAll.js";
 import protectedMediaRoutes from "./MediaRoutes/protected/index.js";
 
 const routeMounts = [
@@ -15,7 +15,7 @@ const routeMounts = [
   { router: publicTrainerRoutes, path: "/trainers", protected: false },
   { router: authRoutes, path: "/auth", protected: false },
   { router: publicSystemRoutes, path: "/system", protected: false },
-  { router: publicExercisesRoutes, path: "/exercises", protected: false },
+  { router: listExerciseAll, path: "/exercises", protected: true },
   { router: protectedUserRoutes, path: "/users", protected: true },
   { router: protectedSystemRoutes, path: "/system", protected: true },
   { router: privateTrainerRoutes, path: "/trainers", protected: true },

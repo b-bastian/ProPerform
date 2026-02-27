@@ -5,17 +5,21 @@ import { requireRole } from "../../../middleware/role.js";
 
 import { requireAuth } from "../../../middleware/auth.js";
 
+import { createRateLimiter } from "../../../middleware/rate.js";
+
 const router = express.Router();
 
 router.get(
-  "/exercises/all",
+  "/",
   requireAuth,
   requireRole("user", "owner"),
+  createRateLimiter({ windowMs: 15 * 60 * 1000, max: 100 }),
   async (req, res) => {
     try {
+      const { scope } = req.query;
+
       const page = Math.max(1, parseInt(req.query.page) || 1);
       const limit = Math.max(1, Math.min(100, parseInt(req.query.limit) || 10));
-
       const offset = (page - 1) * limit;
 
       const [countResult] = await db.query(
@@ -25,24 +29,48 @@ router.get(
       const total = countResult[0].total;
       const totalPages = Math.ceil(total / limit);
 
-      const [rows] = await db.query(
-        `
-        SELECT
-          e.*,
+      let query;
 
-          v.url AS video_url,
-          t.url AS thumbnail_url
+      // nur admin
+      if (scope === "admin") {
+        if (req.user.role !== "owner") {
+          return res.status(403).json({ error: "forbidden" });
+        }
 
-        FROM exercises e
+        query = `
+          SELECT eid, name, created_by
+          FROM exercises
+          ORDER BY created_at DESC
+          LIMIT ? OFFSET ?
+        `;
+      }
 
-        LEFT JOIN media v ON e.video_mid = v.mid
-        LEFT JOIN media t ON e.thumbnail_mid = t.mid
+      // admin & user
+      else {
+        query = `
+          SELECT
+            e.eid,
+            e.name,
+            e.description,
+            e.instructions,
+            e.sid,
+            e.dlid,
+            e.duration_minutes,
+            e.equipment_needed,
+            e.created_by,
+            e.created_at,
+            e.updated_at,
+            v.url AS video_url,
+            t.url AS thumbnail_url
+          FROM exercises e
+          LEFT JOIN media v ON e.video_mid = v.mid
+          LEFT JOIN media t ON e.thumbnail_mid = t.mid
+          ORDER BY e.created_at DESC
+          LIMIT ? OFFSET ?
+        `;
+      }
 
-        ORDER BY e.created_at DESC
-        LIMIT ? OFFSET ?
-      `,
-        [limit, offset],
-      );
+      const [rows] = await db.query(query, [limit, offset]);
 
       return res.json({
         count: rows.length,

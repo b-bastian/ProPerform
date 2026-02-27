@@ -11,7 +11,7 @@ const router = express.Router();
 router.post(
   "/weight",
   requireAuth,
-  requireRole("user"),
+  requireRole("user", "owner"),
   createRateLimiter({ windowMs: 15 * 60 * 1000, max: 20 }),
   async (req, res) => {
     try {
@@ -41,12 +41,16 @@ router.post(
   },
 );
 
-router.get("/weight", requireAuth, requireRole("user"), async (req, res) => {
-  try {
-    const uid = req.user.uid;
+router.get(
+  "/weight",
+  requireAuth,
+  requireRole("user", "owner"),
+  async (req, res) => {
+    try {
+      const uid = req.user.uid;
 
-    const [rows] = await db.query(
-      `
+      const [rows] = await db.query(
+        `
             SELECT 
             wlid, 
             weight_kg, 
@@ -56,17 +60,18 @@ router.get("/weight", requireAuth, requireRole("user"), async (req, res) => {
             WHERE uid = ?
             ORDER BY measured_at DESC
         `,
-      [uid],
-    );
+        [uid],
+      );
 
-    return res.status(200).json({
-      count: rows.length,
-      logs: rows,
-    });
-  } catch (err) {
-    console.error("get weight logs failed:", err);
-    return res.status(500).json({ error: "internal server error" });
-  }
-});
+      return res.status(200).json({
+        count: rows.length,
+        logs: rows,
+      });
+    } catch (err) {
+      console.error("get weight logs failed:", err);
+      return res.status(500).json({ error: "internal server error" });
+    }
+  },
+);
 
 export default router;

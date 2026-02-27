@@ -7,7 +7,7 @@ import { requireRole } from "../../../middleware/role.js";
 const router = express.Router();
 
 router.delete(
-  "/deleteUser/:uid",
+  "/:uid",
   requireAuth,
   requireRole("owner"),
   createRateLimiter({ windowMs: 15 * 60 * 1000, max: 10 }),

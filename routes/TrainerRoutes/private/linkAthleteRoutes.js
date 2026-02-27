@@ -5,7 +5,7 @@ import { createRateLimiter } from "../../../middleware/rate.js";
 const router = express.Router();
 
 router.post(
-  "/link-athlete",
+  "/:tid/link-athlete",
   createRateLimiter({ windowMs: 15 * 60 * 1000, max: 5 }),
   async (req, res) => {
     const { invite_code, athlete_id } = req.body;

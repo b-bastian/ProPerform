@@ -8,7 +8,7 @@ import { requireAuth } from "../../../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/all", requireAuth, requireRole("owner"), async (req, res) => {
+router.get("/", requireAuth, requireRole("owner"), async (req, res) => {
   try {
     const [rows] = await db.query(
       `

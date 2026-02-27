@@ -12,7 +12,7 @@ import { requireAuth } from "../../../middleware/auth.js";
 const router = express.Router();
 
 router.post(
-  "/upload",
+  "/",
   requireAuth,
   requireRole("owner"),
   createRateLimiter({ windowMs: 15 * 60 * 1000, max: 30 }),

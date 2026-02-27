@@ -248,7 +248,7 @@ export default function MediaList() {
                       <td className="px-4 py-3 text-gray-200 font-bold bg-gray-700 group-hover:bg-gray-600 rounded-l-lg text-center w-12">
                         {file.mid}
                       </td>
-                      <td className="px-4 py-3 text-gray-200 font-medium bg-gray-700 group-hover:bg-gray-600 truncate">
+                      <td className="px-4 py-3 text-gray-200 font-medium bg-gray-700 group-hover:bg-gray-600 break-all whitespace-normal max-w-xs">
                         {file.filename}
                       </td>
                       <td className="px-4 py-3 text-gray-300 bg-gray-700 group-hover:bg-gray-600 text-center w-20">

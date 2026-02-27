@@ -3,44 +3,55 @@ import Text from "../../../components/docs/Text";
 import CodeBlock from "../../../components/docs/CodeBlock";
 import Label from "../../../components/Label";
 
-export default function DeleteMediaMid() {
+export default function PostTrainersVerifyCode() {
   return (
     <div className="px-6 py-8 space-y-6">
       <div className="flex items-center gap-3">
-        <code>DELETE /media/:mid</code>
+        <code>POST /trainers/verify-code</code>
         <Label text="Protected route" color="#F59E0B" />
       </div>
 
       <Text>
-        Deletes a media file by ID. Removes both the database record and the
-        physical file from the media server. Requires authentication and the
-        owner role.
+        Verifies a trainer's invite code. Requires authentication. Rate limited
+        to 10 requests per 15 minutes.
       </Text>
 
       <Heading>Authorization Header</Heading>
       <CodeBlock language="http" code={`Authorization: Bearer <JWT_TOKEN>`} />
 
-      <Heading>URL Parameters</Heading>
+      <Heading>Request Body</Heading>
+      <CodeBlock
+        language="json"
+        code={`{
+  "invite_code": "TRN-ABC123DEF456"
+}`}
+      />
+
+      <Heading>Field Requirements</Heading>
       <CodeBlock
         language="text"
-        code={`mid: number - The media ID to delete`}
+        code={`invite_code  (string, required, non-empty)`}
       />
 
       <Heading>Success Response (200)</Heading>
       <CodeBlock
         language="json"
         code={`{
-  "status": "ok",
-  "message": "media with id 42 deleted"
+  "success": true
 }`}
       />
 
       <Heading>Error Responses</Heading>
       <CodeBlock
         language="json"
-        code={`// Media not found (404)
+        code={`// Missing invite code (400)
 {
-  "error": "media not found"
+  "error": "Einladungscode fehlt."
+}
+
+// Invalid invite code (404)
+{
+  "error": "Ungültiger Einladungscode."
 }
 
 // Unauthorized (401)
@@ -48,26 +59,16 @@ export default function DeleteMediaMid() {
   "error": "Unauthorized"
 }
 
-// Forbidden - not owner (403)
-{
-  "error": "Forbidden"
-}
-
 // Server error (500)
 {
-  "error": "internal server error"
+  "error": "Interner Serverfehler."
 }`}
       />
 
-      <Heading>Notes</Heading>
-      <Text>
-        If the physical file is not found on the media server, the database
-        record is still deleted. This prevents orphaned database entries.
-      </Text>
-
       <Heading>Requirements</Heading>
       <Text>
-        Requires authentication and the <code>owner</code> role.
+        Requires authentication. The invite code must be valid and belong to an
+        existing trainer.
       </Text>
     </div>
   );

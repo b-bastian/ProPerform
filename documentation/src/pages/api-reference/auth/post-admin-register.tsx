@@ -3,63 +3,56 @@ import Text from "../../../components/docs/Text";
 import CodeBlock from "../../../components/docs/CodeBlock";
 import Label from "../../../components/Label";
 
-export default function PutMediaMid() {
+export default function PostAdminRegister() {
   return (
     <div className="px-6 py-8 space-y-6">
       <div className="flex items-center gap-3">
-        <code>PUT /media/:mid</code>
+        <code>POST /auth/admin/register</code>
         <Label text="Protected route" color="#F59E0B" />
       </div>
 
       <Text>
-        Updates the filename of a media file. Renames the physical file on the
-        media server and updates the database record. Requires authentication
-        and the owner role.
+        Creates a new admin account. Requires authentication and the{" "}
+        <code>owner</code> role. Rate limited to 5 requests per 15 minutes.
       </Text>
 
       <Heading>Authorization Header</Heading>
       <CodeBlock language="http" code={`Authorization: Bearer <JWT_TOKEN>`} />
 
-      <Heading>URL Parameters</Heading>
-      <CodeBlock
-        language="text"
-        code={`mid: number - The media ID to update`}
-      />
-
       <Heading>Request Body</Heading>
       <CodeBlock
         language="json"
         code={`{
-  "filename": "new_exercise_name.mp4"
+  "firstname": "Admin",
+  "birthdate": "1985-03-20",
+  "email": "admin@example.com",
+  "password_hash": "SecurePass123!"
 }`}
       />
 
       <Heading>Field Requirements</Heading>
       <CodeBlock
         language="text"
-        code={`filename  (string, required, non-empty)`}
+        code={`firstname      (string, required)
+birthdate      (string, optional, format: YYYY-MM-DD)
+email          (string, required)
+password_hash  (string, required)`}
       />
 
-      <Heading>Success Response (200)</Heading>
+      <Heading>Success Response (201)</Heading>
       <CodeBlock
         language="json"
         code={`{
-  "status": "ok",
-  "message": "media with id 42 updated"
+  "message": "admin Admin registered."
 }`}
       />
 
       <Heading>Error Responses</Heading>
       <CodeBlock
         language="json"
-        code={`// Missing filename (400)
+        code={`// Missing fields (400)
 {
-  "error": "filename is required"
-}
-
-// Media not found (404)
-{
-  "error": "media not found"
+  "error": "required fields missing."
 }
 
 // Unauthorized (401)
@@ -74,19 +67,14 @@ export default function PutMediaMid() {
 
 // Server error (500)
 {
-  "error": "internal server error"
+  "error": "error message"
 }`}
       />
 
-      <Heading>Notes</Heading>
-      <Text>
-        The filename is sanitized to remove special characters. The media URL is
-        automatically updated after renaming.
-      </Text>
-
       <Heading>Requirements</Heading>
       <Text>
-        Requires authentication and the <code>owner</code> role.
+        The requester must be authenticated and have the <code>owner</code> role
+        (role_id: 1).
       </Text>
     </div>
   );

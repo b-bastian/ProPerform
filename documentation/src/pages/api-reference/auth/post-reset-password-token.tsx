@@ -3,11 +3,11 @@ import Text from "../../../components/docs/Text";
 import CodeBlock from "../../../components/docs/CodeBlock";
 import Label from "../../../components/Label";
 
-export default function ResetPasswordToken() {
+export default function PostResetPasswordToken() {
   return (
     <div className="px-6 py-8 space-y-6">
       <div className="flex items-center gap-3">
-        <code>POST /reset-password/:token</code>
+        <code>POST /auth/reset-password/:token</code>
         <Label text="Public route" color="#10B981" />
       </div>
 
@@ -27,7 +27,7 @@ export default function ResetPasswordToken() {
       <CodeBlock
         language="json"
         code={`{
-  "password": "newSecurePassword123"
+  "password": "NewSecurePass123!"
 }`}
       />
 
@@ -65,7 +65,7 @@ export default function ResetPasswordToken() {
 // Server error (500)
 {
   "message": "failed to reset password",
-  "error": "error message details"
+  "error": "error details"
 }`}
       />
 

@@ -32,7 +32,6 @@ export const navLinks: NavLink[] = [
     label: "Dokumentation",
     subLinks: [
       { to: "/docs/error-responses", label: "Error Responses" },
-      //{ to: "/docs/request-bodys", label: "Request Bodys" },
       { to: "/docs/test-users", label: "Test Users" },
     ],
   },
@@ -56,10 +55,6 @@ export const navLinks: NavLink[] = [
             label: "POST /auth/admin/login",
           },
           {
-            to: "/api/auth/trainers/login",
-            label: "POST /auth/trainers/login",
-          },
-          {
             to: "/api/auth/check-verification-code",
             label: "POST /auth/check-verification-code",
           },
@@ -81,58 +76,57 @@ export const navLinks: NavLink[] = [
         label: "Users",
         subLinks: [
           { to: "/api/users", label: "GET /users" },
-          {
-            to: "/api/users/deleteUser/:uid",
-            label: "DELETE /users/deleteUser/:uid",
-          },
+          { to: "/api/users/:role", label: "GET /users/:role" },
           { to: "/api/users/me", label: "GET /users/me" },
+          { to: "/api/users/stats", label: "GET /users/stats" },
+          { to: "/api/users/delete/:uid", label: "DELETE /users/:uid" },
+        ],
+      },
+      {
+        label: "Weight Logs",
+        subLinks: [
           { to: "/api/logs/weight", label: "POST /logs/weight" },
           { to: "/api/logs/weight/all", label: "GET /logs/weight" },
         ],
       },
       {
-        label: "Admin",
+        label: "Exercises",
         subLinks: [
+          { to: "/api/exercises", label: "GET /exercises" },
           {
             to: "/api/admin/exercises/create",
             label: "POST /admin/exercises/create",
           },
           {
-            to: "/api/admin/exercises/getExercise",
-            label: "GET /admin/exercises/getExercise",
+            to: "/api/admin/exercises/:eid",
+            label: "GET /admin/exercises/:eid",
           },
           {
-            to: "/api/admin/exercises/updateExercise",
-            label: "PUT /admin/exercises/updateExercise",
+            to: "/api/admin/exercises/:eid/delete",
+            label: "DELETE /admin/exercises/:eid",
           },
           {
-            to: "/api/admin/exercises/deleteExercise",
-            label: "DELETE /admin/exercises/deleteExercise",
-          },
-          {
-            to: "/api/admin/exercises/listExercises",
-            label: "GET /admin/exercises/listExercises",
+            to: "/api/admin/exercises/:eid/update",
+            label: "PUT /admin/exercises/:eid",
           },
         ],
       },
       {
         label: "Trainers",
         subLinks: [
+          { to: "/api/trainers", label: "POST /trainers" },
+          { to: "/api/trainers/:tid", label: "DELETE /trainers/:tid" },
           {
-            to: "/api/trainers/createTrainer",
-            label: "POST /trainers/createTrainer",
+            to: "/api/trainers/:tid/link-athlete",
+            label: "POST /trainers/:tid/link-athlete",
+          },
+          {
+            to: "/api/trainers/:tid/regenerate-code",
+            label: "PATCH /trainers/:tid/regenerate-code",
           },
           {
             to: "/api/trainers/verify-code",
             label: "POST /trainers/verify-code",
-          },
-          {
-            to: "/api/trainers/link-athlete",
-            label: "POST /trainers/link-athlete",
-          },
-          {
-            to: "/api/trainers/:id/regenerateCode",
-            label: "PATCH /trainers/:id/regenerateCode",
           },
         ],
       },
@@ -140,20 +134,33 @@ export const navLinks: NavLink[] = [
         label: "Media",
         subLinks: [
           {
-            to: "/api/media/uploadMedia",
-            label: "POST /media/uploadMedia",
+            to: "/api/media",
+            label: "POST /media",
           },
           {
-            to: "/api/media/getAllMedia",
-            label: "GET /media/getAllMedia",
+            to: "/api/media/list",
+            label: "GET /media",
           },
           {
-            to: "/api/media/deleteMedia",
-            label: "DELETE /media/deleteMedia",
+            to: "/api/media/:mid",
+            label: "DELETE /media/:mid",
           },
           {
-            to: "/api/media/updatedMedia",
-            label: "PUT /media/updatedMedia",
+            to: "/api/media/:mid/update",
+            label: "PUT /media/:mid",
+          },
+        ],
+      },
+      {
+        label: "System",
+        subLinks: [
+          {
+            to: "/api/system/health",
+            label: "GET /system/health",
+          },
+          {
+            to: "/api/system/healthcheck",
+            label: "GET /system/healthcheck",
           },
         ],
       },

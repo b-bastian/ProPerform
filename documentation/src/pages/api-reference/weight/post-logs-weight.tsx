@@ -3,44 +3,59 @@ import Text from "../../../components/docs/Text";
 import CodeBlock from "../../../components/docs/CodeBlock";
 import Label from "../../../components/Label";
 
-export default function DeleteMediaMid() {
+export default function PostLogsWeight() {
   return (
     <div className="px-6 py-8 space-y-6">
       <div className="flex items-center gap-3">
-        <code>DELETE /media/:mid</code>
+        <code>POST /logs/weight</code>
         <Label text="Protected route" color="#F59E0B" />
       </div>
 
       <Text>
-        Deletes a media file by ID. Removes both the database record and the
-        physical file from the media server. Requires authentication and the
-        owner role.
+        Logs a weight measurement for the authenticated user. Requires
+        authentication and user or owner role. Rate limited to 20 requests per
+        15 minutes.
       </Text>
 
       <Heading>Authorization Header</Heading>
       <CodeBlock language="http" code={`Authorization: Bearer <JWT_TOKEN>`} />
 
-      <Heading>URL Parameters</Heading>
+      <Heading>Request Body</Heading>
       <CodeBlock
-        language="text"
-        code={`mid: number - The media ID to delete`}
+        language="json"
+        code={`{
+  "weight_kg": 75.5,
+  "notes": "After workout"
+}`}
       />
 
-      <Heading>Success Response (200)</Heading>
+      <Heading>Field Requirements</Heading>
+      <CodeBlock
+        language="text"
+        code={`weight_kg  (number, required, must be positive)
+notes      (string, optional)`}
+      />
+
+      <Heading>Success Response (201)</Heading>
       <CodeBlock
         language="json"
         code={`{
   "status": "ok",
-  "message": "media with id 42 deleted"
+  "weight_kg": 75.5
 }`}
       />
 
       <Heading>Error Responses</Heading>
       <CodeBlock
         language="json"
-        code={`// Media not found (404)
+        code={`// Missing weight_kg (400)
 {
-  "error": "media not found"
+  "error": "weight_kg is required."
+}
+
+// Invalid weight (400)
+{
+  "error": "invalid weight_kg"
 }
 
 // Unauthorized (401)
@@ -48,7 +63,7 @@ export default function DeleteMediaMid() {
   "error": "Unauthorized"
 }
 
-// Forbidden - not owner (403)
+// Forbidden - wrong role (403)
 {
   "error": "Forbidden"
 }
@@ -59,15 +74,10 @@ export default function DeleteMediaMid() {
 }`}
       />
 
-      <Heading>Notes</Heading>
-      <Text>
-        If the physical file is not found on the media server, the database
-        record is still deleted. This prevents orphaned database entries.
-      </Text>
-
       <Heading>Requirements</Heading>
       <Text>
-        Requires authentication and the <code>owner</code> role.
+        Requires authentication and user or owner role. Weight must be a
+        positive number.
       </Text>
     </div>
   );

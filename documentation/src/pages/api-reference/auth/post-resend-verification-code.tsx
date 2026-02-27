@@ -3,27 +3,29 @@ import Text from "../../../components/docs/Text";
 import CodeBlock from "../../../components/docs/CodeBlock";
 import Label from "../../../components/Label";
 
-export default function ResendVerificationCode() {
+export default function PostResendVerificationCode() {
   return (
     <div className="px-6 py-8 space-y-6">
       <div className="flex items-center gap-3">
-        <code>POST /resend-verification-code</code>
+        <code>POST /auth/resend-verification-code</code>
         <Label text="Public route" color="#10B981" />
       </div>
 
       <Text>
-        Resends the email verification code to the user's email address. Can
-        only be used for accounts that exist but haven't verified their email
-        yet.
+        Resends the email verification code if the original email was not
+        received or the code expired. Can only be used for unverified accounts.
       </Text>
 
       <Heading>Request Body</Heading>
       <CodeBlock
         language="json"
         code={`{
-  "email": "user@example.com"
+  "email": "john@example.com"
 }`}
       />
+
+      <Heading>Field Requirements</Heading>
+      <CodeBlock language="text" code={`email  (string, required)`} />
 
       <Heading>Success Response (200)</Heading>
       <CodeBlock
@@ -46,6 +48,11 @@ export default function ResendVerificationCode() {
   "error": "email already verified."
 }
 
+// Account doesn't exist - returns success for privacy (200)
+{
+  "message": "if the account exists, a verification email was sent."
+}
+
 // Server error (500)
 {
   "error": "failed to resend verification code."
@@ -54,9 +61,8 @@ export default function ResendVerificationCode() {
 
       <Heading>Notes</Heading>
       <Text>
-        The verification code is valid for 15 minutes. If the email doesn't
-        exist in the database, a generic success message is returned for
-        security reasons (prevents email enumeration).
+        Returns a success response even if the account doesn't exist for
+        security/privacy reasons. This prevents email enumeration attacks.
       </Text>
     </div>
   );

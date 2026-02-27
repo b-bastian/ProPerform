@@ -3,18 +3,17 @@ import Text from "../../../components/docs/Text";
 import CodeBlock from "../../../components/docs/CodeBlock";
 import Label from "../../../components/Label";
 
-export default function DeleteMediaMid() {
+export default function GetExercisesEid() {
   return (
     <div className="px-6 py-8 space-y-6">
       <div className="flex items-center gap-3">
-        <code>DELETE /media/:mid</code>
+        <code>GET /admin/exercises/:eid</code>
         <Label text="Protected route" color="#F59E0B" />
       </div>
 
       <Text>
-        Deletes a media file by ID. Removes both the database record and the
-        physical file from the media server. Requires authentication and the
-        owner role.
+        Retrieves a specific exercise by ID with all its details. Requires
+        authentication and the <code>owner</code> role.
       </Text>
 
       <Heading>Authorization Header</Heading>
@@ -23,24 +22,40 @@ export default function DeleteMediaMid() {
       <Heading>URL Parameters</Heading>
       <CodeBlock
         language="text"
-        code={`mid: number - The media ID to delete`}
+        code={`eid: number - The exercise ID to retrieve`}
       />
 
       <Heading>Success Response (200)</Heading>
       <CodeBlock
         language="json"
         code={`{
-  "status": "ok",
-  "message": "media with id 42 deleted"
+  "eid": 42,
+  "name": "Push-Up",
+  "description": "Upper body pushing exercise",
+  "instructions": "Place hands shoulder-width apart...",
+  "video_url": "https://media.properform.app/videos/video.mp4",
+  "thumbnail_url": "https://media.properform.app/images/thumb.jpg",
+  "sid": 1,
+  "dlid": 2,
+  "duration_minutes": 10,
+  "equipment_needed": "None",
+  "created_by": 1,
+  "created_at": "2024-01-15T10:30:00Z",
+  "updated_at": "2024-02-20T14:45:00Z"
 }`}
       />
 
       <Heading>Error Responses</Heading>
       <CodeBlock
         language="json"
-        code={`// Media not found (404)
+        code={`// Invalid exercise ID (400)
 {
-  "error": "media not found"
+  "error": "invalid exercise id"
+}
+
+// Exercise not found (404)
+{
+  "error": "exercise not found"
 }
 
 // Unauthorized (401)
@@ -59,15 +74,10 @@ export default function DeleteMediaMid() {
 }`}
       />
 
-      <Heading>Notes</Heading>
-      <Text>
-        If the physical file is not found on the media server, the database
-        record is still deleted. This prevents orphaned database entries.
-      </Text>
-
       <Heading>Requirements</Heading>
       <Text>
-        Requires authentication and the <code>owner</code> role.
+        The requester must be authenticated and have the <code>owner</code>{" "}
+        role.
       </Text>
     </div>
   );

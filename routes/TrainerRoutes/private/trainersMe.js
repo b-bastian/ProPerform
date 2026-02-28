@@ -11,7 +11,7 @@ router.get(
   createRateLimiter({ windowMs: 15 * 60 * 1000, max: 20 }),
   async (req, res) => {
     try {
-      const uid = req.users.uid;
+      const uid = req.user.uid;
 
       const [rows] = await db.execute(
         `

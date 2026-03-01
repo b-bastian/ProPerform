@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,9 +13,28 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { spacing } from "@/src/theme/spacing";
 import { colors } from "@/src/theme/colors";
+import axios from "axios";
 
 export default function ProfileScreen() {
   const router = useRouter();
+
+  const [user, setUser] = React.useState<{
+    firstname: string;
+    email: string;
+    profile_image_url: string | null;
+    created_at: string;
+  } | null>(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const token = await AsyncStorage.getItem("auth_token");
+      const response = await axios.get("https://api.properform.app/users/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUser(response.data);
+    };
+    getUser();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -42,14 +61,18 @@ export default function ProfileScreen() {
       >
         <View style={styles.topSection}>
           <Image
-            source={require("../../assets/images/profile_picture.png")}
+            source={
+              user?.profile_image_url
+                ? { uri: user.profile_image_url }
+                : require("../../assets/images/profile_picture.png")
+            }
             resizeMode="contain"
             style={styles.profileImage}
           />
 
           <View>
             <Text style={styles.goodMorning}>Guten Morgen,</Text>
-            <Text style={styles.hello}>Max!</Text>
+            <Text style={styles.hello}>{user?.firstname ?? "..."}</Text>
           </View>
         </View>
 
@@ -58,21 +81,25 @@ export default function ProfileScreen() {
 
           <View style={styles.row}>
             <Text style={styles.label}>Benutzername</Text>
-            <Text style={styles.value}>Max Bert</Text>
+            <Text style={styles.value}>{user?.firstname ?? "..."}</Text>
           </View>
 
           <View style={styles.separator} />
 
           <View style={styles.row}>
             <Text style={styles.label}>Email</Text>
-            <Text style={styles.value}>max@example.com</Text>
+            <Text style={styles.value}>{user?.email ?? "..."}</Text>
           </View>
 
           <View style={styles.separator} />
 
           <View style={styles.row}>
             <Text style={styles.label}>Trainiert seit</Text>
-            <Text style={styles.value}>01.01.2024</Text>
+            <Text style={styles.value}>
+              {user?.created_at
+                ? new Date(user.created_at).toLocaleDateString("de-AT")
+                : ""}
+            </Text>
           </View>
         </View>
 

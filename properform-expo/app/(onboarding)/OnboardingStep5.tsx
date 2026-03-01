@@ -110,7 +110,15 @@ export default function OnboardingStep5() {
         primary_goal: primaryGoal,
       };
 
-      await axios.post("https://api.properform.app/auth/register", requestBody);
+      const response = await axios.post(
+        "https://api.properform.app/auth/register",
+        requestBody,
+      );
+
+      const { token, uid } = response.data;
+
+      await AsyncStorage.setItem("auth_token", token);
+      await AsyncStorage.setItem("user_id", String(uid));
 
       router.push("../(onboarding)/VerifyEmailScreen");
     } catch (error: any) {

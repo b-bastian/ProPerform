@@ -20,6 +20,7 @@ import { typography } from "@/src/theme/typography";
 import { spacing } from "@/src/theme/spacing";
 import { colors } from "@/src/theme/colors";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
+import ForgotPasswordModal from "@/src/components/modals/ForgotPasswordModal";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -28,6 +29,8 @@ export default function LoginScreen() {
   const [password, setPassword] = React.useState("");
   const [stayLoggedIn, setStayLoggedIn] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [forgotPasswordVisible, setForgotPasswordVisible] =
+    React.useState(false);
 
   const handleLogin = async () => {
     try {
@@ -83,14 +86,12 @@ export default function LoginScreen() {
                 placeholder="max@beispiel.at"
                 onChange={setEmail}
               />
-
               <InputField
                 title="Passwort"
                 value={password}
                 placeholder="********"
                 onChange={setPassword}
               />
-
               <TouchableOpacity
                 style={styles.checkboxContainer}
                 onPress={() => setStayLoggedIn(!stayLoggedIn)}
@@ -108,8 +109,16 @@ export default function LoginScreen() {
                 </View>
                 <Text style={styles.checkboxLabel}>Angemeldet bleiben</Text>
               </TouchableOpacity>
-
               {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+              <TouchableOpacity
+                onPress={() => setForgotPasswordVisible(true)}
+                style={styles.forgotPasswordWrap}
+              >
+                <Text style={styles.forgotPasswordText}>
+                  Passwort vergessen?
+                </Text>
+              </TouchableOpacity>
             </View>
 
             <View style={styles.navigation}>
@@ -130,6 +139,10 @@ export default function LoginScreen() {
           </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
+      <ForgotPasswordModal
+        visible={forgotPasswordVisible}
+        onClose={() => setForgotPasswordVisible(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -205,5 +218,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primaryBlue,
     alignItems: "center",
     justifyContent: "center",
+  },
+  forgotPasswordWrap: {
+    alignSelf: "flex-end",
+    marginTop: spacing.xs,
+  },
+
+  forgotPasswordText: {
+    fontFamily: "Inter",
+    fontSize: 14,
+    color: colors.primaryBlue,
   },
 });

@@ -1,12 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { typography } from "@/src/theme/typography";
 import { spacing } from "@/src/theme/spacing";
 import { colors } from "@/src/theme/colors";
 import SecondaryButton from "@/src/components/secondaryButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 export default function HomeScreen() {
+  const [user, setUser] = React.useState<{
+    firstname: string;
+    profile_image_url: string | null;
+  } | null>(null);
+
+  useEffect(() => {
+    const getUserData = async () => {
+      const token = await AsyncStorage.getItem("auth_token");
+      const response = await axios.get("https://api.properform.app/users/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUser(response.data);
+    };
+    getUserData();
+  }, []);
+
   // dummy values for streak
   const streakDays = 4;
   const days = ["M", "D", "M", "D", "F", "S", "S"];
@@ -22,14 +40,18 @@ export default function HomeScreen() {
         {/* top row (profile, greeting, name) */}
         <View style={styles.topRow}>
           <Image
-            source={require("../../assets/images/profile_picture.png")}
+            source={
+              user?.profile_image_url
+                ? { uri: user.profile_image_url }
+                : require("../../assets/images/profile_picture.png")
+            }
             style={styles.avatarImage}
           />
 
           <View style={styles.greetingBlock}>
             {/* TODO: später eventuell guten morgen, guten abend je nach tageszeit*/}
             <Text style={styles.goodMorning}>Guten Morgen,</Text>
-            <Text style={styles.hello}>Max!</Text>
+            <Text style={styles.hello}>{user?.firstname || "..."}</Text>
           </View>
         </View>
 

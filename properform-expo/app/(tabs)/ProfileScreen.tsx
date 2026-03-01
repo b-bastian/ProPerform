@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SecondaryButton from "@/src/components/secondaryButton";
@@ -35,6 +36,17 @@ export default function ProfileScreen() {
     };
     getUser();
   }, []);
+
+  const handleResetPassword = async () => {
+    try {
+      await axios.post("https://api.properform.app/auth/reset-password", {
+        email: user?.email,
+      });
+      Alert.alert("Erfolg", "Wir haben dir einen Link per Email geschickt!");
+    } catch (error) {
+      Alert.alert("Fehler", "Etwas ist schiefgelaufen, versuch es nochmal.");
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -104,7 +116,10 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.changePasswordWrap}>
-          <SecondaryButton text="Passwort ändern" />
+          <SecondaryButton
+            onPress={handleResetPassword}
+            text="Passwort ändern"
+          />
         </View>
 
         <TouchableOpacity onPress={handleLogout} style={styles.logoutWrap}>

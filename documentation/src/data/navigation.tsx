@@ -31,8 +31,8 @@ export const navLinks: NavLink[] = [
     icon: <BookOpen size={20} />,
     label: "Dokumentation",
     subLinks: [
+      { to: "/docs/request-bodys", label: "Request Bodys" },
       { to: "/docs/error-responses", label: "Error Responses" },
-      { to: "/docs/test-users", label: "Test Users" },
     ],
   },
 
@@ -50,10 +50,7 @@ export const navLinks: NavLink[] = [
             to: "/api/auth/admin/register",
             label: "POST /auth/admin/register",
           },
-          {
-            to: "/api/auth/admin/login",
-            label: "POST /auth/admin/login",
-          },
+          { to: "/api/auth/admin/login", label: "POST /auth/admin/login" },
           {
             to: "/api/auth/check-verification-code",
             label: "POST /auth/check-verification-code",
@@ -114,54 +111,47 @@ export const navLinks: NavLink[] = [
       {
         label: "Trainers",
         subLinks: [
-          { to: "/api/trainers", label: "POST /trainers" },
           { to: "/api/trainers/:tid", label: "DELETE /trainers/:tid" },
-          {
-            to: "/api/trainers/:tid/link-athlete",
-            label: "POST /trainers/:tid/link-athlete",
-          },
           {
             to: "/api/trainers/:tid/regenerate-code",
             label: "PATCH /trainers/:tid/regenerate-code",
           },
           {
-            to: "/api/trainers/verify-code",
-            label: "POST /trainers/verify-code",
+            to: "/api/trainers/check-invite-code",
+            label: "POST /trainers/check-invite-code",
+          },
+          {
+            to: "/api/athletes/trainer/connect",
+            label: "GET /athletes/trainer/connect",
+          },
+          {
+            to: "/api/athletes/trainer/disconnect",
+            label: "GET /athletes/trainer/disconnect",
+          },
+          {
+            to: "/api/trainers/:tid/athletes",
+            label: "GET /trainers/:tid/athletes",
+          },
+          {
+            to: "/api/athletes/trainer/me",
+            label: "GET /athletes/trainer/me",
           },
         ],
       },
       {
         label: "Media",
         subLinks: [
-          {
-            to: "/api/media",
-            label: "POST /media",
-          },
-          {
-            to: "/api/media/list",
-            label: "GET /media",
-          },
-          {
-            to: "/api/media/:mid",
-            label: "DELETE /media/:mid",
-          },
-          {
-            to: "/api/media/:mid/update",
-            label: "PUT /media/:mid",
-          },
+          { to: "/api/media", label: "POST /media" },
+          { to: "/api/media/list", label: "GET /media" },
+          { to: "/api/media/:mid", label: "DELETE /media/:mid" },
+          { to: "/api/media/:mid/update", label: "PUT /media/:mid" },
         ],
       },
       {
         label: "System",
         subLinks: [
-          {
-            to: "/api/system/health",
-            label: "GET /system/health",
-          },
-          {
-            to: "/api/system/healthcheck",
-            label: "GET /system/healthcheck",
-          },
+          { to: "/api/system/health", label: "GET /system/health" },
+          { to: "/api/system/healthcheck", label: "GET /system/healthcheck" },
         ],
       },
     ],

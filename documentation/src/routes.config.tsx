@@ -29,10 +29,12 @@ import GetHealthcheck from "./pages/api-reference/system/get-healthcheck";
 
 // trainers
 import DeleteTrainersTid from "./pages/api-reference/trainers/delete-trainer-tid";
-import PatchTrainersRegenerateCode from "./pages/api-reference/trainers/patch-trainers-regen-code";
-import PostTrainers from "./pages/api-reference/trainers/post-create-trainer";
-import PostTrainersLinkAthlete from "./pages/api-reference/trainers/post-trainer-link-athlete";
-import PostTrainersVerifyCode from "./pages/api-reference/trainers/post-trainer-verify-code";
+import ConnectTrainer from "./pages/api-reference/trainers/get-trainer-connect";
+import DisconnectTrainer from "./pages/api-reference/trainers/get-trainer-disconnect";
+import GetTrainerAthletes from "./pages/api-reference/trainers/get-trainers-:tid-athletes";
+import GetMyTrainer from "./pages/api-reference/trainers/get-trainer-me";
+import RegenerateTrainerCode from "./pages/api-reference/trainers/patch-trainers-regen-code";
+import CheckInviteCode from "./pages/api-reference/trainers/post-trainer-check-inv-code";
 
 // users
 import DeleteUsersUid from "./pages/api-reference/users/delete-users-uid";
@@ -46,14 +48,14 @@ import GetLogsWeight from "./pages/api-reference/weight/get-logs-weight";
 import PostLogsWeight from "./pages/api-reference/weight/post-logs-weight";
 
 import RequestBodys from "./pages/docs/request-bodys";
-import TestUsers from "./pages/docs/test-users";
+import ErrorResponses from "./pages/docs/error-responses";
 
 export const apiRoutes = [
   // docs
   { path: "docs/request-bodys", element: <RequestBodys /> },
-  { path: "docs/test-users", element: <TestUsers /> },
+  { path: "docs/error-responses", element: <ErrorResponses /> },
 
-  // auth routes
+  // auth
   { path: "api/auth/login", element: <PostLogin /> },
   { path: "api/auth/register", element: <PostRegister /> },
   { path: "api/auth/admin/login", element: <PostAdminLogin /> },
@@ -72,44 +74,58 @@ export const apiRoutes = [
     element: <PostResetPasswordToken />,
   },
 
-  // user routes
+  // users
   { path: "api/users", element: <GetUsers /> },
   { path: "api/users/:role", element: <GetUsersRole /> },
   { path: "api/users/me", element: <GetUsersMe /> },
   { path: "api/users/stats", element: <GetUsersStats /> },
   { path: "api/users/delete/:uid", element: <DeleteUsersUid /> },
 
-  // weight logs
+  // weight
   { path: "api/logs/weight", element: <PostLogsWeight /> },
   { path: "api/logs/weight/all", element: <GetLogsWeight /> },
 
-  // trainer routes
-  { path: "api/trainers", element: <PostTrainers /> },
+  // trainers
   { path: "api/trainers/:tid", element: <DeleteTrainersTid /> },
   {
-    path: "api/trainers/:tid/link-athlete",
-    element: <PostTrainersLinkAthlete />,
+    path: "api/trainers/:tid/regenerate-code",
+    element: <RegenerateTrainerCode />,
   },
   {
-    path: "api/trainers/:tid/regenerate-code",
-    element: <PatchTrainersRegenerateCode />,
+    path: "api/trainers/check-invite-code",
+    element: <CheckInviteCode />,
   },
-  { path: "api/trainers/verify-code", element: <PostTrainersVerifyCode /> },
+  { path: "api/athletes/trainer/connect", element: <ConnectTrainer /> },
+  {
+    path: "api/athletes/trainer/disconnect",
+    element: <DisconnectTrainer />,
+  },
+  {
+    path: "api/trainers/:tid/athletes",
+    element: <GetTrainerAthletes />,
+  },
+  { path: "api/athletes/trainer/me", element: <GetMyTrainer /> },
 
-  // exercise routes
+  // exercises
   { path: "api/exercises", element: <GetExercises /> },
   { path: "api/admin/exercises/create", element: <PostExercisesCreate /> },
   { path: "api/admin/exercises/:eid", element: <GetExercisesEid /> },
-  { path: "api/admin/exercises/:eid/delete", element: <DeleteExercisesEid /> },
-  { path: "api/admin/exercises/:eid/update", element: <PutExercisesEid /> },
+  {
+    path: "api/admin/exercises/:eid/delete",
+    element: <DeleteExercisesEid />,
+  },
+  {
+    path: "api/admin/exercises/:eid/update",
+    element: <PutExercisesEid />,
+  },
 
-  // media routes
+  // media
   { path: "api/media", element: <PostMedia /> },
   { path: "api/media/list", element: <GetMedia /> },
   { path: "api/media/:mid", element: <DeleteMediaMid /> },
   { path: "api/media/:mid/update", element: <PutMediaMid /> },
 
-  // system routes
+  // system
   { path: "api/system/health", element: <GetHealth /> },
   { path: "api/system/healthcheck", element: <GetHealthcheck /> },
 ];

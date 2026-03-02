@@ -55,6 +55,9 @@ export default function ProfileScreen() {
 
   const handleLogout = async () => {
     try {
+      await SecureStore.deleteItemAsync("auth_token");
+      await SecureStore.deleteItemAsync("user_id");
+
       await AsyncStorage.removeItem("onboardingFinished");
 
       console.log("Logout erfolgreich");

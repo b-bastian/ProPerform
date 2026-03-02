@@ -10,6 +10,7 @@ import {
   Platform,
   TouchableOpacity,
   TextInput,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/src/components/header";
@@ -32,6 +33,7 @@ export default function VerifyEmailScreen() {
   const [error, setError] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [loadingResend, setLoadingResend] = useState(false);
 
   useEffect(() => {
     async function loadEmail() {
@@ -70,6 +72,26 @@ export default function VerifyEmailScreen() {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    try {
+      setLoadingResend(true);
+      await axios.post(
+        "https://api.properform.app/auth/resend-verification-code",
+        {
+          email,
+        },
+      );
+      Alert.alert("Erfolg", "Code wurde erneut gesendet");
+    } catch (err: any) {
+      Alert.alert(
+        "Fehler",
+        err.response?.data?.error || "Etwas ist schiefgelaufen.",
+      );
+    } finally {
+      setLoadingResend(false);
     }
   };
 
@@ -121,6 +143,16 @@ export default function VerifyEmailScreen() {
             <Text style={styles.hintText}>
               E-Mail nicht gefunden? Sieh auch im Spam-Ordner nach.
             </Text>
+
+            <TouchableOpacity
+              onPress={handleResend}
+              style={styles.resendWrap}
+              disabled={loadingResend}
+            >
+              <Text style={styles.resendText}>
+                {loadingResend ? "Wird gesendet..." : "Code erneut senden"}
+              </Text>
+            </TouchableOpacity>
 
             <View style={styles.navigation}>
               <TouchableOpacity style={styles.arrowButton} onPress={handleBack}>
@@ -215,5 +247,14 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginTop: 6,
     textAlign: "center",
+  },
+  resendWrap: {
+    alignSelf: "center",
+    marginTop: spacing.sm,
+  },
+  resendText: {
+    fontFamily: "Inter",
+    fontSize: 14,
+    color: colors.primaryBlue,
   },
 });

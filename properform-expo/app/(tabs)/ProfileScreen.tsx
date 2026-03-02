@@ -15,6 +15,7 @@ import { useRouter } from "expo-router";
 import { spacing } from "@/src/theme/spacing";
 import { colors } from "@/src/theme/colors";
 import axios from "axios";
+import * as SecureStore from "expo-secure-store";
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     const getUser = async () => {
-      const token = await AsyncStorage.getItem("auth_token");
+      const token = await SecureStore.getItemAsync("auth_token");
       const response = await axios.get("https://api.properform.app/users/me", {
         headers: { Authorization: `Bearer ${token}` },
       });

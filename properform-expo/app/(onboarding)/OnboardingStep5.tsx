@@ -22,6 +22,7 @@ import { colors } from "@/src/theme/colors";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
+import * as SecureStore from "expo-secure-store";
 
 export default function OnboardingStep5() {
   const router = useRouter();
@@ -121,8 +122,11 @@ export default function OnboardingStep5() {
 
       const { token, uid } = response.data;
 
-      await AsyncStorage.setItem("auth_token", token);
-      await AsyncStorage.setItem("user_id", String(uid));
+      // await AsyncStorage.setItem("auth_token", token);
+      // await AsyncStorage.setItem("user_id", String(uid));
+      await SecureStore.setItemAsync("auth_token", token);
+      await SecureStore.setItemAsync("user_id", String(uid));
+      await AsyncStorage.removeItem("onboarding_password");
 
       router.push("../(onboarding)/VerifyEmailScreen");
     } catch (error: any) {

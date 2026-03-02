@@ -7,6 +7,7 @@ import { colors } from "@/src/theme/colors";
 import SecondaryButton from "@/src/components/secondaryButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import * as SecureStore from "expo-secure-store";
 
 export default function HomeScreen() {
   const [user, setUser] = React.useState<{
@@ -16,7 +17,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     const getUserData = async () => {
-      const token = await AsyncStorage.getItem("auth_token");
+      const token = await SecureStore.getItemAsync("auth_token");
       const response = await axios.get("https://api.properform.app/users/me", {
         headers: { Authorization: `Bearer ${token}` },
       });

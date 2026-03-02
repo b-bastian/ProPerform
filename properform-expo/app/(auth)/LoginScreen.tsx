@@ -21,6 +21,7 @@ import { spacing } from "@/src/theme/spacing";
 import { colors } from "@/src/theme/colors";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import ForgotPasswordModal from "@/src/components/modals/ForgotPasswordModal";
+import * as SecureStore from "expo-secure-store";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -50,8 +51,11 @@ export default function LoginScreen() {
       const { token, uid } = response.data;
       console.log("Login success");
 
-      await AsyncStorage.setItem("auth_token", token);
-      await AsyncStorage.setItem("user_id", String(uid));
+      // await AsyncStorage.setItem("auth_token", token);
+      // await AsyncStorage.setItem("user_id", String(uid));
+      // ^ switch to secure store for sensitive data
+      await SecureStore.setItemAsync("auth_token", token);
+      await SecureStore.setItemAsync("user_id", String(uid));
 
       if (stayLoggedIn) await AsyncStorage.setItem("stay_logged_in", "true");
 

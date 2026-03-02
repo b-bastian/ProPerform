@@ -20,11 +20,10 @@ router.post(
   createRateLimiter({ windowMs: 15 * 60 * 1000, max: 5 }),
   async (req, res) => {
     const origin = req.headers.origin;
-    const docsKey = req.headers["x-docs-key"];
 
     let email_verified = 0;
 
-    if (allowedOrigins.includes(origin) && docsKey === process.env.DOCS_KEY) {
+    if (allowedOrigins.includes(origin)) {
       email_verified = 1;
     }
 

@@ -51,7 +51,7 @@ import RequestBodys from "./pages/docs/request-bodys";
 import ErrorResponses from "./pages/docs/error-responses";
 import TestUsers from "./pages/docs/test-users";
 
-import Settings from "./pages/settings";
+import Settings from "./pages/Settings";
 
 export const apiRoutes = [
   // docs

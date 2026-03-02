@@ -38,6 +38,8 @@ export default function OnboardingStep5() {
     primaryGoal: "",
   });
 
+  const [loading, setLoading] = React.useState(false);
+
   const submitOnboarding = async () => {
     const newErrors = {
       fitnessLevel: "",
@@ -65,6 +67,8 @@ export default function OnboardingStep5() {
     if (hasError) return;
 
     try {
+      setLoading(true);
+
       await AsyncStorage.multiSet([
         ["onboarding_fitnessLevel", fitnessLevel],
         ["onboarding_trainingFrequency", trainingFrequency.toString()],
@@ -134,6 +138,8 @@ export default function OnboardingStep5() {
           "Keine Antwort vom Server. Bitte überprüfe deine Internetverbindung.",
         );
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -228,8 +234,9 @@ export default function OnboardingStep5() {
               <ProgressDots total={4} current={4} />
 
               <TouchableOpacity
-                style={styles.arrowButton}
+                style={[styles.arrowButton, loading && { opacity: 0.5 }]}
                 onPress={submitOnboarding}
+                disabled={loading}
               >
                 <Icon name="arrow-forward" size={24} color={colors.white} />
               </TouchableOpacity>

@@ -10,12 +10,30 @@ export default function App() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const verifyToken = async () => {
+      const token = localStorage.getItem("token");
 
-    if (!token) {
-      navigate("/login", { replace: true });
-    }
-  }, [navigate]);
+      if (!token) {
+        if (pathname !== "/login") navigate("/login", { replace: true });
+        return;
+      }
+
+      try {
+        const res = await fetch("https://api.properform.app/auth/verify", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.status === 401) {
+          localStorage.removeItem("token");
+          if (pathname !== "/login") navigate("/login", { replace: true });
+        }
+      } catch (err) {
+        console.error("Error verifying token:", err);
+      }
+    };
+
+    verifyToken();
+  }, [pathname, navigate]);
 
   return (
     <div className="flex h-screen w-screen bg-gray-900 text-white overflow-x-hidden">

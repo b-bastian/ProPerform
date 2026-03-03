@@ -27,7 +27,7 @@ type ButtonState = "idle" | "loading" | "success" | "error";
 export default function SystemStatus() {
   const [health, setHealth] = useState<Health | null>(null);
   const [buttonState, setButtonState] = useState<ButtonState>("idle");
-  const [err, setErr] = useState<string | null>(null);
+  const [, setErr] = useState<string | null>(null);
   const stateTimeoutRef = useRef<number | null>(null);
 
   const fetchHealth = useCallback(async () => {

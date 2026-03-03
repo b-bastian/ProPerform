@@ -31,7 +31,7 @@ import GetHealthcheck from "./pages/api-reference/system/get-healthcheck";
 import DeleteTrainersTid from "./pages/api-reference/trainers/delete-trainer-tid";
 import ConnectTrainer from "./pages/api-reference/trainers/get-trainer-connect";
 import DisconnectTrainer from "./pages/api-reference/trainers/get-trainer-disconnect";
-import GetTrainerAthletes from "./pages/api-reference/trainers/get-trainers-:tid-athletes";
+import GetTrainerAthletes from "./pages/api-reference/trainers/get-trainers-tid-athletes";
 import GetMyTrainer from "./pages/api-reference/trainers/get-trainer-me";
 import RegenerateTrainerCode from "./pages/api-reference/trainers/patch-trainers-regen-code";
 import CheckInviteCode from "./pages/api-reference/trainers/post-trainer-check-inv-code";

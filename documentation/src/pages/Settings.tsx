@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function Settings() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
@@ -7,15 +7,36 @@ export default function Settings() {
   });
 
   const [isClicking, setIsClicking] = useState(false);
+  const isSettingsInitiated = useRef(false);
 
   useEffect(() => {
     localStorage.setItem("sidebarCollapsed", JSON.stringify(sidebarCollapsed));
+    isSettingsInitiated.current = true;
     window.dispatchEvent(
       new CustomEvent("sidebarStateChanged", {
         detail: { collapsed: sidebarCollapsed },
       }),
     );
   }, [sidebarCollapsed]);
+
+  useEffect(() => {
+    const handleSidebarStateChange = (event: Event) => {
+      if (isSettingsInitiated.current) {
+        isSettingsInitiated.current = false;
+        return;
+      }
+      const customEvent = event as CustomEvent;
+      setSidebarCollapsed(customEvent.detail.collapsed);
+    };
+
+    window.addEventListener("sidebarStateChanged", handleSidebarStateChange);
+    return () => {
+      window.removeEventListener(
+        "sidebarStateChanged",
+        handleSidebarStateChange,
+      );
+    };
+  }, []);
 
   const handleToggleClick = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsClicking(true);
@@ -24,7 +45,7 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen bg-gray-950 p-8">
       <style>{`
         @keyframes togglePulse {
           0% { transform: scale(1); }

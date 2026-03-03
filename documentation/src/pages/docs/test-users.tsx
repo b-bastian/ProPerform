@@ -6,6 +6,17 @@ import Button from "../../components/Button";
 import { useEffect, useRef, useState } from "react";
 
 export default function TestUsers() {
+  const BASE_URL = "https://api.properform.app";
+
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert(
+      "No token found. Please login first to access test user registration.",
+    );
+    return;
+  }
+
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [requestState, setRequestState] = useState<
@@ -45,7 +56,7 @@ export default function TestUsers() {
     setRequestState("loading");
 
     try {
-      const result = await fetch("https://api.properform.app/auth/register", {
+      const result = await fetch(`${BASE_URL}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -67,6 +78,23 @@ export default function TestUsers() {
 
       if (result.ok) {
         const data = await result.json();
+
+        const saveResult = await fetch(`${BASE_URL}/system/save-log`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            filename: "registered_test_users",
+            message: data.uid.toString(),
+          }),
+        });
+
+        if (!saveResult.ok) {
+          console.error("Failed to save test user:", await saveResult.text());
+          alert("Test user registered but failed to save logs.");
+        }
 
         setSuccessMessage(
           `Test user registered successfully with email: ${registerUser.email}, Id: ${data.uid}`,

@@ -31,14 +31,8 @@ export const navLinks: NavLink[] = [
     icon: <BookOpen size={20} />,
     label: "Dokumentation",
     subLinks: [
-      {
-        label: "Allgemein",
-        subLinks: [
-          { to: "/docs/getting-started", label: "Getting Started" },
-          { to: "/docs/installation", label: "Installation" },
-          { to: "/docs/configuration", label: "Konfiguration" },
-        ],
-      },
+      { to: "/docs/test-users", label: "Test Users" },
+      { to: "/docs/error-responses", label: "Error Responses" },
     ],
   },
 
@@ -56,17 +50,22 @@ export const navLinks: NavLink[] = [
             to: "/api/auth/admin/register",
             label: "POST /auth/admin/register",
           },
-          {
-            to: "/api/auth/admin/login",
-            label: "POST /auth/admin/login",
-          },
-          {
-            to: "/api/auth/trainers/login",
-            label: "POST /auth/trainers/login",
-          },
+          { to: "/api/auth/admin/login", label: "POST /auth/admin/login" },
           {
             to: "/api/auth/check-verification-code",
             label: "POST /auth/check-verification-code",
+          },
+          {
+            to: "/api/auth/resend-verification-code",
+            label: "POST /auth/resend-verification-code",
+          },
+          {
+            to: "/api/auth/reset-password",
+            label: "POST /auth/reset-password",
+          },
+          {
+            to: "/api/auth/reset-password/:token",
+            label: "POST /auth/reset-password/:token",
           },
         ],
       },
@@ -74,32 +73,85 @@ export const navLinks: NavLink[] = [
         label: "Users",
         subLinks: [
           { to: "/api/users", label: "GET /users" },
-          {
-            to: "/api/users/deleteUser/:uid",
-            label: "DELETE /users/deleteUser/:uid",
-          },
+          { to: "/api/users/:role", label: "GET /users/:role" },
           { to: "/api/users/me", label: "GET /users/me" },
+          { to: "/api/users/stats", label: "GET /users/stats" },
+          { to: "/api/users/delete/:uid", label: "DELETE /users/:uid" },
+        ],
+      },
+      {
+        label: "Weight Logs",
+        subLinks: [
+          { to: "/api/logs/weight", label: "POST /logs/weight" },
+          { to: "/api/logs/weight/all", label: "GET /logs/weight" },
+        ],
+      },
+      {
+        label: "Exercises",
+        subLinks: [
+          { to: "/api/exercises", label: "GET /exercises" },
+          {
+            to: "/api/admin/exercises/create",
+            label: "POST /admin/exercises/create",
+          },
+          {
+            to: "/api/admin/exercises/:eid",
+            label: "GET /admin/exercises/:eid",
+          },
+          {
+            to: "/api/admin/exercises/:eid/delete",
+            label: "DELETE /admin/exercises/:eid",
+          },
+          {
+            to: "/api/admin/exercises/:eid/update",
+            label: "PUT /admin/exercises/:eid",
+          },
         ],
       },
       {
         label: "Trainers",
         subLinks: [
+          { to: "/api/trainers/:tid", label: "DELETE /trainers/:tid" },
           {
-            to: "/api/trainers/createTrainer",
-            label: "POST /trainers/createTrainer",
+            to: "/api/trainers/:tid/regenerate-code",
+            label: "PATCH /trainers/:tid/regenerate-code",
           },
           {
-            to: "/api/trainers/verify-code",
-            label: "POST /trainers/verify-code",
+            to: "/api/trainers/check-invite-code",
+            label: "POST /trainers/check-invite-code",
           },
           {
-            to: "/api/trainers/link-athlete",
-            label: "POST /trainers/link-athlete",
+            to: "/api/athletes/trainer/connect",
+            label: "GET /athletes/trainer/connect",
           },
           {
-            to: "/api/trainers/:id/regenerateCode",
-            label: "PATCH /trainers/:id/regenerateCode",
+            to: "/api/athletes/trainer/disconnect",
+            label: "GET /athletes/trainer/disconnect",
           },
+          {
+            to: "/api/trainers/:tid/athletes",
+            label: "GET /trainers/:tid/athletes",
+          },
+          {
+            to: "/api/athletes/trainer/me",
+            label: "GET /athletes/trainer/me",
+          },
+        ],
+      },
+      {
+        label: "Media",
+        subLinks: [
+          { to: "/api/media", label: "POST /media" },
+          { to: "/api/media/list", label: "GET /media" },
+          { to: "/api/media/:mid", label: "DELETE /media/:mid" },
+          { to: "/api/media/:mid/update", label: "PUT /media/:mid" },
+        ],
+      },
+      {
+        label: "System",
+        subLinks: [
+          { to: "/api/system/health", label: "GET /system/health" },
+          { to: "/api/system/healthcheck", label: "GET /system/healthcheck" },
         ],
       },
     ],

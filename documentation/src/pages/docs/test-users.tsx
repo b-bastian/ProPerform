@@ -8,15 +8,6 @@ import { useEffect, useRef, useState } from "react";
 export default function TestUsers() {
   const BASE_URL = "https://api.properform.app";
 
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    alert(
-      "No token found. Please login first to access test user registration.",
-    );
-    return;
-  }
-
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [requestState, setRequestState] = useState<
@@ -83,7 +74,6 @@ export default function TestUsers() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             filename: "registered_test_users",

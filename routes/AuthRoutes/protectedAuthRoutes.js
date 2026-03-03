@@ -4,7 +4,7 @@ import { requireAuth } from "../../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/verify-token", requireAuth, async (req, res) => {
+router.get("/verify-token", requireAuth, async (req, res) => {
   try {
     res.status(200).json({ valid: true, uid: req.user.uid });
   } catch (error) {

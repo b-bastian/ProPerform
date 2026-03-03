@@ -128,7 +128,7 @@ export default function OnboardingStep5() {
       await SecureStore.setItemAsync("user_id", String(uid));
       await AsyncStorage.removeItem("onboarding_password");
 
-      router.push("../(onboarding)/VerifyEmailScreen");
+      router.push("../(onboarding)/OnboardingTrainingModeScreen");
     } catch (error: any) {
       if (error.response) {
         console.log("STATUS:", error.response.status);
@@ -235,7 +235,7 @@ export default function OnboardingStep5() {
                 <Icon name="arrow-back" size={24} color={colors.white} />
               </TouchableOpacity>
 
-              <ProgressDots total={4} current={4} />
+              <ProgressDots total={6} current={4} />
 
               <TouchableOpacity
                 style={[styles.arrowButton, loading && { opacity: 0.5 }]}

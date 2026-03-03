@@ -229,24 +229,23 @@ export default function OnboardingStep5() {
                 <Text style={styles.errorText}>{errors.primaryGoal}</Text>
               ) : null}
             </View>
-
-            <View style={styles.navigation}>
-              <TouchableOpacity style={styles.arrowButton} onPress={handleBack}>
-                <Icon name="arrow-back" size={24} color={colors.white} />
-              </TouchableOpacity>
-
-              <ProgressDots total={6} current={4} />
-
-              <TouchableOpacity
-                style={[styles.arrowButton, loading && { opacity: 0.5 }]}
-                onPress={submitOnboarding}
-                disabled={loading}
-              >
-                <Icon name="arrow-forward" size={24} color={colors.white} />
-              </TouchableOpacity>
-            </View>
           </ScrollView>
         </TouchableWithoutFeedback>
+        <View style={styles.navigation}>
+          <TouchableOpacity style={styles.arrowButton} onPress={handleBack}>
+            <Icon name="arrow-back" size={24} color={colors.white} />
+          </TouchableOpacity>
+
+          <ProgressDots total={6} current={4} />
+
+          <TouchableOpacity
+            style={[styles.arrowButton, loading && { opacity: 0.5 }]}
+            onPress={submitOnboarding}
+            disabled={loading}
+          >
+            <Icon name="arrow-forward" size={24} color={colors.white} />
+          </TouchableOpacity>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -290,7 +289,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingBottom: spacing.lg,
-    marginTop: "auto",
     paddingTop: spacing.lg,
   },
   arrowButton: {

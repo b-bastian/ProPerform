@@ -3,63 +3,19 @@ import cors from "cors";
 import dotenv from "dotenv";
 import listEndpoints from "express-list-endpoints";
 import { mountRoutes, routeMounts } from "./routes/index.js";
+import {
+  box,
+  COLORS,
+  methodLabel,
+  printBootSequence,
+  printRoutesHeader,
+} from "./helpers/terminalStyle.js";
 
 import { requestLogger } from "./logger.js";
 
 dotenv.config();
 
 const routeMap = new Map();
-
-const COLORS = {
-  reset: "\x1b[0m",
-  cyan: "\x1b[36m",
-  green: "\x1b[32m",
-  yellow: "\x1b[33m",
-  gray: "\x1b[90m",
-  white: "\x1b[37m",
-  blue: "\x1b[34m",
-  magenta: "\x1b[35m",
-};
-
-const BOX_COLOR = COLORS.cyan;
-const TEXT_COLOR = COLORS.white;
-const MUTED_COLOR = COLORS.gray;
-const TITLE_COLOR = COLORS.green;
-const METHOD_COLOR = COLORS.magenta;
-
-const BOX_WIDTH = 80;
-
-function stripAnsi(str) {
-  return str.replace(/\x1b\[[0-9;]*m/g, "");
-}
-
-function stripWide(str) {
-  return stripAnsi(str).replace(/[^\x00-\x7F]/g, "");
-}
-
-function line(text = "") {
-  const visible = stripWide(text);
-  const padded = visible.padEnd(BOX_WIDTH - 2, " ");
-  return (
-    BOX_COLOR +
-    "║" +
-    TEXT_COLOR +
-    " " +
-    padded +
-    " " +
-    BOX_COLOR +
-    "║" +
-    COLORS.reset
-  );
-}
-
-function box(lines = []) {
-  console.log(BOX_COLOR + "╔" + "═".repeat(BOX_WIDTH) + "╗" + COLORS.reset);
-  console.log(line());
-  lines.forEach((l) => console.log(line(l)));
-  console.log(line());
-  console.log(BOX_COLOR + "╚" + "═".repeat(BOX_WIDTH) + "╝" + COLORS.reset);
-}
 
 function getRoutesFromMounts(mounts) {
   const routes = [];
@@ -168,25 +124,18 @@ app.listen(PORT, "0.0.0.0", () => {
   console.clear();
 
   box([
-    `${TITLE_COLOR}ProPerform API${TEXT_COLOR}`,
+    `${COLORS.green}ProPerform API${COLORS.white}`,
     "",
     `Version:      1.0.0`,
     `Environment:  ${process.env.NODE_ENV || "development"}`,
   ]);
 
-  console.log(`\n${MUTED_COLOR}⏳ Loading modules...${COLORS.reset}`);
-  console.log(`${COLORS.green}✔ Express loaded${COLORS.reset}`);
-  console.log(`${COLORS.green}✔ CORS configured${COLORS.reset}`);
-  console.log(`${COLORS.green}✔ Database configured${COLORS.reset}`);
-  console.log(
-    `${COLORS.green}✔ Authentication middleware loaded${COLORS.reset}`,
-  );
-  console.log(`${COLORS.green}✔ Routes mounted${COLORS.reset}\n`);
+  printBootSequence();
 
   console.log(`${COLORS.yellow}✨ Server started ✨${COLORS.reset}\n`);
 
   box([
-    `${TITLE_COLOR}ProPerform API is ONLINE${TEXT_COLOR}`,
+    `${COLORS.green}ProPerform API is ONLINE${COLORS.white}`,
     "",
     `Local:   http://localhost:${PORT}`,
     `Network: http://0.0.0.0:${PORT}`,
@@ -195,7 +144,7 @@ app.listen(PORT, "0.0.0.0", () => {
     "Ready to handle requests",
   ]);
 
-  console.log(`\n${COLORS.blue}📋 REGISTERED ROUTES:${COLORS.reset}\n`);
+  printRoutesHeader();
 
   const allRoutes = getRoutesFromMounts(routeMounts);
 
@@ -227,10 +176,7 @@ app.listen(PORT, "0.0.0.0", () => {
   if (publicRoutes.length > 0) {
     console.log(`${COLORS.green}🔓 PUBLIC ROUTES:${COLORS.reset}`);
     publicRoutes.forEach((route) => {
-      const methodFormatted = route.method.padEnd(6);
-      console.log(
-        `  ${METHOD_COLOR}${methodFormatted}${COLORS.reset} ${route.path}`,
-      );
+      console.log(`  ${methodLabel(route.method)} ${route.path}`);
     });
     console.log();
   }
@@ -240,15 +186,12 @@ app.listen(PORT, "0.0.0.0", () => {
       `${COLORS.magenta}🔐 PROTECTED ROUTES (require auth):${COLORS.reset}`,
     );
     protectedRoutes.forEach((route) => {
-      const methodFormatted = route.method.padEnd(6);
-      console.log(
-        `  ${METHOD_COLOR}${methodFormatted}${COLORS.reset} ${route.path}`,
-      );
+      console.log(`  ${methodLabel(route.method)} ${route.path}`);
     });
     console.log();
   }
 
   console.log(
-    `${MUTED_COLOR}Total: ${uniqueRoutes.length} routes registered${COLORS.reset}\n`,
+    `${COLORS.gray}Total: ${uniqueRoutes.length} routes registered${COLORS.reset}\n`,
   );
 });

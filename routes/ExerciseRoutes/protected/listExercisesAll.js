@@ -9,6 +9,8 @@ import { createRateLimiter } from "../../../middleware/rate.js";
 
 const router = express.Router();
 
+const allowedFilters = ["gym", "basketball"];
+
 router.get(
   "/",
   requireAuth,
@@ -17,13 +19,34 @@ router.get(
   async (req, res) => {
     try {
       const { scope } = req.query;
+      let { filter } = req.query;
+
+      let sportId = null;
+
+      if (filter) {
+        if (!allowedFilters.includes(filter)) {
+          return res.status(400).json({ error: "invalid filter" });
+        }
+
+        if (filter === "gym") sportId = 1;
+        if (filter === "basketball") sportId = 2;
+      }
 
       const page = Math.max(1, parseInt(req.query.page) || 1);
       const limit = Math.max(1, Math.min(100, parseInt(req.query.limit) || 10));
       const offset = (page - 1) * limit;
 
+      let where = "";
+      let params = [];
+
+      if (sportId) {
+        where = "WHERE e.sid = ?";
+        params.push(sportId);
+      }
+
       const [countResult] = await db.query(
-        `SELECT COUNT(*) as total FROM exercises`,
+        `SELECT COUNT(*) as total FROM exercises e ${where}`,
+        params,
       );
 
       const total = countResult[0].total;
@@ -31,7 +54,7 @@ router.get(
 
       let query;
 
-      // nur admin
+      // nur owner
       if (scope === "admin") {
         if (req.user.role !== "owner") {
           return res.status(403).json({ error: "forbidden" });
@@ -39,13 +62,16 @@ router.get(
 
         query = `
           SELECT eid, name, created_by
-          FROM exercises
+          FROM exercises e
+          ${where}
           ORDER BY created_at DESC
           LIMIT ? OFFSET ?
         `;
+
+        params.push(limit, offset);
       }
 
-      // admin & user
+      // user + owner
       else {
         query = `
           SELECT
@@ -54,6 +80,7 @@ router.get(
             e.description,
             e.instructions,
             e.sid,
+            s.name AS sport,
             e.dlid,
             e.duration_minutes,
             e.equipment_needed,
@@ -63,14 +90,18 @@ router.get(
             v.url AS video_url,
             t.url AS thumbnail_url
           FROM exercises e
+          LEFT JOIN sports s ON e.sid = s.sid
           LEFT JOIN media v ON e.video_mid = v.mid
           LEFT JOIN media t ON e.thumbnail_mid = t.mid
+          ${where}
           ORDER BY e.created_at DESC
           LIMIT ? OFFSET ?
         `;
+
+        params.push(limit, offset);
       }
 
-      const [rows] = await db.query(query, [limit, offset]);
+      const [rows] = await db.query(query, params);
 
       return res.json({
         count: rows.length,

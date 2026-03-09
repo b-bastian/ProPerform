@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import ErrorResponses from "./pages/docs/error-responses";
 import NotFound from "./pages/404";
 import { apiRoutes } from "./routes.config";
+import Login from "./pages/login";
 
 export default function AppRoutes() {
   return (
@@ -11,6 +12,8 @@ export default function AppRoutes() {
       <Route path="/" element={<App />}>
         <Route index element={<Home />} />
         <Route path="docs/error-responses" element={<ErrorResponses />} />
+
+        <Route path="login" element={<Login />} />
 
         {apiRoutes.map(({ path, element }) => (
           <Route key={path} path={path} element={element} />

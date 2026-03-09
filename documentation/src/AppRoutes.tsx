@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import ErrorResponses from "./pages/docs/error-responses";
 import NotFound from "./pages/404";
 import { apiRoutes } from "./routes.config";
-import Login from "./pages/login";
+import Login from "./pages/Login";
 
 export default function AppRoutes() {
   return (

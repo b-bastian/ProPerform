@@ -26,6 +26,10 @@ export default function DevMenu() {
             title="ProfileScreen"
             onPress={() => router.push("/ProfileScreen")}
           />
+          <Button
+            title="ExerciseScreen"
+            onPress={() => router.push("/ExerciseScreen")}
+          />
         </View>
       </View>
 

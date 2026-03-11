@@ -197,7 +197,8 @@ router.post(
       }
 
       return res.status(500).json({
-        error: "registration failed.",
+        message: "registration failed.",
+        error: error.message,
       });
     }
   },
@@ -275,9 +276,7 @@ router.post("/login", async (req, res) => {
       uid: user.uid,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "internal server error.", error: error.message });
+    res.status(500).json({ message: "login failed.", error: error.message });
   }
 });
 

@@ -13,6 +13,11 @@ import { colors } from "@/src/theme/colors";
 import { typography } from "@/src/theme/typography";
 import { spacing } from "@/src/theme/spacing";
 
+type MuscleGroup = {
+  mgid: number;
+  name: string;
+  is_primary: number;
+};
 type Exercise = {
   eid: number;
   name: string;
@@ -21,7 +26,7 @@ type Exercise = {
   equipment_needed: string;
   thumbnail_url?: string;
   video_url?: string;
-  muscleGroup: string;
+  muscle_groups?: MuscleGroup[];
   sid: number;
   dlid: number;
 };
@@ -102,7 +107,12 @@ export default function ExerciseDetailModal({
                   size={14}
                   color={colors.primaryBlue}
                 />
-                <Text style={styles.badgeText}>{exercise.muscleGroup}</Text>
+                <Text style={styles.badgeText}>
+                  {" "}
+                  {(exercise.muscle_groups ?? []).find(
+                    (mg) => mg.is_primary === 1,
+                  )?.name ?? ""}
+                </Text>
               </View>
 
               {/* difficulty */}

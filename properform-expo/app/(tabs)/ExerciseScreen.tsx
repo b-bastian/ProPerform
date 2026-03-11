@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
@@ -14,6 +15,14 @@ import { colors } from "@/src/theme/colors";
 import { typography } from "@/src/theme/typography";
 import { spacing } from "@/src/theme/spacing";
 import ExerciseDetailModal from "@/src/components/modals/ExerciseDetailModal";
+import * as SecureStore from "expo-secure-store";
+import axios from "axios";
+
+type MuscleGroup = {
+  mgid: number;
+  name: string;
+  is_primary: number;
+};
 
 type Exercise = {
   eid: number;
@@ -23,7 +32,7 @@ type Exercise = {
   equipment_needed: string;
   thumbnail_url?: string;
   video_url?: string;
-  muscleGroup: string;
+  muscle_groups: MuscleGroup[];
   sid: number;
   dlid: number;
 };
@@ -36,95 +45,26 @@ const getSportName = (sid: number) => {
   return sports[sid] ?? "Unbekannt"; // falls unbekannt
 };
 
-const categories = ["Gym", "Basketball"];
+const getDifficultyLabel = (dlid: number) => {
+  const levels: Record<number, string> = {
+    1: "Beginner",
+    2: "Intermediate",
+    3: "Advanced",
+    4: "Expert",
+  };
+  return levels[dlid] ?? "Unbekannt";
+};
 
-// dummy daten, TODO: gerpüfte Erklärungen benutzen + API
-const exercises: Exercise[] = [
-  {
-    eid: 1,
-    name: "Bankdrücken",
-    muscleGroup: "Brust",
-    sid: 1,
-    dlid: 2,
-    description:
-      "Bankdrücken ist eine grundlegende Kraftübung für die Brustmuskulatur. Du legst dich auf eine Bank, greifst die Hantelstange schulterbreit und drückst das Gewicht kontrolliert nach oben und wieder herunter.",
-    instructions:
-      "Lege dich auf die Bank, greife die Stange schulterbreit, senke sie zur Brust und drücke kontrolliert nach oben.",
-    equipment_needed: "Langhantel, Bank",
-  },
-  {
-    eid: 2,
-    name: "Kniebeugen",
-    muscleGroup: "Beine",
-    sid: 1,
-    dlid: 1,
-    description:
-      "Kniebeugen trainieren die gesamte Beinmuskulatur. Stelle deine Füße schulterbreit auseinander und senke deinen Körper kontrolliert ab.",
-    instructions:
-      "Füße schulterbreit, Knie beugen, Oberschenkel parallel zum Boden, Rücken gerade halten.",
-    equipment_needed: "Langhantel, Squat Rack",
-  },
-  {
-    eid: 3,
-    name: "Klimmzüge",
-    muscleGroup: "Rücken",
-    sid: 1,
-    dlid: 3,
-    description:
-      "Klimmzüge sind eine effektive Übung für den Rücken. Greife die Stange breiter als schulterbreit und ziehe dich nach oben.",
-    instructions:
-      "Stange breiter als schulterbreit greifen, Körper nach oben ziehen bis das Kinn über der Stange ist.",
-    equipment_needed: "Klimmzugstange",
-  },
-  {
-    eid: 4,
-    name: "Kreuzheben",
-    muscleGroup: "Ganzkörper",
-    sid: 1,
-    dlid: 3,
-    description:
-      "Kreuzheben ist eine der effektivsten Ganzkörperübungen. Du hebst eine Langhantel vom Boden auf.",
-    instructions:
-      "Füße hüftbreit, Rücken gerade, Hüfte strecken und Stange kontrolliert vom Boden heben.",
-    equipment_needed: "Langhantel",
-  },
-  {
-    eid: 5,
-    name: "Dribbling",
-    muscleGroup: "Ballhandling",
-    sid: 2,
-    dlid: 1,
-    description:
-      "Dribbling ist die grundlegende Technik im Basketball. Tippe den Ball rhythmisch mit den Fingerkuppen auf den Boden.",
-    instructions:
-      "Ball mit Fingerkuppen tippen, Blick nach vorne, Körper leicht gebeugt.",
-    equipment_needed: "Basketball",
-  },
-  {
-    eid: 6,
-    name: "Crossover Drills",
-    muscleGroup: "Ballhandling",
-    sid: 2,
-    dlid: 2,
-    description:
-      "Crossover Drills verbessern deine Ballkontrolle. Wechsle den Ball schnell von einer Hand zur anderen.",
-    instructions:
-      "Ball schnell zwischen den Händen wechseln, tief bleiben, Blick nach vorne.",
-    equipment_needed: "Basketball",
-  },
-  {
-    eid: 7,
-    name: "Freiwürfe",
-    muscleGroup: "Wurftechnik",
-    sid: 2,
-    dlid: 1,
-    description:
-      "Freiwürfe erfordern Konzentration und eine konsistente Wurfroutine.",
-    instructions:
-      "An die Freiwurflinie stellen, Knie leicht beugen, Ball mit gleichmäßiger Bewegung in den Korb werfen.",
-    equipment_needed: "Basketball, Korb",
-  },
-];
+const categoryToFilter = (category: string): string => {
+  const map: Record<string, string> = {
+    Gym: "gym",
+    Basketball: "basketball",
+  };
+  return map[category] ?? "gym";
+};
+
+const categories = ["Gym", "Basketball"];
+const LIMIT = 10;
 
 export default function ExerciseScreen() {
   const [activeCategory, setActiveCategory] = useState("Gym");
@@ -135,16 +75,72 @@ export default function ExerciseScreen() {
   );
   const [modalVisible, setModalVisible] = useState(false);
 
-  const filtered = exercises.filter(
-    (ex) =>
-      getSportName(ex.sid) === activeCategory &&
-      ex.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchExercises = useCallback(
+    async (category: string, pageNum: number) => {
+      try {
+        setLoading(true);
+        setError(null);
+        const token = await SecureStore.getItemAsync("auth_token");
+
+        const response = await axios.get(
+          "https://api.properform.app/exercises",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            params: {
+              filter: categoryToFilter(category),
+              page: pageNum,
+              limit: LIMIT,
+            },
+          },
+        );
+
+        if (pageNum === 1) {
+          setExercises(response.data.exercises);
+        } else {
+          setExercises((prev) => [...prev, ...response.data.exercises]);
+        }
+        setTotalPages(response.data.totalPages);
+      } catch (err: any) {
+        setError(err.response?.data?.error || "Fehler beim Laden der Übungen.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
   );
+
+  useEffect(() => {
+    setPage(1);
+    fetchExercises(activeCategory, 1);
+  }, [activeCategory]);
+
+  const handleCategoryChange = (category: string) => {
+    setActiveCategory(category);
+    setSearchQuery("");
+  };
+
+  const handleLoadMore = () => {
+    if (page < totalPages && !loading) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchExercises(activeCategory, nextPage);
+    }
+  };
 
   const handleExercisePress = (exercise: Exercise) => {
     setSelectedExercise(exercise);
     setModalVisible(true);
   };
+
+  const filtered = exercises.filter((ex) =>
+    ex.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -181,7 +177,7 @@ export default function ExerciseScreen() {
               styles.categoryChip,
               activeCategory === c && styles.categoryChipActive,
             ]}
-            onPress={() => setActiveCategory(c)}
+            onPress={() => handleCategoryChange(c)}
           >
             <Text
               style={[
@@ -195,41 +191,86 @@ export default function ExerciseScreen() {
         ))}
       </View>
 
+      {error && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+          <TouchableOpacity onPress={() => fetchExercises(activeCategory, 1)}>
+            <Text style={styles.retryText}>Erneut versuchen</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.list}
       >
-        {filtered.map((exercise) => (
-          <TouchableOpacity
-            key={exercise.eid}
-            style={styles.exerciseCard}
-            onPress={() => handleExercisePress(exercise)}
-            activeOpacity={0.7}
-          >
-            <View style={styles.exerciseImage}>
-              {exercise.thumbnail_url ? (
-                <Image
-                  source={{ uri: exercise.thumbnail_url }}
-                  style={{ width: "100%", height: "100%", borderRadius: 12 }}
-                  resizeMode="cover"
-                />
-              ) : (
+        {loading && page === 1 ? (
+          <ActivityIndicator
+            size="large"
+            color={colors.primaryBlue}
+            style={styles.loader}
+          />
+        ) : (
+          <>
+            {filtered.map((exercise) => (
+              <TouchableOpacity
+                key={exercise.eid}
+                style={styles.exerciseCard}
+                onPress={() => handleExercisePress(exercise)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.exerciseImage}>
+                  {exercise.thumbnail_url ? (
+                    <Image
+                      source={{ uri: exercise.thumbnail_url }}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: 12,
+                      }}
+                      resizeMode="cover"
+                    />
+                  ) : (
+                    <Icon
+                      name="fitness-center"
+                      size={22}
+                      color={colors.primaryBlue}
+                    />
+                  )}
+                </View>
+
+                <View style={styles.exerciseInfo}>
+                  <Text style={styles.exerciseName}>{exercise.name}</Text>
+                  <Text style={styles.exerciseMuscle}>
+                    {(exercise.muscle_groups ?? []).find(
+                      (mg) => mg.is_primary === 1,
+                    )?.name ?? ""}
+                  </Text>
+                </View>
+
                 <Icon
-                  name="fitness-center"
+                  name="chevron-right"
                   size={22}
-                  color={colors.primaryBlue}
+                  color={colors.textSecondary}
                 />
-              )}
-            </View>
+              </TouchableOpacity>
+            ))}
 
-            <View style={styles.exerciseInfo}>
-              <Text style={styles.exerciseName}>{exercise.name}</Text>
-              <Text style={styles.exerciseMuscle}>{exercise.muscleGroup}</Text>
-            </View>
-
-            <Icon name="chevron-right" size={22} color={colors.textSecondary} />
-          </TouchableOpacity>
-        ))}
+            {page < totalPages && (
+              <TouchableOpacity
+                style={styles.loadMoreButton}
+                onPress={handleLoadMore}
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator size="small" color={colors.white} />
+                ) : (
+                  <Text style={styles.loadMoreText}>Mehr laden</Text>
+                )}
+              </TouchableOpacity>
+            )}
+          </>
+        )}
       </ScrollView>
 
       {selectedExercise && (
@@ -343,5 +384,37 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.textSecondary,
     marginTop: 2,
+  },
+  loader: {
+    marginTop: spacing.xl,
+  },
+  errorContainer: {
+    alignItems: "center",
+    marginBottom: spacing.md,
+    gap: spacing.xs,
+  },
+  errorText: {
+    ...typography.body,
+    color: "red",
+    fontSize: 14,
+  },
+  retryText: {
+    ...typography.body,
+    color: colors.primaryBlue,
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  loadMoreButton: {
+    backgroundColor: colors.primaryBlue,
+    borderRadius: 999,
+    paddingVertical: spacing.sm,
+    alignItems: "center",
+    marginTop: spacing.sm,
+  },
+  loadMoreText: {
+    ...typography.body,
+    color: colors.white,
+    fontWeight: "600",
+    fontSize: 14,
   },
 });

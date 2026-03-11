@@ -1,7 +1,7 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { db } from "../../../db";
+import { db } from "../../../db.js";
 
 dotenv.config();
 

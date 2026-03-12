@@ -23,7 +23,7 @@ router.post(
 
       const weight = Number(weight_kg);
       if (Number.isNaN(weight) || weight <= 0)
-        return res.status(400).json({ error: "invalid weight_kg" });
+        return res.status(400).json({ error: "invalid weight_kg." });
 
       await db.query(
         `
@@ -33,10 +33,10 @@ router.post(
         [uid, weight, notes ?? null],
       );
 
-      return res.status(201).json({ status: "ok", weight_kg: weight });
+      return res.status(201).json({ status: "ok.", weight_kg: weight });
     } catch (err) {
-      console.error("create weight log failed:", err);
-      return res.status(500).json({ error: "internal server error" });
+      console.error("create weight log failed.", err);
+      return res.status(500).json({ error: "internal server error." });
     }
   },
 );
@@ -68,8 +68,8 @@ router.get(
         logs: rows,
       });
     } catch (err) {
-      console.error("get weight logs failed:", err);
-      return res.status(500).json({ error: "internal server error" });
+      console.error("get weight logs failed.", err);
+      return res.status(500).json({ error: "internal server error." });
     }
   },
 );

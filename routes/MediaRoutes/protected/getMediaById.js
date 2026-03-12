@@ -27,15 +27,15 @@ router.get("/:mid", requireAuth, requireRole("owner"), async (req, res) => {
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({ error: "media not found" });
+      return res.status(404).json({ error: "media not found." });
     }
 
     const media = rows[0];
 
     return res.status(200).json({ filename: media.filename, type: media.type });
   } catch (err) {
-    console.error("fetch media failed:", err);
-    return res.status(500).json({ error: "internal server error" });
+    console.error("fetch media failed.", err);
+    return res.status(500).json({ error: "internal server error." });
   }
 });
 

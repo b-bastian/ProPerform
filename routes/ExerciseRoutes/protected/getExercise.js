@@ -15,7 +15,7 @@ router.get(
     try {
       const eid = Number(req.params.eid);
       if (!Number.isInteger(eid)) {
-        return res.status(400).json({ error: "invalid exercise id" });
+        return res.status(400).json({ error: "invalid exercise id." });
       }
 
       const [rows] = await db.query(
@@ -54,13 +54,13 @@ router.get(
       );
 
       if (rows.length === 0) {
-        return res.status(404).json({ error: "exercise not found" });
+        return res.status(404).json({ error: "exercise not found." });
       }
 
       return res.json(rows[0]);
     } catch (err) {
-      console.error("get exercise failed:", err);
-      return res.status(500).json({ error: "internal server error" });
+      console.error("get exercise failed.", err);
+      return res.status(500).json({ error: "internal server error." });
     }
   },
 );

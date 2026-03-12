@@ -7,7 +7,7 @@ export function requireAuth(req, res, next) {
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
-      error: "Nicht authentifiziert",
+      error: "not authenticated.",
     });
   }
 
@@ -18,7 +18,7 @@ export function requireAuth(req, res, next) {
     next();
   } catch {
     return res.status(401).json({
-      error: "Token ungültig oder abgelaufen",
+      error: "token is invalid or expired.",
     });
   }
 }

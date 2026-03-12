@@ -14,7 +14,7 @@ router.delete(
   async (req, res) => {
     const { uid } = req.params;
 
-    console.log(`Lösche Benutzer mit UID: ${uid}`);
+    console.log(`deleting user with uid ${uid}.`);
 
     try {
       const [result] = await db.execute("DELETE FROM users WHERE uid = ?", [
@@ -22,13 +22,13 @@ router.delete(
       ]);
 
       if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "Benutzer nicht gefunden" });
+        return res.status(404).json({ error: "user not found." });
       }
 
-      res.json({ message: "Benutzer erfolgreich gelöscht" });
+      res.json({ message: "user deleted successfully." });
     } catch (error) {
-      console.error("Fehler beim Löschen des Benutzers:", error);
-      res.status(500).json({ error: "Fehler beim Löschen des Benutzers" });
+      console.error("failed to delete user.", error);
+      res.status(500).json({ error: "failed to delete user." });
     }
   },
 );

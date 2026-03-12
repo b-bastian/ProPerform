@@ -21,7 +21,7 @@ router.post(
     try {
       if (!req.file) {
         return res.status(400).json({
-          message: "No file uploaded or unsupported file type.",
+          message: "no file uploaded or unsupported file type.",
         });
       }
 
@@ -54,7 +54,7 @@ router.post(
       );
 
       res.json({
-        message: "File uploaded successfully",
+        message: "file uploaded successfully.",
         filename: req.file.filename,
         url,
         mid: result.insertId,
@@ -66,12 +66,12 @@ router.post(
         err.message === "Error: File already exists"
       ) {
         return res.status(409).json({
-          message: "File already exists",
+          message: "file already exists.",
         });
       }
 
       res.status(500).json({
-        message: "Error uploading file",
+        message: "error uploading file.",
         error: err.message,
       });
     }

@@ -59,11 +59,11 @@ router.post("/reset-password", async (req, res) => {
         html: html,
       })
       .catch((err) => {
-        console.error("failed to send reset email:", err);
+        console.error("failed to send reset email.", err);
       });
 
     return res.status(200).json({
-      message: "If an account exists, a reset email has been sent.",
+      message: "if an account exists, a reset email has been sent.",
     });
   } catch (err) {
     return res.status(500).json({
@@ -83,7 +83,7 @@ router.post("/reset-password/:token", async (req, res) => {
 
   if (password.length < 8) {
     return res.status(400).json({
-      message: "Password must be at least 8 characters.",
+      message: "password must be at least 8 characters.",
     });
   }
 
@@ -121,7 +121,7 @@ router.post("/reset-password/:token", async (req, res) => {
     });
   } catch (err) {
     return res.status(500).json({
-      message: "failed to reset password",
+      message: "failed to reset password.",
       error: err.message,
     });
   }

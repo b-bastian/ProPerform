@@ -15,7 +15,7 @@ router.put(
     try {
       const eid = Number(req.params.eid);
       if (!Number.isInteger(eid)) {
-        return res.status(400).json({ error: "invalid exercise id" });
+        return res.status(400).json({ error: "invalid exercise id." });
       }
 
       const {
@@ -38,13 +38,13 @@ router.put(
         !dlid ||
         duration_minutes === undefined
       ) {
-        return res.status(400).json({ error: "missing required fields" });
+        return res.status(400).json({ error: "missing required fields." });
       }
 
       if (!Number.isInteger(duration_minutes) || duration_minutes < 0) {
         return res
           .status(400)
-          .json({ error: "duration_minutes must be a positive integer" });
+          .json({ error: "duration_minutes must be a positive integer." });
       }
 
       const [result] = await db.query(
@@ -77,13 +77,13 @@ router.put(
       );
 
       if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "exercise not found" });
+        return res.status(404).json({ error: "exercise not found." });
       }
 
-      return res.json({ status: "ok" });
+      return res.json({ status: "ok." });
     } catch (err) {
-      console.error("update exercise failed:", err);
-      return res.status(500).json({ error: "internal server error" });
+      console.error("update exercise failed.", err);
+      return res.status(500).json({ error: "internal server error." });
     }
   },
 );

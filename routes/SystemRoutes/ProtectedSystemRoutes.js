@@ -16,16 +16,16 @@ router.get(
   async (req, res) => {
     const start = Date.now();
 
-    // CPU
+    // cpu
     const cpus = os.cpus();
     const avgCpuLoad = os.loadavg()[0].toFixed(2);
 
-    // RAM
+    // ram
     const totalMem = os.totalmem();
     const freeMem = os.freemem();
     const usedMemPercent = (((totalMem - freeMem) / totalMem) * 100).toFixed(1);
 
-    // Disk – Linux only via /proc/statvfs fallback
+    // disk linux only via /proc/statvfs fallback
     let diskInfo = null;
     try {
       const { execSync } = await import("child_process");
@@ -46,7 +46,7 @@ router.get(
       diskInfo = "not supported";
     }
 
-    // DB-Status – nutzt bestehenden Pool
+    // db status using existing pool
     let dbStatus = "disconnected";
     try {
       await db.execute("SELECT 1");
@@ -55,7 +55,7 @@ router.get(
       dbStatus = "error";
     }
 
-    // Systeminformationen
+    // system information
     const sys = {
       platform: os.platform(),
       arch: os.arch(),
@@ -70,7 +70,7 @@ router.get(
       disk: diskInfo,
     };
 
-    // Node-Prozess
+    // node process
     const processInfo = {
       pid: process.pid,
       node_version: process.version,
@@ -119,7 +119,7 @@ router.post("/save-log", async (req, res) => {
     });
   }
 
-  // nur Buchstaben, Zahlen, -, _
+  // letters numbers dash and underscore only
   if (!/^[a-zA-Z0-9_-]+$/.test(filename)) {
     return res.status(400).json({
       success: false,

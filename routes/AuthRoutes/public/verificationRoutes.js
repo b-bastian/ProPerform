@@ -109,7 +109,7 @@ router.post("/resend-verification-code", async (req, res) => {
         html: html,
       })
       .catch((err) => {
-        console.error("failed to send verification email:", err);
+        console.error("failed to send verification email.", err);
       });
 
     return res.status(200).json({

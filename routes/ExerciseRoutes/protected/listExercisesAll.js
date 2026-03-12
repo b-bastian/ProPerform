@@ -25,7 +25,7 @@ router.get(
 
       if (filter) {
         if (!allowedFilters.includes(filter)) {
-          return res.status(400).json({ error: "invalid filter" });
+          return res.status(400).json({ error: "invalid filter." });
         }
 
         if (filter === "gym") sportId = 1;
@@ -54,10 +54,10 @@ router.get(
 
       let query;
 
-      // nur owner
+      // owner only
       if (scope === "admin") {
         if (req.user.role !== "owner") {
-          return res.status(403).json({ error: "forbidden" });
+          return res.status(403).json({ error: "forbidden." });
         }
 
         query = `
@@ -71,7 +71,7 @@ router.get(
         params.push(limit, offset);
       }
 
-      // user + owner
+      // user and owner
       else {
         query = `
           SELECT
@@ -122,8 +122,8 @@ router.get(
         exercises: rows,
       });
     } catch (err) {
-      console.error("fetch exercises failed:", err);
-      return res.status(500).json({ error: "internal server error" });
+      console.error("fetch exercises failed.", err);
+      return res.status(500).json({ error: "internal server error." });
     }
   },
 );

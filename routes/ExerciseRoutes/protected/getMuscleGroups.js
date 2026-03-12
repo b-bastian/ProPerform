@@ -24,8 +24,8 @@ router.get(
 
       return res.status(200).json({ count: rows.length, data: rows });
     } catch (err) {
-      console.error("create exercise failed: ", err);
-      return res.status(500).json({ error: "internal server error" });
+      console.error("create exercise failed.", err);
+      return res.status(500).json({ error: "internal server error." });
     }
   },
 );

@@ -77,7 +77,7 @@ mountRoutes(app);
 
 app.get("/", (req, res) => {
   res.json({
-    status: "API online",
+    status: "api online.",
     timestamp: new Date().toISOString(),
   });
 });
@@ -87,36 +87,36 @@ app.use((req, res) => {
 
   if (methods) {
     return res.status(405).json({
-      error: "Method not allowed",
-      message: `Diese Route existiert, aber nicht mit ${req.method}`,
+      error: "method not allowed.",
+      message: `this route exists, but not with ${req.method}.`,
       allowedMethods: Array.from(methods),
-      hint: `Vielleicht meintest du ${Array.from(methods).join(" oder ")}`,
+      hint: `maybe you meant ${Array.from(methods).join(" or ")}.`,
     });
   }
 
   res.status(404).json({
-    error: "Route not found",
-    message: `No API Route matches ${req.method} ${req.originalUrl}`,
+    error: "route not found.",
+    message: `no api route matches ${req.method} ${req.originalUrl}.`,
   });
 });
 
 app.use((err, req, res, next) => {
   if (err.message === "File already exists") {
     return res.status(409).json({
-      message: "File already exists",
+      message: "file already exists.",
     });
   }
 
   if (err.message === "Unsupported file type") {
     return res.status(400).json({
-      message: "Unsupported file type",
+      message: "unsupported file type.",
     });
   }
 
   console.error(err);
 
   res.status(500).json({
-    message: "Internal server error",
+    message: "internal server error.",
   });
 });
 
@@ -132,16 +132,16 @@ app.listen(PORT, "0.0.0.0", () => {
 
   printBootSequence();
 
-  console.log(`${COLORS.yellow}✨ Server started ✨${COLORS.reset}\n`);
+  console.log(`${COLORS.yellow}✨ server started.${COLORS.reset}\n`);
 
   box([
     `${COLORS.green}ProPerform API is ONLINE${COLORS.white}`,
     "",
-    `Local:   http://localhost:${PORT}`,
-    `Network: http://0.0.0.0:${PORT}`,
-    `Started: ${new Date().toLocaleString("de-AT")}`,
+    `local:   http://localhost:${PORT}`,
+    `network: http://0.0.0.0:${PORT}`,
+    `started: ${new Date().toLocaleString("de-AT")}`,
     "",
-    "Ready to handle requests",
+    "ready to handle requests.",
   ]);
 
   printRoutesHeader();
@@ -174,7 +174,7 @@ app.listen(PORT, "0.0.0.0", () => {
   });
 
   if (publicRoutes.length > 0) {
-    console.log(`${COLORS.green}🔓 PUBLIC ROUTES:${COLORS.reset}`);
+    console.log(`${COLORS.green}🔓 public routes.${COLORS.reset}`);
     publicRoutes.forEach((route) => {
       console.log(`  ${methodLabel(route.method)} ${route.path}`);
     });
@@ -183,7 +183,7 @@ app.listen(PORT, "0.0.0.0", () => {
 
   if (protectedRoutes.length > 0) {
     console.log(
-      `${COLORS.magenta}🔐 PROTECTED ROUTES (require auth):${COLORS.reset}`,
+      `${COLORS.magenta}🔐 protected routes (require auth).${COLORS.reset}`,
     );
     protectedRoutes.forEach((route) => {
       console.log(`  ${methodLabel(route.method)} ${route.path}`);
@@ -192,6 +192,6 @@ app.listen(PORT, "0.0.0.0", () => {
   }
 
   console.log(
-    `${COLORS.gray}Total: ${uniqueRoutes.length} routes registered${COLORS.reset}\n`,
+    `${COLORS.gray}total: ${uniqueRoutes.length} routes registered.${COLORS.reset}\n`,
   );
 });

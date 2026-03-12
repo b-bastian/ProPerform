@@ -30,7 +30,7 @@ router.post(
       !birthdate ||
       !password
     ) {
-      return res.status(400).json({ error: "Pflichtfelder fehlen" });
+      return res.status(400).json({ error: "required fields missing." });
     }
 
     try {
@@ -60,7 +60,7 @@ router.post(
       );
 
       res.status(201).json({
-        message: `Trainer ${firstname} ${lastname} erstellt.`,
+        message: `trainer ${firstname} ${lastname} created.`,
         trainerId: result.insertId,
         invite_code: trainerCode,
         token,
@@ -69,7 +69,7 @@ router.post(
       if (error.code === "ER_DUP_ENTRY") {
         return res
           .status(409)
-          .json({ error: "Ein Trainer mit dieser E-Mail existiert bereits." });
+          .json({ error: "a trainer with this email already exists." });
       }
 
       res.status(500).json({ error: error.message });
@@ -124,7 +124,7 @@ router.post("/trainers/login", async (req, res) => {
       role: "trainer",
     });
   } catch (error) {
-    console.error("trainer login error:", error);
+    console.error("trainer login error.", error);
     return res.status(500).json({
       error: "internal server error.",
     });

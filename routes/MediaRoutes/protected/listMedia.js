@@ -23,8 +23,8 @@ router.get("/", requireAuth, requireRole("owner"), async (req, res) => {
       media: rows,
     });
   } catch (err) {
-    console.error("fetch media failed:", err);
-    return res.status(500).json({ error: "internal server error" });
+    console.error("fetch media failed.", err);
+    return res.status(500).json({ error: "internal server error." });
   }
 });
 

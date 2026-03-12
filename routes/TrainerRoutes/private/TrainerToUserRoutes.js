@@ -39,8 +39,7 @@ router.post(
         },
       });
     } catch (error) {
-      console.error("check-invite-code error:", error);
-
+      console.error("check invite code error.", error);
       return res.status(500).json({
         success: false,
         message: "server error.",

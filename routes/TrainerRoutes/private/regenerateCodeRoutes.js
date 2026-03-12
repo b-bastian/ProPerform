@@ -23,11 +23,11 @@ router.patch(
         [newCode, tid],
       );
       if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "Trainer nicht gefunden." });
+        return res.status(404).json({ error: "trainer not found." });
       }
 
       res.json({
-        message: "Einladungscode erfolgreich aktualisiert.",
+        message: "invite code updated successfully.",
         newCode,
       });
     } catch (error) {

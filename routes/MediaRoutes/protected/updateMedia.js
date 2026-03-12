@@ -16,7 +16,7 @@ router.put("/:mid", requireAuth, requireRole("owner"), async (req, res) => {
     const { filename } = req.body;
 
     if (!filename || !filename.trim()) {
-      return res.status(400).json({ error: "filename is required" });
+      return res.status(400).json({ error: "filename is required." });
     }
 
     const cleanFilename = path
@@ -33,7 +33,7 @@ router.put("/:mid", requireAuth, requireRole("owner"), async (req, res) => {
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({ error: "media not found" });
+      return res.status(404).json({ error: "media not found." });
     }
 
     const media = rows[0];
@@ -72,12 +72,12 @@ router.put("/:mid", requireAuth, requireRole("owner"), async (req, res) => {
     );
 
     return res.json({
-      status: "ok",
-      message: `media with id ${mid} updated`,
+      status: "ok.",
+      message: `media with id ${mid} updated.`,
     });
   } catch (err) {
-    console.error("update media failed:", err);
-    return res.status(500).json({ error: "internal server error" });
+    console.error("update media failed.", err);
+    return res.status(500).json({ error: "internal server error." });
   }
 });
 

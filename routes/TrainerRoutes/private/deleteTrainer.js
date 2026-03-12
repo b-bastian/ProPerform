@@ -20,12 +20,10 @@ router.delete(
       ]);
 
       if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "Trainer nicht gefunden." });
+        return res.status(404).json({ error: "trainer not found." });
       }
 
-      res
-        .status(200)
-        .json({ message: `Trainer mit ID ${tid} wurde gelöscht.` });
+      res.status(200).json({ message: `trainer with id ${tid} deleted.` });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

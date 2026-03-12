@@ -32,7 +32,7 @@ router.post(
 
       res.status(201).json({ message: `admin ${firstname} registered.` });
     } catch (error) {
-      console.error("admin registration error:", error);
+      console.error("admin registration error.", error);
       res.status(500).json({ error: error.message });
     }
   },
@@ -95,7 +95,7 @@ router.post(
         refresh_token: refreshToken,
       });
     } catch (error) {
-      console.error("admin login error:", error);
+      console.error("admin login error.", error);
       res.status(500).json({ error: "server error: " + error.message });
     }
   },

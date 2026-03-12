@@ -21,8 +21,8 @@ export function createRateLimiter({
 
     handler: (req, res) => {
       res.status(429).json({
-        error: "RATE_LIMIT",
-        message: "Too many requests.",
+        error: "rate_limit.",
+        message: "too many requests.",
       });
     },
   });

@@ -34,7 +34,7 @@ router.get(
     } catch (err) {
       return res
         .status(500)
-        .json({ message: "server error", error: err.message });
+        .json({ message: "server error.", error: err.message });
     }
   },
 );

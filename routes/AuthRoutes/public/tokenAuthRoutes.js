@@ -11,7 +11,7 @@ router.post("/refresh", async (req, res) => {
   const { refresh_token } = req.body;
 
   if (!refresh_token) {
-    return res.status(401).json({ message: "refresh token is required. " });
+    return res.status(401).json({ message: "refresh token is required." });
   }
 
   try {
@@ -37,7 +37,7 @@ router.post("/refresh", async (req, res) => {
     if (!rows.length) {
       return res
         .status(403)
-        .json({ message: "invalid or expired refresh token" });
+        .json({ message: "invalid or expired refresh token." });
     }
 
     const [userRows] = await db.query(
@@ -49,7 +49,7 @@ router.post("/refresh", async (req, res) => {
 
     if (!userRows.length) {
       return res.status(404).json({
-        message: "user not found",
+        message: "user not found.",
       });
     }
 

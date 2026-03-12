@@ -38,24 +38,26 @@ router.post(
       if (duration_minutes !== undefined && duration_minutes < 0) {
         return res
           .status(400)
-          .json({ error: "duration_minutes must be positive" });
+          .json({ error: "duration_minutes must be positive." });
       }
 
       if (muscle_groups !== undefined) {
         if (!Array.isArray(muscle_groups)) {
           return res
             .status(400)
-            .json({ error: "muscle_groups must be an array" });
+            .json({ error: "muscle_groups must be an array." });
         }
 
         for (const mg of muscle_groups) {
           if (!mg.mgid) {
             return res
               .status(400)
-              .json({ error: "each muscle_group must have mgid" });
+              .json({ error: "each muscle_group must have mgid." });
           }
           if (mg.is_primary !== undefined && ![0, 1].includes(mg.is_primary)) {
-            return res.status(400).json({ error: "is_primary must be 0 or 1" });
+            return res
+              .status(400)
+              .json({ error: "is_primary must be 0 or 1." });
           }
         }
       }
@@ -108,10 +110,10 @@ router.post(
         );
       }
 
-      return res.status(201).json({ status: "ok", eid });
+      return res.status(201).json({ status: "ok.", eid });
     } catch (err) {
-      console.error("create exercise failed: ", err);
-      return res.status(500).json({ error: "internal server error" });
+      console.error("create exercise failed.", err);
+      return res.status(500).json({ error: "internal server error." });
     }
   },
 );

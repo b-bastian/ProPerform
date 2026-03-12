@@ -13,7 +13,7 @@ router.get(
     try {
       const userId = req.user.uid;
 
-      console.log("JWT USER:", req.user);
+      console.log("jwt user.", req.user);
 
       const [rows] = await db.execute(
         `SELECT
@@ -41,14 +41,14 @@ router.get(
       );
 
       if (rows.length === 0) {
-        return res.status(404).json({ error: "User nicht gefunden" });
+        return res.status(404).json({ error: "user not found." });
       }
 
       return res.status(200).json(rows[0]);
     } catch (err) {
       return res
         .status(500)
-        .json({ message: "Serverfehler", error: err.message });
+        .json({ message: "server error.", error: err.message });
     }
   },
 );

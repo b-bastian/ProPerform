@@ -15,7 +15,7 @@ router.delete(
     try {
       const eid = Number(req.params.eid);
       if (!Number.isInteger(eid)) {
-        return res.status(400).json({ error: "invalid exercise id" });
+        return res.status(400).json({ error: "invalid exercise id." });
       }
 
       const [result] = await db.query(
@@ -27,16 +27,16 @@ router.delete(
       );
 
       if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "exercise not found" });
+        return res.status(404).json({ error: "exercise not found." });
       }
 
       return res.json({
-        status: "ok",
-        message: `exercise with id ${eid} deleted`,
+        status: "ok.",
+        message: `exercise with id ${eid} deleted.`,
       });
     } catch (err) {
-      console.error("delete exercise failed: ", err);
-      return res.status(500).json({ error: "internal server error" });
+      console.error("delete exercise failed.", err);
+      return res.status(500).json({ error: "internal server error." });
     }
   },
 );

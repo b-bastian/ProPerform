@@ -24,7 +24,7 @@ router.delete("/:mid", requireAuth, requireRole("owner"), async (req, res) => {
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({ error: "media not found" });
+      return res.status(404).json({ error: "media not found." });
     }
 
     const media = rows[0];
@@ -53,10 +53,13 @@ router.delete("/:mid", requireAuth, requireRole("owner"), async (req, res) => {
       [mid],
     );
 
-    return res.json({ status: "ok", message: `media with id ${mid} deleted` });
+    return res.json({
+      status: "ok.",
+      message: `media with id ${mid} deleted.`,
+    });
   } catch (err) {
-    console.error("delete media failed: ", err);
-    return res.status(500).json({ error: "internal server error" });
+    console.error("delete media failed.", err);
+    return res.status(500).json({ error: "internal server error." });
   }
 });
 

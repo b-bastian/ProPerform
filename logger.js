@@ -122,7 +122,7 @@ function formatGenericLine(level, message, meta = {}) {
  */
 function writeToFile(line) {
   fs.appendFile(getLogFile(), line + "\n", (err) => {
-    if (err) console.error("[logger] Failed to write log:", err.message);
+    if (err) console.error("[logger] failed to write log.", err.message);
   });
 }
 

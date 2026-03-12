@@ -15,7 +15,7 @@ router.get("/verify-token", requireAuth, async (req, res) => {
 
     res.status(200).json({ valid: true, uid: req.user.uid, user: rows[0] });
   } catch (error) {
-    console.error("invalid token.:", error);
+    console.error("invalid token.", error);
     res.status(500).json({ message: "invalid token.", error: error.message });
   }
 });

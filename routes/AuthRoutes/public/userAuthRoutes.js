@@ -72,8 +72,7 @@ router.post(
 
     if (!passwordRegex.test(password)) {
       return res.status(400).json({
-        error:
-          "password must be at least 8 characters long and contain uppercase, lowercase, number, and special character.",
+        error: "password must be at least 8 characters long and contain uppercase, lowercase, number, and special character.",
       });
     }
 

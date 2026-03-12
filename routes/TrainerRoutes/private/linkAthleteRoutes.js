@@ -60,7 +60,7 @@ router.post(
         },
       });
     } catch (error) {
-      console.error("connect trainer error:", error);
+      console.error("connect trainer error.", error);
       return res.status(500).json({
         error: "internal server error.",
       });

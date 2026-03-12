@@ -11,7 +11,7 @@ const ROLES = {
   TRAINER: 3,
 };
 
-// Separate Route für Statistiken
+// separate route for statistics
 router.get(
   "/stats",
   requireAuth,
@@ -46,9 +46,9 @@ router.get(
         },
       });
     } catch (err) {
-      console.error("Fehler beim Abrufen der Statistiken:", err);
+      console.error("failed to fetch statistics.", err);
       res.status(500).json({
-        error: "Fehler beim Abrufen der Statistiken",
+        error: "failed to fetch statistics.",
       });
     }
   },

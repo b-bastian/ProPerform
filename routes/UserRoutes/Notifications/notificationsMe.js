@@ -18,7 +18,7 @@ router.get("/me", requireAuth, async (req, res) => {
 
     res.status(200).json({ success: true, notifications: rows });
   } catch (err) {
-    console.error("notifications/me error: " + err.message);
+    console.error("notifications me error. " + err.message);
     res.status(500).json({ success: false, error: err.message });
   }
 });

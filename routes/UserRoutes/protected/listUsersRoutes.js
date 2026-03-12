@@ -19,18 +19,18 @@ const getUsers = async (req, res, role) => {
     if (roleParam && !validRoles.includes(roleParam)) {
       return res.status(400).json({
         error:
-          "Ungültige Rollenangabe. Erlaubte Werte: 'owners', 'users', 'trainers'",
+          "invalid role value. allowed values: 'owners', 'users', 'trainers'.",
       });
     }
 
-    // Pagination
+    // pagination
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.min(parseInt(req.query.limit) || 10, 100);
     const offset = (page - 1) * limit;
 
     let allUsers = [];
 
-    // Owners
+    // owners
     if (!roleParam || roleParam === "owners") {
       const [owners] = await db.execute(
         "SELECT uid, firstname, birthdate, email, role_id FROM users WHERE role_id = ?",
@@ -39,7 +39,7 @@ const getUsers = async (req, res, role) => {
       allUsers.push(...owners.map((o) => ({ ...o, type: "owner" })));
     }
 
-    // Users
+    // users
     if (!roleParam || roleParam === "users") {
       const [users] = await db.execute(
         "SELECT uid, firstname, birthdate, email, role_id FROM users WHERE role_id = ?",
@@ -48,7 +48,7 @@ const getUsers = async (req, res, role) => {
       allUsers.push(...users.map((u) => ({ ...u, type: "user" })));
     }
 
-    // Trainers
+    // trainers
     if (!roleParam || roleParam === "trainers") {
       const [trainers] = await db.execute(
         "SELECT tid, firstname, lastname, birthdate, email, phone_number FROM trainers",
@@ -66,7 +66,7 @@ const getUsers = async (req, res, role) => {
       );
     }
 
-    // Optional: sortieren (wichtig!)
+    // optional: sort by newest id first
     allUsers.sort((a, b) => {
       const aId = a.uid ?? a.tid;
       const bId = b.uid ?? b.tid;
@@ -84,9 +84,9 @@ const getUsers = async (req, res, role) => {
       users: paginatedUsers,
     });
   } catch (err) {
-    console.error("Fehler beim Abrufen der Benutzer:", err);
+    console.error("failed to fetch users.", err);
     res.status(500).json({
-      error: "Fehler beim Abrufen der Benutzer",
+      error: "failed to fetch users.",
     });
   }
 };

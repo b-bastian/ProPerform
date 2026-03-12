@@ -26,11 +26,11 @@ router.get(
 
       return res
         .status(200)
-        .json({ message: "trainer disconnected successfully" });
+        .json({ message: "trainer disconnected successfully." });
     } catch (err) {
       return res
         .status(500)
-        .json({ message: "server error", error: err.message });
+        .json({ message: "server error.", error: err.message });
     }
   },
 );

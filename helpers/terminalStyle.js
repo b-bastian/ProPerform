@@ -50,18 +50,18 @@ function methodLabel(method) {
 }
 
 function printBootSequence() {
-  console.log(`\n${COLORS.gray}⏳ Loading modules...${COLORS.reset}`);
-  console.log(`${COLORS.green}✔ Express loaded${COLORS.reset}`);
-  console.log(`${COLORS.green}✔ CORS configured${COLORS.reset}`);
-  console.log(`${COLORS.green}✔ Database configured${COLORS.reset}`);
+  console.log(`\n${COLORS.gray}⏳ loading modules.${COLORS.reset}`);
+  console.log(`${COLORS.green}✔ express loaded.${COLORS.reset}`);
+  console.log(`${COLORS.green}✔ cors configured.${COLORS.reset}`);
+  console.log(`${COLORS.green}✔ database configured.${COLORS.reset}`);
   console.log(
-    `${COLORS.green}✔ Authentication middleware loaded${COLORS.reset}`,
+    `${COLORS.green}✔ authentication middleware loaded.${COLORS.reset}`,
   );
-  console.log(`${COLORS.green}✔ Routes mounted${COLORS.reset}\n`);
+  console.log(`${COLORS.green}✔ routes mounted.${COLORS.reset}\n`);
 }
 
 function printRoutesHeader() {
-  console.log(`\n${COLORS.blue}📋 REGISTERED ROUTES:${COLORS.reset}\n`);
+  console.log(`\n${COLORS.blue}📋 registered routes.${COLORS.reset}\n`);
 }
 
 export { box, COLORS, methodLabel, printBootSequence, printRoutesHeader };

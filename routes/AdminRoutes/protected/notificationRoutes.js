@@ -93,8 +93,8 @@ router.get(
 
       res.json(rows);
     } catch (err) {
-      console.error("Admin notifications error:", err);
-      res.status(500).json({ error: "Failed to fetch notifications" });
+      console.error("admin notifications error.", err);
+      res.status(500).json({ error: "failed to fetch notifications." });
     }
   },
 );

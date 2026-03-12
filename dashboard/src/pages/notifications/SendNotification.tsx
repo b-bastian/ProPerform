@@ -148,12 +148,6 @@ export default function NotificationsDashboard() {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && e.ctrlKey && requestState !== "loading") {
-      handleSendNotification();
-    }
-  };
-
   return (
     <div className="px-6 py-8 space-y-6">
       <div className="flex items-center gap-3">

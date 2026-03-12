@@ -284,4 +284,24 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/logout", async (req, res) => {
+  const { refresh_token } = req.body;
+
+  if (!refresh_token) {
+    return res.status(400).json({ error: "refresh token is required." });
+  }
+
+  try {
+    await db.query("DELETE FROM refresh_tokens WHERE token = ?", [
+      refresh_token,
+    ]);
+
+    return res.status(200).json({ message: "logout successful." });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "logout failed.", error: error.message });
+  }
+});
+
 export default router;

@@ -62,9 +62,7 @@ export default function CheckToken() {
     setRequestState("loading");
 
     try {
-      const result = await apiFetch(`${BASE_URL}/auth/verify-token`, {
-        method: "GET",
-      });
+      const result = await apiFetch(`${BASE_URL}/auth/verify-token`);
 
       if (result.ok) {
         const data: TokenResponse = await result.json();

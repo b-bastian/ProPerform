@@ -70,10 +70,9 @@ export default function UsersMe() {
     setRequestState("loading");
 
     try {
-      const result = await apiFetch(`${BASE_URL}/users/me`, {
-        method: "GET",
+      const result = await fetch(`${BASE_URL}/users/me`, {
         headers: {
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${trimmedToken}`,
         },
       });
 
@@ -269,7 +268,9 @@ export default function UsersMe() {
                   Primary Goal
                 </p>
                 <p className="text-sm text-gray-300 capitalize">
-                  {userData.primary_goal.replace(/_/g, " ")}
+                  {userData.primary_goal
+                    ? userData.primary_goal.replace(/_/g, " ")
+                    : "—"}
                 </p>
               </div>
 

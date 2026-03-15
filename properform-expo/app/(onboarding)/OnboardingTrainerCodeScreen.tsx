@@ -22,6 +22,7 @@ import { colors } from "@/src/theme/colors";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
+import api from "@/src/utils/axiosInstance";
 
 export default function OnboardingTrainerCodeScreen() {
   const router = useRouter();
@@ -69,13 +70,8 @@ export default function OnboardingTrainerCodeScreen() {
   const handleConnect = async () => {
     try {
       setLoadingConnect(true);
-      const token = await SecureStore.getItemAsync("access_token");
       const inviteCode = `TRN-${code.slice(0, 3)}-${code.slice(3)}`;
-      await axios.post(
-        "https://api.properform.app/trainers/connect",
-        { invite_code: inviteCode },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      await api.post("/trainers/connect", { invite_code: inviteCode });
       router.push("../(onboarding)/VerifyEmailScreen");
     } catch (err: any) {
       console.log("STATUS:", err.response?.status);

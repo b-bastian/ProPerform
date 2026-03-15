@@ -7,6 +7,7 @@ import { colors } from "@/src/theme/colors";
 import SecondaryButton from "@/src/components/secondaryButton";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
+import api from "@/src/utils/axiosInstance";
 
 export default function HomeScreen() {
   const [user, setUser] = React.useState<{
@@ -16,10 +17,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     const getUserData = async () => {
-      const token = await SecureStore.getItemAsync("access_token");
-      const response = await axios.get("https://api.properform.app/users/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get("/users/me");
       setUser(response.data);
     };
     getUserData();

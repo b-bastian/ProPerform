@@ -17,6 +17,7 @@ import { spacing } from "@/src/theme/spacing";
 import ExerciseDetailModal from "@/src/components/modals/ExerciseDetailModal";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
+import api from "@/src/utils/axiosInstance";
 
 type MuscleGroup = {
   mgid: number;
@@ -86,19 +87,14 @@ export default function ExerciseScreen() {
       try {
         setLoading(true);
         setError(null);
-        const token = await SecureStore.getItemAsync("access_token");
 
-        const response = await axios.get(
-          "https://api.properform.app/exercises",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            params: {
-              filter: categoryToFilter(category),
-              page: pageNum,
-              limit: LIMIT,
-            },
+        const response = await api.get("/exercises", {
+          params: {
+            filter: categoryToFilter(category),
+            page: pageNum,
+            limit: LIMIT,
           },
-        );
+        });
 
         if (pageNum === 1) {
           setExercises(response.data.exercises);

@@ -1,12 +1,17 @@
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Image,
+  ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { typography } from "@/src/theme/typography";
 import { spacing } from "@/src/theme/spacing";
 import { colors } from "@/src/theme/colors";
 import SecondaryButton from "@/src/components/secondaryButton";
-import axios from "axios";
-import * as SecureStore from "expo-secure-store";
 import api from "@/src/utils/axiosInstance";
 
 export default function HomeScreen() {
@@ -14,12 +19,20 @@ export default function HomeScreen() {
     firstname: string;
     profile_image_url: string | null;
   } | null>(null);
+  const [loading, setLoading] = React.useState(true);
 
   useEffect(() => {
     const getUserData = async () => {
-      const response = await axios.get("/users/me");
-      setUser(response.data);
+      try {
+        const response = await api.get("/users/me");
+        setUser(response.data);
+      } catch (err) {
+        console.log("Fehler beim Laden der User-Daten:", err);
+      } finally {
+        setLoading(false);
+      }
     };
+
     getUserData();
   }, []);
 
@@ -34,6 +47,16 @@ export default function HomeScreen() {
   const streakDays = 4;
   const days = ["M", "D", "M", "D", "F", "S", "S"];
   const completed = [true, true, true, true, false, false, false];
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container} edges={["top"]}>
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color={colors.primaryBlue} />
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -130,6 +153,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   scrollContent: {

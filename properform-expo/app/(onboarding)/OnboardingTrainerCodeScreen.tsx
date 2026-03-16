@@ -11,6 +11,7 @@ import {
   Platform,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/src/components/header";
@@ -143,9 +144,11 @@ export default function OnboardingTrainerCodeScreen() {
                   onPress={handleCheckCode}
                   disabled={loading || code.length < 6}
                 >
-                  <Text style={styles.checkButtonText}>
-                    {loading ? "..." : "Prüfen"}
-                  </Text>
+                  {loading ? (
+                    <ActivityIndicator size="small" color={colors.white} />
+                  ) : (
+                    <Text style={styles.checkButtonText}>Prüfen</Text>
+                  )}
                 </TouchableOpacity>
               </View>
 
@@ -195,7 +198,11 @@ export default function OnboardingTrainerCodeScreen() {
                 onPress={handleConnect}
                 disabled={!trainer || loadingConnect}
               >
-                <Icon name="arrow-forward" size={24} color={colors.white} />
+                {loadingConnect ? (
+                  <ActivityIndicator size="small" color={colors.white} />
+                ) : (
+                  <Icon name="arrow-forward" size={24} color={colors.white} />
+                )}
               </TouchableOpacity>
             </View>
           </ScrollView>

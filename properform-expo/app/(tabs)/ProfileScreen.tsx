@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SecondaryButton from "@/src/components/secondaryButton";
@@ -26,17 +27,28 @@ export default function ProfileScreen() {
     profile_image_url: string | null;
     created_at: string;
   } | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [loadingResetPassword, setLoadingResetPassword] = React.useState(false);
 
   useEffect(() => {
     const getUser = async () => {
-      const response = await api.get("/users/me");
-      setUser(response.data);
+      try {
+        const response = await api.get("/users/me");
+        setUser(response.data);
+      } catch (err) {
+        console.log("Fehler beim Laden des Profils:", err);
+      } finally {
+        setLoading(false);
+      }
     };
     getUser();
   }, []);
 
   const handleResetPassword = async () => {
+    if (loadingResetPassword) return;
+
     try {
+      setLoadingResetPassword(true);
       await axios.post("https://api.properform.app/auth/reset-password", {
         email: user?.email,
       });
@@ -47,6 +59,8 @@ export default function ProfileScreen() {
         err.response?.data?.error ||
           "Etwas ist schiefgelaufen, versuch es nochmal.",
       );
+    } finally {
+      setLoadingResetPassword(false);
     }
   };
 
@@ -63,6 +77,16 @@ export default function ProfileScreen() {
       console.log("Fehler Logout", "Logout fehgeschlagen");
     }
   };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container} edges={["top"]}>
+        <View style={styles.loaderContainer}>
+          <ActivityIndicator size="large" color={colors.primaryBlue} />
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -122,7 +146,12 @@ export default function ProfileScreen() {
         <View style={styles.changePasswordWrap}>
           <SecondaryButton
             onPress={handleResetPassword}
-            text="Passwort ändern"
+            text={loadingResetPassword ? "Wird gesendet..." : "Passwort ändern"}
+            icon={
+              loadingResetPassword ? (
+                <ActivityIndicator size="small" color={colors.primaryBlue} />
+              ) : undefined
+            }
           />
         </View>
 
@@ -138,6 +167,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  loaderContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   content: {
     flex: 1,

@@ -11,8 +11,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      
+      - name: Disable sparse checkout (GitHub Actions bug fix)
+        run: |
+          git config core.sparseCheckout false
+          git config --worktree core.sparseCheckout false 2>/dev/null || true
+          git config --unset extensions.worktreeConfig 2>/dev/null || true
+          git read-tree -mu HEAD
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3

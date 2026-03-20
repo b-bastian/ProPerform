@@ -110,7 +110,7 @@ export default function OnboardingStep3() {
                 <Icon name="arrow-back" size={24} color={colors.white} />
               </TouchableOpacity>
 
-              <ProgressDots total={4} current={2} />
+              <ProgressDots total={6} current={2} />
 
               <TouchableOpacity
                 style={styles.arrowButton}

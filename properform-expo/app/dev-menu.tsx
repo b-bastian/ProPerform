@@ -50,6 +50,15 @@ export default function DevMenu() {
             onPress={() => router.push("/OnboardingStep5")}
           />
           <Button
+            title="OnboardingTrainerCodeScreen"
+            onPress={() => router.push("/OnboardingTrainerCodeScreen")}
+          />
+          <Button
+            title="OnboardingTrainingModeScreen"
+            onPress={() => router.push("/OnboardingTrainingModeScreen")}
+          />
+
+          <Button
             title="VerifyEmailScreen"
             onPress={() => router.push("/(onboarding)/VerifyEmailScreen")}
           />

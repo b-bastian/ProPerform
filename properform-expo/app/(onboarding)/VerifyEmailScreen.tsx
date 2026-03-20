@@ -159,7 +159,7 @@ export default function VerifyEmailScreen() {
                 <Icon name="arrow-back" size={24} color={colors.white} />
               </TouchableOpacity>
 
-              <ProgressDots total={5} current={5} />
+              <ProgressDots total={6} current={6} />
 
               <TouchableOpacity
                 style={[

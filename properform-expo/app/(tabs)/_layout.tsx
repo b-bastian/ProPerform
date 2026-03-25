@@ -129,6 +129,15 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="TrainingScreen"
+        options={{
+          title: "Training",
+          tabBarIcon: ({ color }) => (
+            <Icon name="assignment" color={color} size={28} />
+          ),
+        }}
+      />
 
       <Tabs.Screen
         name="ProfileScreen"

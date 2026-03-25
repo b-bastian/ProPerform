@@ -26,6 +26,7 @@ router.get("/:tpid/exercises", requireAuth, async (req, res) => {
         tpe.id,
         tpe.tpid,
         tpe.eid,
+        e.name,
         tpe.week_number,
         tpe.day_number,
         tpe.exercise_order,
@@ -35,6 +36,7 @@ router.get("/:tpid/exercises", requireAuth, async (req, res) => {
         tpe.rest_seconds,
         tpe.notes
       FROM training_plan_exercises tpe
+      JOIN exercises e ON tpe.eid = e.eid
       WHERE tpe.tpid = ?
       ORDER BY tpe.week_number ASC, tpe.day_number ASC, tpe.exercise_order ASC
       `,

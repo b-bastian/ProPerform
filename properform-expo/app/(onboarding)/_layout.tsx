@@ -9,13 +9,6 @@ export default function OnboardingLayout() {
       }}
     >
       <Stack.Screen name="OnboardingScreen" />
-      <Stack.Screen name="OnboardingStep2" />
-      <Stack.Screen name="OnboardingStep3" />
-      <Stack.Screen name="OnboardingStep4" />
-      <Stack.Screen name="OnboardingStep5" />
-      <Stack.Screen name="OnboardingTrainingModeScreen" />
-      <Stack.Screen name="OnboardingTrainerCodeScreen" />
-      <Stack.Screen name="VerifyEmailScreen" />
     </Stack>
   );
 }

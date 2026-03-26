@@ -1,19 +1,19 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/src/components/header";
 import ProgressDots from "@/src/components/ProgressDots";
-import { useRouter } from "expo-router";
-import { typography } from "@/src/theme/typography";
-import { spacing } from "@/src/theme/spacing";
 import { colors } from "@/src/theme/colors";
+import { spacing } from "@/src/theme/spacing";
+import { typography } from "@/src/theme/typography";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function OnboardingTrainingModeScreen() {
   const router = useRouter();
@@ -161,9 +161,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingBottom: spacing.lg,
     marginTop: "auto",
-    paddingTop: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.xl + 20,
   },
   arrowButton: {
     width: 56,

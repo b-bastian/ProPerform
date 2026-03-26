@@ -1,22 +1,19 @@
+import { colors } from "@/src/theme/colors";
+import { spacing } from "@/src/theme/spacing";
+import api from "@/src/utils/axiosInstance";
+import { MaterialIcons as Icon } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  Alert,
   ActivityIndicator,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SecondaryButton from "@/src/components/secondaryButton";
-import { useRouter } from "expo-router";
-import { spacing } from "@/src/theme/spacing";
-import { colors } from "@/src/theme/colors";
-import axios from "axios";
-import * as SecureStore from "expo-secure-store";
-import api from "@/src/utils/axiosInstance";
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -28,7 +25,6 @@ export default function ProfileScreen() {
     created_at: string;
   } | null>(null);
   const [loading, setLoading] = React.useState(true);
-  const [loadingResetPassword, setLoadingResetPassword] = React.useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -43,40 +39,6 @@ export default function ProfileScreen() {
     };
     getUser();
   }, []);
-
-  const handleResetPassword = async () => {
-    if (loadingResetPassword) return;
-
-    try {
-      setLoadingResetPassword(true);
-      await axios.post("https://api.properform.app/auth/reset-password", {
-        email: user?.email,
-      });
-      Alert.alert("Erfolg", "Wir haben dir einen Link per Email geschickt!");
-    } catch (err: any) {
-      Alert.alert(
-        "Fehler",
-        err.response?.data?.error ||
-          "Etwas ist schiefgelaufen, versuch es nochmal.",
-      );
-    } finally {
-      setLoadingResetPassword(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await SecureStore.deleteItemAsync("access_token");
-      await SecureStore.deleteItemAsync("refresh_token");
-      await SecureStore.deleteItemAsync("user_id");
-
-      console.log("Logout erfolgreich");
-
-      router.replace("../(onboarding)/OnboardingScreen");
-    } catch {
-      console.log("Fehler Logout", "Logout fehgeschlagen");
-    }
-  };
 
   if (loading) {
     return (
@@ -137,27 +99,29 @@ export default function ProfileScreen() {
             <Text style={styles.label}>Trainiert seit</Text>
             <Text style={styles.value}>
               {user?.created_at
-                ? new Date(user.created_at).toLocaleDateString("de-AT")
+                ? new Date(user.created_at).toLocaleDateString("de-AT", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })
                 : ""}
             </Text>
           </View>
         </View>
 
-        <View style={styles.changePasswordWrap}>
-          <SecondaryButton
-            onPress={handleResetPassword}
-            text={loadingResetPassword ? "Wird gesendet..." : "Passwort ändern"}
-            icon={
-              loadingResetPassword ? (
-                <ActivityIndicator size="small" color={colors.primaryBlue} />
-              ) : undefined
-            }
-          />
-        </View>
-
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutWrap}>
-          <Text style={styles.logoutText}>Abmelden</Text>
+        <TouchableOpacity
+          style={styles.settingsButton}
+          onPress={() => router.push("/(settings)/SettingsScreen")}
+          activeOpacity={0.7}
+        >
+          <Icon name="settings" size={24} color={colors.primaryBlue} />
+          <Text style={styles.settingsButtonText}>Einstellungen</Text>
+          <Icon name="arrow-forward" size={20} color={colors.primaryBlue} />
         </TouchableOpacity>
+
+        <Text style={styles.copyRightText}>
+          ProPerform © {new Date().getFullYear()}
+        </Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -205,17 +169,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#A0A0A0",
     marginVertical: 20,
     width: "100%",
-  },
-  logoutButton: {
-    backgroundColor: "#D32F2F",
-    paddingVertical: 15,
-    borderRadius: 12,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 4,
   },
   buttonText: {
     color: "#fff",
@@ -301,17 +254,30 @@ const styles = StyleSheet.create({
     backgroundColor: "#E5E7EB",
   },
 
-  changePasswordWrap: {
-    marginBottom: spacing.lg,
+  copyRightText: {
+    textAlign: "center",
+    fontSize: 14,
+    color: colors.textSecondary,
+    marginTop: spacing.xl,
+    fontWeight: "800",
   },
-
-  logoutWrap: {
+  settingsButton: {
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    backgroundColor: "#f0f4f8",
+    borderRadius: 12,
+    borderColor: colors.primaryBlue,
+    borderWidth: 1.5,
   },
-
-  logoutText: {
+  settingsButtonText: {
+    flex: 1,
     fontSize: 16,
-    color: "#EF4444",
+    fontWeight: "600",
+    color: colors.textPrimary,
+    marginLeft: spacing.lg,
     fontFamily: "Inter",
   },
 });

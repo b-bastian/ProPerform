@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet, Button, ScrollView } from "react-native";
-import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import * as SecureStorage from "expo-secure-store";
+import { Button, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function DevMenu() {
   const router = useRouter();
@@ -43,36 +43,7 @@ export default function DevMenu() {
         <View style={styles.buttonGroup}>
           <Button
             title="OnboardingScreen"
-            onPress={() => router.push("/OnboardingScreen")}
-          />
-          <Button
-            title="OnboardingStep2"
-            onPress={() => router.push("/OnboardingStep2")}
-          />
-          <Button
-            title="OnboardingStep3"
-            onPress={() => router.push("/OnboardingStep3")}
-          />
-          <Button
-            title="OnboardingStep4"
-            onPress={() => router.push("/OnboardingStep4")}
-          />
-          <Button
-            title="OnboardingStep5"
-            onPress={() => router.push("/OnboardingStep5")}
-          />
-          <Button
-            title="OnboardingTrainerCodeScreen"
-            onPress={() => router.push("/OnboardingTrainerCodeScreen")}
-          />
-          <Button
-            title="OnboardingTrainingModeScreen"
-            onPress={() => router.push("/OnboardingTrainingModeScreen")}
-          />
-
-          <Button
-            title="VerifyEmailScreen"
-            onPress={() => router.push("/(onboarding)/VerifyEmailScreen")}
+            onPress={() => router.push("/(onboarding)/OnboardingScreen")}
           />
         </View>
       </View>

@@ -1,18 +1,17 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  Platform,
-  Keyboard,
-  TouchableWithoutFeedback,
-  Button,
-  StyleSheet,
-} from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { colors } from "@/src/theme/colors";
 import { typography } from "@/src/theme/typography";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import React, { useState } from "react";
+import {
+  Button,
+  Keyboard,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 interface SmartInputProps {
   title: string;
@@ -58,63 +57,58 @@ const SmartInput: React.FC<SmartInputProps> = ({
     confirmedDate?.toISOString().split("T")[0] || value || placeholder;
 
   return (
-    <TouchableWithoutFeedback
-      onPress={() => setShowPicker(false)}
-      accessible={false}
-    >
-      <View style={styles.inputWrapper}>
-        <Text style={styles.label}>{title}</Text>
+    <View style={styles.inputWrapper}>
+      <Text style={styles.label}>{title}</Text>
 
-        {isDate ? (
-          <>
-            <Pressable
-              onPress={() => {
-                Keyboard.dismiss();
-                setShowPicker(true);
+      {isDate ? (
+        <>
+          <Pressable
+            onPress={() => {
+              Keyboard.dismiss();
+              setShowPicker(true);
+            }}
+            style={styles.inputContainer}
+          >
+            <Text style={{ color: value ? "#333" : "#A0A0A0" }}>
+              {formattedDate}
+            </Text>
+          </Pressable>
+
+          {showPicker && (
+            <View
+              style={{
+                backgroundColor: "#f9f9f9",
+                borderRadius: 10,
+                marginTop: 10,
               }}
-              style={styles.inputContainer}
             >
-              <Text style={{ color: value ? "#333" : "#A0A0A0" }}>
-                {formattedDate}
-              </Text>
-            </Pressable>
-
-            {showPicker && (
-              <View
-                style={{
-                  backgroundColor: "#f9f9f9",
-                  borderRadius: 10,
-                  marginTop: 10,
-                }}
-              >
-                <DateTimePicker
-                  value={tempDate}
-                  mode="date"
-                  display={Platform.OS === "ios" ? "spinner" : "default"}
-                  onChange={onDateChange}
-                  locale="de-DE"
-                  themeVariant="light"
-                />
-                {Platform.OS === "ios" && (
-                  <Button title="Fertig" onPress={confirmIOSDate} />
-                )}
-              </View>
-            )}
-          </>
-        ) : (
-          <View style={styles.inputContainer}>
-            <TextInput
-              value={value}
-              onChangeText={onChange}
-              placeholder={placeholder}
-              placeholderTextColor={"#A0A0A0"}
-              secureTextEntry={isPassword}
-              style={styles.input}
-            />
-          </View>
-        )}
-      </View>
-    </TouchableWithoutFeedback>
+              <DateTimePicker
+                value={tempDate}
+                mode="date"
+                display={Platform.OS === "ios" ? "spinner" : "default"}
+                onChange={onDateChange}
+                locale="de-DE"
+                themeVariant="light"
+              />
+              {Platform.OS === "ios" && (
+                <Button title="Fertig" onPress={confirmIOSDate} />
+              )}
+            </View>
+          )}
+        </>
+      ) : (
+        <View style={styles.inputContainer}>
+          <TextInput
+            value={value}
+            onChangeText={onChange}
+            placeholder={placeholder}
+            placeholderTextColor={"#A0A0A0"}
+            secureTextEntry={isPassword}
+            style={styles.input}
+          />
+        </View>
+      )}
+    </View>
   );
 };
 

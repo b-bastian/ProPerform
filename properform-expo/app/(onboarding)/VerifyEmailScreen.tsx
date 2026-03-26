@@ -1,29 +1,27 @@
-import React, { useState, useEffect, useContext } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Keyboard,
-  TouchableWithoutFeedback,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableOpacity,
-  TextInput,
-  Alert,
-  ActivityIndicator,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/src/components/header";
 import ProgressDots from "@/src/components/ProgressDots";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
-import { typography } from "@/src/theme/typography";
-import { spacing } from "@/src/theme/spacing";
-import { colors } from "@/src/theme/colors";
-import { MaterialIcons as Icon } from "@expo/vector-icons";
-import axios from "axios";
 import { OnboardingContext } from "@/src/context/OnboardingContext";
+import { colors } from "@/src/theme/colors";
+import { spacing } from "@/src/theme/spacing";
+import { typography } from "@/src/theme/typography";
+import { MaterialIcons as Icon } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { useRouter } from "expo-router";
+import React, { useContext, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function VerifyEmailScreen() {
   const router = useRouter();
@@ -108,79 +106,78 @@ export default function VerifyEmailScreen() {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-          >
-            <View style={styles.header}>
-              <Text style={typography.title}>E-Mail bestätigen</Text>
-              <Text style={[typography.body, styles.subheader]}>
-                Gib den 6-stelligen Code ein
-              </Text>
-            </View>
-
-            <View style={styles.card}>
-              <Text style={styles.label}>Verifikationscode</Text>
-
-              <TextInput
-                style={[styles.input, error ? { borderColor: "red" } : null]}
-                value={code}
-                onChangeText={(text) => {
-                  const numbersOnly = text.replace(/[^0-9]/g, "");
-                  if (numbersOnly.length <= 6) {
-                    setCode(numbersOnly);
-                  }
-                }}
-                keyboardType="number-pad"
-                maxLength={6}
-                placeholder="123456"
-                placeholderTextColor="#aaa"
-              />
-
-              {error ? <Text style={styles.errorText}>{error}</Text> : null}
-            </View>
-
-            <Text style={styles.hintText}>
-              E-Mail nicht gefunden? Sieh auch im Spam-Ordner nach.
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="always"
+          keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "none"}
+        >
+          <View style={styles.header}>
+            <Text style={typography.title}>E-Mail bestätigen</Text>
+            <Text style={[typography.body, styles.subheader]}>
+              Gib den 6-stelligen Code ein
             </Text>
+          </View>
 
-            <TouchableOpacity
-              onPress={handleResend}
-              style={styles.resendWrap}
-              disabled={loadingResend}
-            >
-              {loadingResend ? (
-                <ActivityIndicator size="small" color={colors.primaryBlue} />
-              ) : (
-                <Text style={styles.resendText}>Code erneut senden</Text>
-              )}
+          <View style={styles.card}>
+            <Text style={styles.label}>Verifikationscode</Text>
+
+            <TextInput
+              style={[styles.input, error ? { borderColor: "red" } : null]}
+              value={code}
+              onChangeText={(text) => {
+                const numbersOnly = text.replace(/[^0-9]/g, "");
+                if (numbersOnly.length <= 6) {
+                  setCode(numbersOnly);
+                }
+              }}
+              keyboardType="number-pad"
+              maxLength={6}
+              placeholder="123456"
+              placeholderTextColor="#aaa"
+            />
+
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          </View>
+
+          <Text style={styles.hintText}>
+            E-Mail nicht gefunden? Sieh auch im Spam-Ordner nach.
+          </Text>
+
+          <TouchableOpacity
+            onPress={handleResend}
+            style={styles.resendWrap}
+            disabled={loadingResend}
+          >
+            {loadingResend ? (
+              <ActivityIndicator size="small" color={colors.primaryBlue} />
+            ) : (
+              <Text style={styles.resendText}>Code erneut senden</Text>
+            )}
+          </TouchableOpacity>
+
+          <View style={styles.navigation}>
+            <TouchableOpacity style={styles.arrowButton} onPress={handleBack}>
+              <Icon name="arrow-back" size={24} color={colors.white} />
             </TouchableOpacity>
 
-            <View style={styles.navigation}>
-              <TouchableOpacity style={styles.arrowButton} onPress={handleBack}>
-                <Icon name="arrow-back" size={24} color={colors.white} />
-              </TouchableOpacity>
+            <ProgressDots total={6} current={6} />
 
-              <ProgressDots total={6} current={6} />
-
-              <TouchableOpacity
-                style={[
-                  styles.arrowButton,
-                  (code.length !== 6 || loading) && { opacity: 0.4 },
-                ]}
-                onPress={handleVerify}
-                disabled={code.length !== 6 || loading}
-              >
-                {loading ? (
-                  <ActivityIndicator size="small" color={colors.white} />
-                ) : (
-                  <Icon name="arrow-forward" size={24} color={colors.white} />
-                )}
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-        </TouchableWithoutFeedback>
+            <TouchableOpacity
+              style={[
+                styles.arrowButton,
+                (code.length !== 6 || loading) && { opacity: 0.4 },
+              ]}
+              onPress={handleVerify}
+              disabled={code.length !== 6 || loading}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color={colors.white} />
+              ) : (
+                <Icon name="arrow-forward" size={24} color={colors.white} />
+              )}
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -237,9 +234,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingBottom: spacing.lg,
     marginTop: "auto",
-    paddingTop: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.xl + 20,
   },
   arrowButton: {
     width: 56,

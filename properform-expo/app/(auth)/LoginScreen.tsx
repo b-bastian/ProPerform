@@ -1,28 +1,26 @@
-import React from "react";
-import {
-  ScrollView,
-  Keyboard,
-  TouchableWithoutFeedback,
-  View,
-  Text,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "@/src/components/header";
 import InputField from "@/src/components/input";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
-import axios from "axios";
-import { typography } from "@/src/theme/typography";
-import { spacing } from "@/src/theme/spacing";
-import { colors } from "@/src/theme/colors";
-import { MaterialIcons as Icon } from "@expo/vector-icons";
 import ForgotPasswordModal from "@/src/components/modals/ForgotPasswordModal";
+import { colors } from "@/src/theme/colors";
+import { spacing } from "@/src/theme/spacing";
+import { typography } from "@/src/theme/typography";
+import { MaterialIcons as Icon } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
+import React from "react";
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -78,89 +76,86 @@ export default function LoginScreen() {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-          >
-            <View style={styles.headerSection}>
-              <Text style={typography.title}>Willkommen zurück</Text>
-              <Text style={[typography.body, styles.subheader]}>
-                Melde dich mit deinem Account an
-              </Text>
-            </View>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="always"
+          keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "none"}
+        >
+          <View style={styles.headerSection}>
+            <Text style={typography.title}>Willkommen zurück</Text>
+            <Text style={[typography.body, styles.subheader]}>
+              Melde dich mit deinem Account an
+            </Text>
+          </View>
 
-            <View style={styles.card}>
-              <InputField
-                title="E-Mail"
-                value={email}
-                placeholder="max@beispiel.at"
-                onChange={setEmail}
-              />
-              <InputField
-                title="Passwort"
-                value={password}
-                placeholder="********"
-                onChange={setPassword}
-              />
-              <TouchableOpacity
-                style={styles.checkboxContainer}
-                onPress={() => setStayLoggedIn(!stayLoggedIn)}
-                activeOpacity={0.7}
+          <View style={styles.card}>
+            <InputField
+              title="E-Mail"
+              value={email}
+              placeholder="max@beispiel.at"
+              onChange={setEmail}
+            />
+            <InputField
+              title="Passwort"
+              value={password}
+              placeholder="********"
+              onChange={setPassword}
+            />
+            <TouchableOpacity
+              style={styles.checkboxContainer}
+              onPress={() => setStayLoggedIn(!stayLoggedIn)}
+              activeOpacity={0.7}
+            >
+              <View
+                style={[
+                  styles.checkbox,
+                  stayLoggedIn && styles.checkboxChecked,
+                ]}
               >
-                <View
-                  style={[
-                    styles.checkbox,
-                    stayLoggedIn && styles.checkboxChecked,
-                  ]}
-                >
-                  {stayLoggedIn && (
-                    <Icon name="check" size={16} color={colors.white} />
-                  )}
-                </View>
-                <Text style={styles.checkboxLabel}>Angemeldet bleiben</Text>
-              </TouchableOpacity>
-              {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-              <TouchableOpacity
-                onPress={() => setForgotPasswordVisible(true)}
-                style={styles.forgotPasswordWrap}
-              >
-                <Text style={styles.forgotPasswordText}>
-                  Passwort vergessen?
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.navigation}>
-              <TouchableOpacity
-                style={styles.arrowButton}
-                onPress={() => {
-                  if (router.canGoBack()) {
-                    router.back();
-                  } else {
-                    router.replace("../(onboarding)/OnboardingScreen");
-                  }
-                }}
-              >
-                <Icon name="arrow-back" size={24} color={colors.white} />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[styles.arrowButton, loading && { opacity: 0.5 }]}
-                onPress={handleLogin}
-                disabled={loading}
-              >
-                {loading ? (
-                  <ActivityIndicator size="small" color={colors.white} />
-                ) : (
-                  <Icon name="arrow-forward" size={24} color={colors.white} />
+                {stayLoggedIn && (
+                  <Icon name="check" size={16} color={colors.white} />
                 )}
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-        </TouchableWithoutFeedback>
+              </View>
+              <Text style={styles.checkboxLabel}>Angemeldet bleiben</Text>
+            </TouchableOpacity>
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+            <TouchableOpacity
+              onPress={() => setForgotPasswordVisible(true)}
+              style={styles.forgotPasswordWrap}
+            >
+              <Text style={styles.forgotPasswordText}>Passwort vergessen?</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.navigation}>
+            <TouchableOpacity
+              style={styles.arrowButton}
+              onPress={() => {
+                if (router.canGoBack()) {
+                  router.back();
+                } else {
+                  router.replace("../(onboarding)/OnboardingScreen");
+                }
+              }}
+            >
+              <Icon name="arrow-back" size={24} color={colors.white} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.arrowButton, loading && { opacity: 0.5 }]}
+              onPress={handleLogin}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color={colors.white} />
+              ) : (
+                <Icon name="arrow-forward" size={24} color={colors.white} />
+              )}
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
       <ForgotPasswordModal
         visible={forgotPasswordVisible}

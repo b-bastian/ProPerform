@@ -3,7 +3,7 @@ import { colors } from "./colors";
 export const typography = {
   title: {
     fontFamily: "Inter",
-    fontSize: 36,
+    fontSize: 32,
     fontWeight: "bold" as const,
     textAlign: "center" as const,
     color: colors.textPrimary,

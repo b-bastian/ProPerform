@@ -9,7 +9,7 @@ export default function Header() {
         style={styles.logo}
         resizeMode="contain"
       />
-      <Text style={styles.title}>PROPERFORM</Text>
+      <Text style={styles.title}>ProPerform</Text>
     </View>
   );
 }
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     marginRight: 2,
     marginLeft: 2,
     marginBottom: 10,
-    borderRadius: 20,
+    borderRadius: 230,
     backgroundColor: "#15306e",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "bold",
     color: "#fff",
   },

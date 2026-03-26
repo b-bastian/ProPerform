@@ -16,6 +16,7 @@ import { spacing } from "@/src/theme/spacing";
 import api from "@/src/utils/axiosInstance";
 import CreatePlanModal from "@/src/components/modals/CreatePlanModal";
 import WorkoutModal from "@/src/components/modals/WorkoutModal";
+import EditPlanModal from "@/src/components/modals/EditPlanModal";
 
 type TrainingPlan = {
   tpid: number;
@@ -49,6 +50,8 @@ export default function TrainingScreen() {
     id: number;
     name: string;
   } | null>(null);
+  const [editVisible, setEditVisible] = useState(false);
+  const [editPlan, setEditPlan] = useState<TrainingPlan | null>(null);
 
   const startWorkout = (plan: TrainingPlan) => {
     setSelectedPlan({ id: plan.tpid, name: plan.name });
@@ -101,8 +104,8 @@ export default function TrainingScreen() {
       {
         text: "Bearbeiten",
         onPress: () => {
-          // TODO: Edit
-          console.log("Edit plan", plan.tpid);
+          setEditPlan(plan);
+          setEditVisible(true);
         },
       },
       {
@@ -253,6 +256,13 @@ export default function TrainingScreen() {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onPlanCreated={fetchPlans}
+      />
+
+      <EditPlanModal
+        visible={editVisible}
+        plan={editPlan}
+        onClose={() => setEditVisible(false)}
+        onPlanUpdated={fetchPlans}
       />
 
       <WorkoutModal

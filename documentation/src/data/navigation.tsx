@@ -51,12 +51,20 @@ export const navLinks: NavLink[] = [
         subLinks: [
           { to: "/api/auth/login", label: "POST /auth/login" },
           { to: "/api/auth/register", label: "POST /auth/register" },
-          { to: "api/auth/logout", label: "POST auth/logout" },
+          { to: "/api/auth/logout", label: "POST /auth/logout" },
           {
             to: "/api/auth/admin/register",
             label: "POST /auth/admin/register",
           },
           { to: "/api/auth/admin/login", label: "POST /auth/admin/login" },
+          {
+            to: "/api/auth/trainers/register",
+            label: "POST /auth/trainers/register",
+          },
+          {
+            to: "/api/auth/trainers/login",
+            label: "POST /auth/trainers/login",
+          },
           {
             to: "/api/auth/check-verification-code",
             label: "POST /auth/check-verification-code",
@@ -81,6 +89,10 @@ export const navLinks: NavLink[] = [
             to: "/api/auth/refresh",
             label: "POST /auth/refresh",
           },
+          {
+            to: "/api/auth/verify-token",
+            label: "GET /auth/verify-token",
+          },
         ],
       },
       {
@@ -89,6 +101,7 @@ export const navLinks: NavLink[] = [
           { to: "/api/users", label: "GET /users" },
           { to: "/api/users/:role", label: "GET /users/:role" },
           { to: "/api/users/me", label: "GET /users/me" },
+          { to: "/api/users/me/trainer", label: "GET /users/me/trainer" },
           { to: "/api/users/stats", label: "GET /users/stats" },
           { to: "/api/users/delete/:uid", label: "DELETE /users/:uid" },
         ],
@@ -237,6 +250,10 @@ export const navLinks: NavLink[] = [
           {
             to: "/api/users/training-plans/selected",
             label: "GET /users/training-plans/selected",
+          },
+          {
+            to: "/api/users/training-plans/training/today",
+            label: "GET /users/training-plans/training/today",
           },
           {
             to: "/api/users/training-plans/start/current",

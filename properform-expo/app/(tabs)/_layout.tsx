@@ -66,7 +66,7 @@ export default function TabLayout() {
 
         const response = await axios.post(
           "https://api.properform.app/auth/push-token",
-          { token },
+          { token, projectId: "9cbe62d4-1247-44a2-b565-489d1d9f311f" },
           {
             headers: {
               Authorization: `Bearer ${jwt}`,
@@ -126,6 +126,15 @@ export default function TabLayout() {
           title: "Exercises",
           tabBarIcon: ({ color }) => (
             <Icon name="fitness-center" color={color} size={28} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="TrainingScreen"
+        options={{
+          title: "Training",
+          tabBarIcon: ({ color }) => (
+            <Icon name="assignment" color={color} size={28} />
           ),
         }}
       />

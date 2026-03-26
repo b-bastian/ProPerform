@@ -79,7 +79,7 @@ router.get("/me/trainer", requireAuth, async (req, res) => {
 
     const trainer = rows[0];
 
-    return res.status(200).json({ trainer });
+    return res.status(200).json(trainer);
   } catch (err) {
     console.error("fetch trainer error.", err);
     res.status(500).json({ message: "failed to fetch trainer." });

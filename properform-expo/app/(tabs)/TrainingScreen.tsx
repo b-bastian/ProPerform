@@ -89,7 +89,7 @@ export default function TrainingScreen() {
             try {
               await api.delete(`/training-plans/${tpid}`);
               fetchPlans(); // Liste aktualisieren
-            } catch (err) {
+            } catch {
               Alert.alert("Fehler", "Plan konnte nicht gelöscht werden.");
             }
           },

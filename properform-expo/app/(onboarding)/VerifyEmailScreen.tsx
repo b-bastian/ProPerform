@@ -24,7 +24,6 @@ import { colors } from "@/src/theme/colors";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import axios from "axios";
 import { OnboardingContext } from "@/src/context/OnboardingContext";
-import api from "@/src/utils/axiosInstance";
 
 export default function VerifyEmailScreen() {
   const router = useRouter();

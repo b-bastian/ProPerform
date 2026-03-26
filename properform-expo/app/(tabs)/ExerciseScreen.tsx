@@ -15,8 +15,6 @@ import { colors } from "@/src/theme/colors";
 import { typography } from "@/src/theme/typography";
 import { spacing } from "@/src/theme/spacing";
 import ExerciseDetailModal from "@/src/components/modals/ExerciseDetailModal";
-import * as SecureStore from "expo-secure-store";
-import axios from "axios";
 import api from "@/src/utils/axiosInstance";
 
 type MuscleGroup = {
@@ -36,24 +34,6 @@ type Exercise = {
   muscle_groups: MuscleGroup[];
   sid: number;
   dlid: number;
-};
-
-const getSportName = (sid: number) => {
-  const sports: Record<number, string> = {
-    1: "Gym",
-    2: "Basketball",
-  };
-  return sports[sid] ?? "Unbekannt"; // falls unbekannt
-};
-
-const getDifficultyLabel = (dlid: number) => {
-  const levels: Record<number, string> = {
-    1: "Beginner",
-    2: "Intermediate",
-    3: "Advanced",
-    4: "Expert",
-  };
-  return levels[dlid] ?? "Unbekannt";
 };
 
 const categoryToFilter = (category: string): string => {
@@ -123,7 +103,7 @@ export default function ExerciseScreen() {
   useEffect(() => {
     setPage(1);
     fetchExercises(activeCategory, 1);
-  }, [activeCategory]);
+  }, [activeCategory, fetchExercises]);
 
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);

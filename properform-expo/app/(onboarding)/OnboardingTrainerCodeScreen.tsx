@@ -22,7 +22,6 @@ import { spacing } from "@/src/theme/spacing";
 import { colors } from "@/src/theme/colors";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import axios from "axios";
-import * as SecureStore from "expo-secure-store";
 import api from "@/src/utils/axiosInstance";
 
 export default function OnboardingTrainerCodeScreen() {

@@ -33,7 +33,7 @@ export default function OnboardingScreen() {
           style={styles.primaryButton}
           onPress={() => router.push("/(onboarding)/OnboardingStep2")}
         >
-          <Text style={styles.primaryButtonText}>LOS GEHT'S</Text>
+          <Text style={styles.primaryButtonText}>LOS GEHT&apos;S</Text>
           <Icon name="arrow-forward" size={20} color={colors.white} />
         </TouchableOpacity>
 

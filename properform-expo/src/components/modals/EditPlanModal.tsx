@@ -98,7 +98,7 @@ export default function EditPlanModal({
       setPlanExercises(assigned);
 
       setSelectedEids(assigned.map((ex) => ex.eid));
-    } catch (err) {
+    } catch {
       Alert.alert("Fehler", "Übungen konnten nicht geladen werden.");
     } finally {
       setLoadingExercises(false);

@@ -37,8 +37,6 @@ const getSportIcon = (sport: string) => {
   return (map[sport] ?? "sports") as any;
 };
 
-const tabs = ["Eigene Pläne", "Trainer"];
-
 export default function TrainingScreen() {
   const [activeTab, setActiveTab] = useState("Eigene Pläne");
   const [plans, setPlans] = useState<TrainingPlan[]>([]);
@@ -52,6 +50,9 @@ export default function TrainingScreen() {
   } | null>(null);
   const [editVisible, setEditVisible] = useState(false);
   const [editPlan, setEditPlan] = useState<TrainingPlan | null>(null);
+  const [hasTrainer, setHasTrainer] = useState(false);
+
+  const tabs = hasTrainer ? ["Eigene Pläne", "Trainer"] : ["Eigene Pläne"];
 
   const startWorkout = (plan: TrainingPlan) => {
     setSelectedPlan({ id: plan.tpid, name: plan.name });
@@ -73,6 +74,17 @@ export default function TrainingScreen() {
       }
     } finally {
       setLoading(false);
+    }
+  }, []);
+
+  const fetchTrainer = useCallback(async () => {
+    try {
+      await api.get("/users/me/trainer");
+      setHasTrainer(true);
+    } catch (err: any) {
+      if (err.response?.status === 404) {
+        setHasTrainer(false);
+      }
     }
   }, []);
 
@@ -118,7 +130,8 @@ export default function TrainingScreen() {
 
   useEffect(() => {
     fetchPlans();
-  }, [fetchPlans]);
+    fetchTrainer();
+  }, [fetchPlans, fetchTrainer]);
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>

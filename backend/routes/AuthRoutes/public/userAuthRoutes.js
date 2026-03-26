@@ -67,8 +67,8 @@ router.post(
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_-])[A-Za-z\d@$!%*?&#_-]{8,}$/;
+	const passwordRegex =
+/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.-])[A-Za-z\d@$!%*?&#_.-]{8,}$/;
 
     if (!passwordRegex.test(password)) {
       return res.status(400).json({

@@ -77,7 +77,9 @@ router.get("/me/trainer", requireAuth, async (req, res) => {
         .json({ message: "no trainer found for this user." });
     }
 
-    return res.status(200).json({ trainers: rows[0] });
+    const trainer = rows[0];
+
+    return res.status(200).json({ trainer });
   } catch (err) {
     console.error("fetch trainer error.", err);
     res.status(500).json({ message: "failed to fetch trainer." });

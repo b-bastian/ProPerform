@@ -13,8 +13,8 @@ export default function DeleteMediaMid() {
 
       <Text>
         Deletes a media file by ID. Removes both the database record and the
-        physical file from the media server. Requires authentication and the
-        owner role.
+        physical file from the media server. Requires authentication with owner
+        or trainer role. Trainers can only delete media they created themselves.
       </Text>
 
       <Heading>Authorization Header</Heading>
@@ -30,17 +30,17 @@ export default function DeleteMediaMid() {
       <CodeBlock
         language="json"
         code={`{
-  "status": "ok",
-  "message": "media with id 42 deleted"
+        "status": "ok.",
+        "message": "media with id 42 deleted."
 }`}
       />
 
       <Heading>Error Responses</Heading>
       <CodeBlock
         language="json"
-        code={`// Media not found (404)
+        code={`// Media not found or access denied (404)
 {
-  "error": "media not found"
+  "error": "media not found or access denied."
 }
 
 // Unauthorized (401)
@@ -48,14 +48,14 @@ export default function DeleteMediaMid() {
   "error": "Unauthorized"
 }
 
-// Forbidden - not owner (403)
+// Forbidden - missing owner/trainer role (403)
 {
   "error": "Forbidden"
 }
 
 // Server error (500)
 {
-  "error": "internal server error"
+  "error": "internal server error."
 }`}
       />
 
@@ -67,7 +67,8 @@ export default function DeleteMediaMid() {
 
       <Heading>Requirements</Heading>
       <Text>
-        Requires authentication and the <code>owner</code> role.
+        Requires authentication and either <code>owner</code> or
+        <code> trainer</code> role.
       </Text>
     </div>
   );

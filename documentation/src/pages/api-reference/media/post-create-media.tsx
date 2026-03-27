@@ -12,9 +12,8 @@ export default function PostMedia() {
       </div>
 
       <Text>
-        Uploads a media file (image or video). Requires authentication and the
-        owner role. Rate limited to 30 requests per 15 minutes. Files are stored
-        on a dedicated media server.
+        Uploads a media file (image or video). Requires authentication and
+        either the owner or trainer role.
       </Text>
 
       <Heading>Authorization Header</Heading>
@@ -42,7 +41,7 @@ Videos: mp4, webm, avi, mov`}
       <CodeBlock
         language="json"
         code={`{
-  "message": "File uploaded successfully",
+        "message": "file uploaded successfully.",
   "filename": "exercise_demo_1234567890.mp4",
   "url": "https://media.properform.app/videos/exercise_demo_1234567890.mp4",
   "mid": 42
@@ -54,12 +53,12 @@ Videos: mp4, webm, avi, mov`}
         language="json"
         code={`// No file uploaded (400)
 {
-  "message": "No file uploaded or unsupported file type."
+  "message": "no file uploaded or unsupported file type."
 }
 
 // File already exists (409)
 {
-  "message": "File already exists"
+  "message": "file already exists."
 }
 
 // Unauthorized (401)
@@ -67,22 +66,22 @@ Videos: mp4, webm, avi, mov`}
   "error": "Unauthorized"
 }
 
-// Forbidden - not owner (403)
+// Forbidden - missing owner/trainer role (403)
 {
   "error": "Forbidden"
 }
 
 // Server error (500)
 {
-  "message": "Error uploading file",
+  "message": "error uploading file.",
   "error": "error details"
 }`}
       />
 
       <Heading>Requirements</Heading>
       <Text>
-        Requires authentication and the <code>owner</code> role. File must be
-        either an image or video.
+        Requires authentication and either <code>owner</code> or
+        <code> trainer</code> role. File must be either an image or video.
       </Text>
     </div>
   );

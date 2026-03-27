@@ -27,10 +27,10 @@ type PrimaryGoal = "build muscle" | "lose weight" | "stay at weight";
 type TrainingFrequency = 2 | 4 | 7;
 
 type ProfileResponse = {
-  weight: number | null;
-  height: number | null;
+  weight: number | string | null;
+  height: number | string | null;
   fitness_level: FitnessLevel | null;
-  training_frequency: number | null;
+  training_frequency: number | string | null;
   primary_goal: string | null;
 };
 
@@ -43,7 +43,7 @@ type FormErrors = {
 };
 
 const FITNESS_LEVEL_OPTIONS: { label: string; value: FitnessLevel }[] = [
-  { label: "Anfaenger", value: "beginner" },
+  { label: "Anfänger", value: "beginner" },
   { label: "Fortgeschritten", value: "intermediate" },
   { label: "Experte", value: "advanced" },
 ];
@@ -71,10 +71,36 @@ const INITIAL_ERRORS: FormErrors = {
   primaryGoal: "",
 };
 
+const toPositiveNumberOrNull = (value: unknown): number | null => {
+  if (value == null) return null;
+
+  if (typeof value === "number") {
+    return Number.isFinite(value) && value > 0 ? value : null;
+  }
+
+  if (typeof value === "string") {
+    const parsed = parseDecimal(value);
+    return parsed ?? null;
+  }
+
+  return null;
+};
+
+const hasNumericChange = (
+  nextValue: number,
+  initialValue: number | null,
+  epsilon = 0.000001,
+) => {
+  if (initialValue === null) return true;
+  return Math.abs(nextValue - initialValue) > epsilon;
+};
+
 export default function EditProfileScreen() {
   const router = useRouter();
   const { width, height: screenHeight } = useWindowDimensions();
   const isCompact = width < 380 || screenHeight < 750;
+  const weightInputRef = React.useRef<TextInput>(null);
+  const heightInputRef = React.useRef<TextInput>(null);
 
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
@@ -106,11 +132,18 @@ export default function EditProfileScreen() {
       const response = await api.get<ProfileResponse>("/users/me");
       const data = response.data;
 
+      const normalizedWeight = toPositiveNumberOrNull(data.weight);
+      const normalizedHeight = toPositiveNumberOrNull(data.height);
+      const rawTrainingFrequency =
+        typeof data.training_frequency === "string"
+          ? Number(data.training_frequency)
+          : data.training_frequency;
+
       const normalizedTrainingFrequency =
-        data.training_frequency === 2 ||
-        data.training_frequency === 4 ||
-        data.training_frequency === 7
-          ? data.training_frequency
+        rawTrainingFrequency === 2 ||
+        rawTrainingFrequency === 4 ||
+        rawTrainingFrequency === 7
+          ? rawTrainingFrequency
           : null;
 
       const normalizedPrimaryGoal =
@@ -120,14 +153,14 @@ export default function EditProfileScreen() {
           ? data.primary_goal
           : null;
 
-      setWeight(data.weight != null ? String(data.weight) : "");
-      setHeight(data.height != null ? String(data.height) : "");
+      setWeight(normalizedWeight != null ? String(normalizedWeight) : "");
+      setHeight(normalizedHeight != null ? String(normalizedHeight) : "");
       setFitnessLevel(data.fitness_level ?? null);
       setTrainingFrequency(normalizedTrainingFrequency);
       setPrimaryGoal(normalizedPrimaryGoal);
       setInitialProfile({
-        weight: data.weight,
-        height: data.height,
+        weight: normalizedWeight,
+        height: normalizedHeight,
         fitness_level: data.fitness_level ?? null,
         training_frequency: normalizedTrainingFrequency,
         primary_goal: normalizedPrimaryGoal,
@@ -141,7 +174,7 @@ export default function EditProfileScreen() {
           "Profil konnte nicht geladen werden.",
         [
           {
-            text: "Zurueck",
+            text: "Zurück",
             onPress: () => router.back(),
           },
         ],
@@ -159,24 +192,23 @@ export default function EditProfileScreen() {
     const nextErrors: FormErrors = { ...INITIAL_ERRORS };
 
     if (parseDecimal(weight) === null) {
-      nextErrors.weight = "Bitte gib ein gueltiges Gewicht ein.";
+      nextErrors.weight = "Bitte gib ein gültiges Gewicht ein.";
     }
 
     if (parseDecimal(height) === null) {
-      nextErrors.height = "Bitte gib eine gueltige Groesse ein.";
+      nextErrors.height = "Bitte gib eine gültige Größe ein.";
     }
 
     if (!fitnessLevel) {
-      nextErrors.fitnessLevel = "Bitte waehle dein Fitness-Level.";
+      nextErrors.fitnessLevel = "Bitte wähle dein Fitness-Level.";
     }
 
     if (!trainingFrequency) {
-      nextErrors.trainingFrequency =
-        "Bitte waehle deine Trainingshaeufigkeit.";
+      nextErrors.trainingFrequency = "Bitte wähle deine Trainingshäufigkeit.";
     }
 
     if (!primaryGoal) {
-      nextErrors.primaryGoal = "Bitte waehle dein primaeres Ziel.";
+      nextErrors.primaryGoal = "Bitte wähle dein primäres Ziel.";
     }
 
     setErrors(nextErrors);
@@ -184,8 +216,42 @@ export default function EditProfileScreen() {
     return !Object.values(nextErrors).some(Boolean);
   };
 
+  const hasChanges = React.useMemo(() => {
+    if (!initialProfile) return false;
+
+    const parsedWeight = parseDecimal(weight);
+    const parsedHeight = parseDecimal(height);
+
+    const weightChanged =
+      parsedWeight === null
+        ? initialProfile.weight !== null
+        : hasNumericChange(parsedWeight, initialProfile.weight);
+
+    const heightChanged =
+      parsedHeight === null
+        ? initialProfile.height !== null
+        : hasNumericChange(parsedHeight, initialProfile.height);
+
+    return (
+      weightChanged ||
+      heightChanged ||
+      fitnessLevel !== initialProfile.fitness_level ||
+      trainingFrequency !== initialProfile.training_frequency ||
+      primaryGoal !== initialProfile.primary_goal
+    );
+  }, [
+    initialProfile,
+    weight,
+    height,
+    fitnessLevel,
+    trainingFrequency,
+    primaryGoal,
+  ]);
+
+  const isSaveDisabled = saving || !hasChanges;
+
   const handleSave = async () => {
-    if (!initialProfile || saving) return;
+    if (!initialProfile || saving || !hasChanges) return;
     if (!validateForm()) return;
 
     const parsedWeight = parseDecimal(weight);
@@ -209,11 +275,11 @@ export default function EditProfileScreen() {
       primary_goal?: PrimaryGoal;
     } = {};
 
-    if (parsedWeight !== initialProfile.weight) {
+    if (hasNumericChange(parsedWeight, initialProfile.weight)) {
       payload.weight = parsedWeight;
     }
 
-    if (parsedHeight !== initialProfile.height) {
+    if (hasNumericChange(parsedHeight, initialProfile.height)) {
       payload.height = parsedHeight;
     }
 
@@ -230,7 +296,7 @@ export default function EditProfileScreen() {
     }
 
     if (Object.keys(payload).length === 0) {
-      Alert.alert("Keine Aenderungen", "Es gibt nichts zu speichern.");
+      Alert.alert("Keine Änderungen", "Es gibt nichts zu speichern.");
       return;
     }
 
@@ -279,7 +345,10 @@ export default function EditProfileScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.backButton}
+        >
           <Icon name="arrow-back" size={28} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Profil bearbeiten</Text>
@@ -288,7 +357,8 @@ export default function EditProfileScreen() {
 
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 8 : 0}
       >
         <ScrollView
           contentContainerStyle={[
@@ -297,13 +367,19 @@ export default function EditProfileScreen() {
           ]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode={
+            Platform.OS === "ios" ? "interactive" : "on-drag"
+          }
+          automaticallyAdjustKeyboardInsets={Platform.OS === "ios"}
         >
-          <View style={[styles.section, isCompact ? styles.sectionCompact : null]}>
+          <View
+            style={[styles.section, isCompact ? styles.sectionCompact : null]}
+          >
             <Text style={styles.sectionTitle}>BASISDATEN</Text>
 
             <Text style={styles.label}>Gewicht</Text>
             <Pressable
-              onPress={() => setFocusedInput("weight")}
+              onPress={() => weightInputRef.current?.focus()}
               style={[
                 styles.inputShell,
                 focusedInput === "weight" ? styles.inputFocus : null,
@@ -320,6 +396,7 @@ export default function EditProfileScreen() {
                 }
               />
               <TextInput
+                ref={weightInputRef}
                 style={styles.input}
                 value={weight}
                 onChangeText={(value) => {
@@ -338,9 +415,9 @@ export default function EditProfileScreen() {
               <Text style={styles.errorText}>{errors.weight}</Text>
             ) : null}
 
-            <Text style={styles.label}>Groesse</Text>
+            <Text style={styles.label}>Größe</Text>
             <Pressable
-              onPress={() => setFocusedInput("height")}
+              onPress={() => heightInputRef.current?.focus()}
               style={[
                 styles.inputShell,
                 focusedInput === "height" ? styles.inputFocus : null,
@@ -357,6 +434,7 @@ export default function EditProfileScreen() {
                 }
               />
               <TextInput
+                ref={heightInputRef}
                 style={styles.input}
                 value={height}
                 onChangeText={(value) => {
@@ -376,103 +454,141 @@ export default function EditProfileScreen() {
             ) : null}
           </View>
 
-          <View style={[styles.section, isCompact ? styles.sectionCompact : null]}>
+          <View
+            style={[styles.section, isCompact ? styles.sectionCompact : null]}
+          >
             <Text style={styles.sectionTitle}>TRAININGSFOKUS</Text>
 
             <Text style={styles.label}>Fitness-Level</Text>
             <View style={styles.optionContainer}>
-              {FITNESS_LEVEL_OPTIONS.map((item) => (
-                <Pressable
-                  key={item.value}
-                  onPress={() => {
-                    setFitnessLevel(item.value);
-                    setErrors((prev) => ({ ...prev, fitnessLevel: "" }));
-                  }}
-                  style={[
-                    styles.optionButton,
-                    fitnessLevel === item.value
-                      ? styles.optionButtonSelected
-                      : null,
-                  ]}
-                >
-                  <Text
+              {FITNESS_LEVEL_OPTIONS.map((item) => {
+                const isSelected = fitnessLevel === item.value;
+
+                return (
+                  <Pressable
+                    key={item.value}
+                    onPress={() => {
+                      setFitnessLevel(item.value);
+                      setErrors((prev) => ({ ...prev, fitnessLevel: "" }));
+                    }}
                     style={[
-                      styles.optionText,
-                      fitnessLevel === item.value
-                        ? styles.optionTextSelected
-                        : null,
+                      styles.optionButton,
+                      isSelected ? styles.optionButtonSelected : null,
                     ]}
                   >
-                    {item.label}
-                  </Text>
-                </Pressable>
-              ))}
+                    <View style={styles.optionContent}>
+                      <View
+                        style={[
+                          styles.optionIndicator,
+                          isSelected ? styles.optionIndicatorSelected : null,
+                        ]}
+                      >
+                        {isSelected ? (
+                          <Icon name="check" size={14} color={colors.white} />
+                        ) : null}
+                      </View>
+                      <Text
+                        style={[
+                          styles.optionText,
+                          isSelected ? styles.optionTextSelected : null,
+                        ]}
+                      >
+                        {item.label}
+                      </Text>
+                    </View>
+                  </Pressable>
+                );
+              })}
             </View>
             {errors.fitnessLevel ? (
               <Text style={styles.errorText}>{errors.fitnessLevel}</Text>
             ) : null}
 
-            <Text style={styles.label}>Trainingshaeufigkeit</Text>
+            <Text style={styles.label}>Trainingshäufigkeit</Text>
             <View style={styles.optionContainer}>
-              {TRAINING_FREQUENCY_OPTIONS.map((item) => (
-                <Pressable
-                  key={item.value}
-                  onPress={() => {
-                    setTrainingFrequency(item.value);
-                    setErrors((prev) => ({ ...prev, trainingFrequency: "" }));
-                  }}
-                  style={[
-                    styles.optionButton,
-                    trainingFrequency === item.value
-                      ? styles.optionButtonSelected
-                      : null,
-                  ]}
-                >
-                  <Text
+              {TRAINING_FREQUENCY_OPTIONS.map((item) => {
+                const isSelected = trainingFrequency === item.value;
+
+                return (
+                  <Pressable
+                    key={item.value}
+                    onPress={() => {
+                      setTrainingFrequency(item.value);
+                      setErrors((prev) => ({ ...prev, trainingFrequency: "" }));
+                    }}
                     style={[
-                      styles.optionText,
-                      trainingFrequency === item.value
-                        ? styles.optionTextSelected
-                        : null,
+                      styles.optionButton,
+                      isSelected ? styles.optionButtonSelected : null,
                     ]}
                   >
-                    {item.label}
-                  </Text>
-                </Pressable>
-              ))}
+                    <View style={styles.optionContent}>
+                      <View
+                        style={[
+                          styles.optionIndicator,
+                          isSelected ? styles.optionIndicatorSelected : null,
+                        ]}
+                      >
+                        {isSelected ? (
+                          <Icon name="check" size={14} color={colors.white} />
+                        ) : null}
+                      </View>
+                      <Text
+                        style={[
+                          styles.optionText,
+                          isSelected ? styles.optionTextSelected : null,
+                        ]}
+                      >
+                        {item.label}
+                      </Text>
+                    </View>
+                  </Pressable>
+                );
+              })}
             </View>
             {errors.trainingFrequency ? (
               <Text style={styles.errorText}>{errors.trainingFrequency}</Text>
             ) : null}
 
-            <Text style={styles.label}>Primaeres Ziel</Text>
+            <Text style={styles.label}>Primäres Ziel</Text>
             <View style={styles.optionContainer}>
-              {PRIMARY_GOAL_OPTIONS.map((item) => (
-                <Pressable
-                  key={item.value}
-                  onPress={() => {
-                    setPrimaryGoal(item.value);
-                    setErrors((prev) => ({ ...prev, primaryGoal: "" }));
-                  }}
-                  style={[
-                    styles.optionButton,
-                    primaryGoal === item.value
-                      ? styles.optionButtonSelected
-                      : null,
-                  ]}
-                >
-                  <Text
+              {PRIMARY_GOAL_OPTIONS.map((item) => {
+                const isSelected = primaryGoal === item.value;
+
+                return (
+                  <Pressable
+                    key={item.value}
+                    onPress={() => {
+                      setPrimaryGoal(item.value);
+                      setErrors((prev) => ({ ...prev, primaryGoal: "" }));
+                    }}
                     style={[
-                      styles.optionText,
-                      primaryGoal === item.value
-                        ? styles.optionTextSelected
-                        : null,
+                      styles.optionButton,
+                      isSelected ? styles.optionButtonSelected : null,
                     ]}
                   >
-                    {item.label}
-                  </Text>
-                </Pressable>
-              ))}
+                    <View style={styles.optionContent}>
+                      <View
+                        style={[
+                          styles.optionIndicator,
+                          isSelected ? styles.optionIndicatorSelected : null,
+                        ]}
+                      >
+                        {isSelected ? (
+                          <Icon name="check" size={14} color={colors.white} />
+                        ) : null}
+                      </View>
+                      <Text
+                        style={[
+                          styles.optionText,
+                          isSelected ? styles.optionTextSelected : null,
+                        ]}
+                      >
+                        {item.label}
+                      </Text>
+                    </View>
+                  </Pressable>
+                );
+              })}
             </View>
             {errors.primaryGoal ? (
               <Text style={styles.errorText}>{errors.primaryGoal}</Text>
@@ -483,18 +599,18 @@ export default function EditProfileScreen() {
             style={[
               styles.saveButton,
               isCompact ? styles.saveButtonCompact : null,
-              saving ? styles.saveButtonDisabled : null,
+              isSaveDisabled ? styles.saveButtonDisabled : null,
             ]}
             onPress={handleSave}
             activeOpacity={0.85}
-            disabled={saving}
+            disabled={isSaveDisabled}
           >
             {saving ? (
               <ActivityIndicator size="small" color={colors.white} />
             ) : (
               <>
                 <Icon name="save" size={20} color={colors.white} />
-                <Text style={styles.saveButtonText}>Aenderungen speichern</Text>
+                <Text style={styles.saveButtonText}>Änderungen speichern</Text>
               </>
             )}
           </TouchableOpacity>
@@ -539,6 +655,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   content: {
+    flexGrow: 1,
     paddingHorizontal: spacing.screenPaddingHorizontal,
     paddingVertical: spacing.lg,
     paddingBottom: spacing.xl * 2,
@@ -625,23 +742,51 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   optionButton: {
-    padding: spacing.md,
-    borderRadius: 16,
-    alignItems: "center",
+    minHeight: 54,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: "#D8E1F0",
+    backgroundColor: colors.white,
+    paddingHorizontal: spacing.md,
     justifyContent: "center",
-    backgroundColor: "#1A2332",
   },
   optionButtonSelected: {
+    borderColor: colors.primaryBlue,
+    backgroundColor: "#EEF4FF",
+    shadowColor: colors.primaryBlue,
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  optionContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+  optionIndicator: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1.5,
+    borderColor: "#C9D6EA",
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  optionIndicatorSelected: {
+    borderColor: colors.primaryBlue,
     backgroundColor: colors.primaryBlue,
   },
   optionText: {
-    color: colors.white,
-    fontWeight: "600",
+    flex: 1,
+    color: colors.textPrimary,
+    fontWeight: "700",
     fontSize: 16,
     fontFamily: "Inter",
   },
   optionTextSelected: {
-    color: colors.white,
+    color: colors.primaryBlue,
   },
   errorText: {
     ...typography.error,

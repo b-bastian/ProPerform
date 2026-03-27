@@ -1,8 +1,8 @@
 import { colors } from "@/src/theme/colors";
 import { spacing } from "@/src/theme/spacing";
 import api from "@/src/utils/axiosInstance";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useFocusEffect, useRouter } from "expo-router";
 import React from "react";
 import {
@@ -80,22 +80,37 @@ export default function ProfileScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={[styles.topSection, isCompact ? styles.topSectionCompact : null]}>
+        <View
+          style={[
+            styles.topSection,
+            isCompact ? styles.topSectionCompact : null,
+          ]}
+        >
           <View
-            style={[styles.profileIconWrap, isCompact ? styles.profileIconWrapCompact : null]}
+            style={[
+              styles.profileIconWrap,
+              isCompact ? styles.profileIconWrapCompact : null,
+            ]}
           >
             <Icon name="person" size={48} color={colors.primaryBlue} />
           </View>
 
           <View>
             <Text style={styles.goodMorning}>{greeting}</Text>
-            <Text style={[styles.hello, isCompact ? styles.helloCompact : null]}>
+            <Text
+              style={[styles.hello, isCompact ? styles.helloCompact : null]}
+            >
               {user?.firstname ?? "..."}
             </Text>
           </View>
         </View>
 
-        <View style={[styles.infoSection, isCompact ? styles.infoSectionCompact : null]}>
+        <View
+          style={[
+            styles.infoSection,
+            isCompact ? styles.infoSectionCompact : null,
+          ]}
+        >
           <Text style={styles.sectionTitle}>PERSÖNLICHE INFORMATIONEN</Text>
 
           <View style={styles.row}>
@@ -106,8 +121,14 @@ export default function ProfileScreen() {
           <View style={styles.separator} />
 
           <View style={styles.row}>
-            <Text style={styles.label}>Email</Text>
-            <Text style={styles.value}>{user?.email ?? "..."}</Text>
+            <Text style={styles.label}>E-Mail</Text>
+            <Text
+              style={[styles.value, styles.emailValue]}
+              numberOfLines={1}
+              ellipsizeMode="middle"
+            >
+              {user?.email ?? "..."}
+            </Text>
           </View>
 
           <View style={styles.separator} />
@@ -234,6 +255,12 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: colors.textPrimary,
     fontFamily: "Inter",
+  },
+  emailValue: {
+    fontSize: 14,
+    maxWidth: "62%",
+    flexShrink: 1,
+    textAlign: "right",
   },
   separator: {
     height: 1,

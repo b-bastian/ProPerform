@@ -1,24 +1,24 @@
-import React, { useCallback, useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
-  Alert,
-  useWindowDimensions,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { typography } from "@/src/theme/typography";
-import { spacing } from "@/src/theme/spacing";
-import { colors } from "@/src/theme/colors";
-import SecondaryButton from "@/src/components/secondaryButton";
 import WorkoutModal from "@/src/components/modals/WorkoutModal";
+import SecondaryButton from "@/src/components/secondaryButton";
+import { colors } from "@/src/theme/colors";
+import { spacing } from "@/src/theme/spacing";
+import { typography } from "@/src/theme/typography";
 import api from "@/src/utils/axiosInstance";
+import { MaterialIcons as Icon } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useFocusEffect } from "expo-router";
-import { MaterialIcons as Icon } from "@expo/vector-icons";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const getStreakLabel = (days: number) =>
   `${days} ${days === 1 ? "Tag" : "Tage"} aktiv`;
@@ -234,14 +234,16 @@ export default function HomeScreen() {
           <View style={styles.streakHeader}>
             <Text style={styles.streakTitle}>Trainings-Streak</Text>
 
-            <View style={styles.streakRight}>
-              <Text style={styles.fire}>🔥</Text>
-              <Text style={styles.streakActive}>
-                {streakLoading
-                  ? "Lädt..."
-                  : `${getStreakLabel(streakDays)} · Bestwert ${longestStreak}`}
-              </Text>
-            </View>
+            {streakDays > 0 && !streakLoading ? (
+              <View style={styles.streakRight}>
+                <Text style={styles.fire}>🔥</Text>
+                <Text style={styles.streakActive}>
+                  {streakLoading
+                    ? "Lädt..."
+                    : `${getStreakLabel(streakDays)} · Bestwert ${longestStreak}`}
+                </Text>
+              </View>
+            ) : null}
           </View>
 
           {lastActivityDate ? (

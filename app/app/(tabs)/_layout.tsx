@@ -5,6 +5,8 @@ import * as Notifications from "expo-notifications";
 import { Tabs } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect } from "react";
+import { useWindowDimensions } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -16,6 +18,11 @@ Notifications.setNotificationHandler({
 });
 
 export default function TabLayout() {
+  const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const isSmallPhone = width < 390 || height < 760;
+  const tabBarHeight = isSmallPhone ? 58 : 70;
+
   useEffect(() => {
     console.log("🚀 TabLayout mounted");
 
@@ -87,6 +94,9 @@ export default function TabLayout() {
     registerPush();
   }, []);
 
+  // Icons müssen nach unten verschoben werden um die Safe Area zu kompensieren
+  const iconOffset = insets.bottom > 0 ? insets.bottom / 2 : 0;
+
   return (
     <Tabs
       screenOptions={{
@@ -94,17 +104,27 @@ export default function TabLayout() {
         tabBarShowLabel: false,
         tabBarStyle: {
           backgroundColor: "#F9FAFB",
-          borderRadius: 40,
+          borderRadius: isSmallPhone ? 34 : 40,
           marginHorizontal: 20,
-          marginBottom: "2%",
-          height: 70,
+          marginBottom: insets.bottom > 0 ? 12 : 10,
+          height: tabBarHeight + (insets.bottom > 0 ? insets.bottom : 0),
           paddingBottom: 0,
-          paddingTop: 18,
+          paddingTop: 0,
           position: "absolute",
           shadowColor: "#000",
-          shadowRadius: 12,
-          shadowOpacity: 0.1,
-          elevation: 8,
+          shadowOffset: { width: 4, height: 8 },
+          shadowRadius: 16,
+          shadowOpacity: 0.18,
+          elevation: 14,
+        },
+        tabBarItemStyle: {
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 0,
+        },
+        tabBarIconStyle: {
+          alignSelf: "center",
         },
         tabBarActiveTintColor: "#F97316",
         tabBarInactiveTintColor: "#8899bb",
@@ -115,7 +135,12 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
-            <Icon name="home" color={color} size={28} />
+            <Icon
+              name="home"
+              color={color}
+              size={28}
+              style={{ marginTop: iconOffset }}
+            />
           ),
         }}
       />
@@ -125,7 +150,12 @@ export default function TabLayout() {
         options={{
           title: "Exercises",
           tabBarIcon: ({ color }) => (
-            <Icon name="fitness-center" color={color} size={28} />
+            <Icon
+              name="fitness-center"
+              color={color}
+              size={28}
+              style={{ marginTop: iconOffset }}
+            />
           ),
         }}
       />
@@ -134,7 +164,12 @@ export default function TabLayout() {
         options={{
           title: "Training",
           tabBarIcon: ({ color }) => (
-            <Icon name="assignment" color={color} size={28} />
+            <Icon
+              name="assignment"
+              color={color}
+              size={28}
+              style={{ marginTop: iconOffset }}
+            />
           ),
         }}
       />
@@ -144,7 +179,12 @@ export default function TabLayout() {
         options={{
           title: "Profile",
           tabBarIcon: ({ color }) => (
-            <Icon name="person" color={color} size={28} />
+            <Icon
+              name="person"
+              color={color}
+              size={28}
+              style={{ marginTop: iconOffset }}
+            />
           ),
         }}
       />

@@ -8,6 +8,7 @@ import * as SecureStore from "expo-secure-store";
 import React from "react";
 import {
   Alert,
+  Linking,
   ScrollView,
   StyleSheet,
   Switch,
@@ -91,6 +92,19 @@ export default function SettingsScreen() {
     }
   };
 
+  const handleOpenWebsite = async () => {
+    const url = "https://properform.app";
+
+    const supported = await Linking.canOpenURL(url);
+
+    if (!supported) {
+      Alert.alert("Fehler", "Die URL kann nicht geöffnet werden.");
+      return;
+    }
+
+    await Linking.openURL(url);
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.header}>
@@ -111,7 +125,9 @@ export default function SettingsScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        <View style={[styles.section, isCompact ? styles.sectionCompact : null]}>
+        <View
+          style={[styles.section, isCompact ? styles.sectionCompact : null]}
+        >
           <Text style={styles.sectionTitle}>KONTO</Text>
 
           <TouchableOpacity
@@ -153,7 +169,9 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
 
-        <View style={[styles.section, isCompact ? styles.sectionCompact : null]}>
+        <View
+          style={[styles.section, isCompact ? styles.sectionCompact : null]}
+        >
           <Text style={styles.sectionTitle}>BENACHRICHTIGUNGEN</Text>
 
           <View
@@ -204,7 +222,9 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-        <View style={[styles.section, isCompact ? styles.sectionCompact : null]}>
+        <View
+          style={[styles.section, isCompact ? styles.sectionCompact : null]}
+        >
           <Text style={styles.sectionTitle}>DARSTELLUNG</Text>
 
           <View
@@ -229,7 +249,9 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-        <View style={[styles.section, isCompact ? styles.sectionCompact : null]}>
+        <View
+          style={[styles.section, isCompact ? styles.sectionCompact : null]}
+        >
           <Text style={styles.sectionTitle}>SUPPORT</Text>
 
           <TouchableOpacity
@@ -237,6 +259,7 @@ export default function SettingsScreen() {
               styles.settingItem,
               isCompact ? styles.settingItemCompact : null,
             ]}
+            onPress={handleOpenWebsite}
           >
             <View style={styles.settingLeft}>
               <Icon name="help" size={22} color={colors.primaryBlue} />
@@ -250,7 +273,7 @@ export default function SettingsScreen() {
             <Icon name="arrow-forward" size={20} color={colors.textSecondary} />
           </TouchableOpacity>
 
-          <TouchableOpacity
+          <View
             style={[
               styles.settingItem,
               isCompact ? styles.settingItemCompact : null,
@@ -264,7 +287,7 @@ export default function SettingsScreen() {
               </View>
             </View>
             <Icon name="arrow-forward" size={20} color={colors.textSecondary} />
-          </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.logoutSection}>

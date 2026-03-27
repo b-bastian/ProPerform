@@ -43,8 +43,8 @@ const STEP_TITLES: Record<FormStep, string> = {
 
 const STEP_SUBTITLES: Record<FormStep, string> = {
   2: "Vorname, E-Mail und Passwort",
-  3: "Groesse, Gewicht und Geburtsdatum",
-  4: "Primary Goal, Fitness Level und Trainingshaeufigkeit",
+  3: "Größe, Gewicht und Geburtsdatum",
+  4: "Primary Goal, Fitness Level und Trainingshäufigkeit",
 };
 
 const STEP_5_TITLE = "Wie möchtest du trainieren?";
@@ -53,6 +53,24 @@ const STEP_6_TITLE = "E-Mail bestätigen";
 const STEP_6_SUBTITLE = "Gib den 6-stelligen Code ein";
 const STEP_7_TITLE = "Trainer verbinden";
 const STEP_7_SUBTITLE = "Gib den Code deines Trainers ein";
+
+const FITNESS_LEVEL_STEP_OPTIONS = [
+  { label: "Anfänger", value: "beginner" as const },
+  { label: "Fortgeschritten", value: "intermediate" as const },
+  { label: "Experte", value: "advanced" as const },
+];
+
+const TRAINING_FREQUENCY_STEP_OPTIONS = [
+  { label: "1-2x pro Woche", value: 2 as const },
+  { label: "3-4x pro Woche", value: 4 as const },
+  { label: "5+ pro Woche", value: 7 as const },
+];
+
+const PRIMARY_GOAL_STEP_OPTIONS = [
+  { label: "Muskelaufbau", value: "build muscle" as const },
+  { label: "Abnehmen", value: "lose weight" as const },
+  { label: "Gewicht halten", value: "stay at weight" as const },
+];
 
 function formatDate(date: Date) {
   const year = date.getFullYear();
@@ -198,7 +216,7 @@ export default function OnboardingScreen() {
     const normalizedEmail = value.trim().toLowerCase();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(normalizedEmail))
-      return "Bitte gib eine gueltige E-Mail ein.";
+      return "Bitte gib eine gültige E-Mail ein.";
     return "";
   };
 
@@ -208,7 +226,7 @@ export default function OnboardingScreen() {
 
     if (value.length < 8) return "Mindestens 8 Zeichen erforderlich.";
     if (!/[A-Z]/.test(value))
-      return "Mindestens ein Grossbuchstabe erforderlich.";
+      return "Mindestens ein Großbuchstabe erforderlich.";
     if (!/[a-z]/.test(value))
       return "Mindestens ein Kleinbuchstabe erforderlich.";
     if (!/[0-9]/.test(value)) return "Mindestens eine Zahl erforderlich.";
@@ -240,16 +258,16 @@ export default function OnboardingScreen() {
     const today = new Date();
 
     if (heightNum === null || heightNum < 100 || heightNum > 250) {
-      next.height = "Bitte gib eine gueltige Groesse ein (100-250 cm).";
+      next.height = "Bitte gib eine gültige Größe ein (100-250 cm).";
       hasError = true;
     }
     if (weightNum === null || weightNum < 30 || weightNum > 300) {
-      next.weight = "Bitte gib ein gueltiges Gewicht ein (30-300 kg).";
+      next.weight = "Bitte gib ein gültiges Gewicht ein (30-300 kg).";
       hasError = true;
     }
 
     if (selectedDate >= today) {
-      next.birthDate = "Bitte gib ein gueltiges Geburtsdatum ein.";
+      next.birthDate = "Bitte gib ein gültiges Geburtsdatum ein.";
       hasError = true;
     } else {
       const tenYearsAgo = new Date();
@@ -267,11 +285,11 @@ export default function OnboardingScreen() {
   const validateStep4 = () => {
     const next = {
       ...errors,
-      fitnessLevel: fitnessLevel ? "" : "Bitte waehle dein Fitness-Level.",
+      fitnessLevel: fitnessLevel ? "" : "Bitte wähle dein Fitness-Level.",
       trainingFrequency: trainingFrequency
         ? ""
-        : "Bitte waehle deine Trainingshaeufigkeit.",
-      primaryGoal: primaryGoal ? "" : "Bitte waehle dein primaeres Ziel.",
+        : "Bitte wähle deine Trainingshäufigkeit.",
+      primaryGoal: primaryGoal ? "" : "Bitte wähle dein primäres Ziel.",
     };
     setErrors(next);
     return !Boolean(
@@ -346,7 +364,7 @@ export default function OnboardingScreen() {
         Alert.alert(
           "Fehler",
           error?.response?.data?.error ||
-            "Registrierung fehlgeschlagen. Bitte pruefe deine Daten.",
+            "Registrierung fehlgeschlagen. Bitte prüfe deine Daten.",
         );
       } finally {
         setLoading(false);
@@ -501,32 +519,61 @@ export default function OnboardingScreen() {
           <View style={styles.decoCircleSmall} />
 
           <View style={styles.topSection}>
-            <View style={[styles.logoWrap, isCompact ? styles.logoWrapCompact : null]}>
+            <View
+              style={[
+                styles.logoWrap,
+                isCompact ? styles.logoWrapCompact : null,
+              ]}
+            >
               <Image
                 source={require("../../assets/images/logo_ohne_bg.png")}
-                style={[styles.logoImage, isCompact ? styles.logoImageCompact : null]}
+                style={[
+                  styles.logoImage,
+                  isCompact ? styles.logoImageCompact : null,
+                ]}
                 resizeMode="contain"
               />
             </View>
-            <Text style={[styles.ProPerform, isCompact ? styles.brandCompact : null]}>
+            <Text
+              style={[
+                styles.ProPerform,
+                isCompact ? styles.brandCompact : null,
+              ]}
+            >
               ProPerform
             </Text>
           </View>
 
           <View style={styles.mainSection}>
-            <Text style={[styles.mainTitle, isCompact ? styles.mainTitleCompact : null]}>
+            <Text
+              style={[
+                styles.mainTitle,
+                isCompact ? styles.mainTitleCompact : null,
+              ]}
+            >
               Trainiere{"\n"}smarter.{"\n"}Nicht harder.
             </Text>
             <Text
-              style={[styles.mainSubtitle, isCompact ? styles.mainSubtitleCompact : null]}
+              style={[
+                styles.mainSubtitle,
+                isCompact ? styles.mainSubtitleCompact : null,
+              ]}
             >
               Erstelle dein Profil und werde die beste Version von dir.
             </Text>
           </View>
 
-          <View style={[styles.bottomSection, isCompact ? styles.bottomSectionCompact : null]}>
+          <View
+            style={[
+              styles.bottomSection,
+              isCompact ? styles.bottomSectionCompact : null,
+            ]}
+          >
             <TouchableOpacity
-              style={[styles.primaryButton, isCompact ? styles.primaryButtonCompact : null]}
+              style={[
+                styles.primaryButton,
+                isCompact ? styles.primaryButtonCompact : null,
+              ]}
               onPress={handleNext}
             >
               <Text style={styles.primaryButtonText}>LOS GEHT&apos;S</Text>
@@ -560,7 +607,8 @@ export default function OnboardingScreen() {
 
           <KeyboardAvoidingView
             style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 8 : 0}
           >
             <ScrollView
               contentContainerStyle={[
@@ -571,9 +619,12 @@ export default function OnboardingScreen() {
               keyboardDismissMode={
                 Platform.OS === "ios" ? "interactive" : "none"
               }
+              automaticallyAdjustKeyboardInsets={Platform.OS === "ios"}
               showsVerticalScrollIndicator={false}
             >
-              <View style={[styles.header, isCompact ? styles.headerCompact : null]}>
+              <View
+                style={[styles.header, isCompact ? styles.headerCompact : null]}
+              >
                 <Text style={typography.title}>
                   {step === 5
                     ? STEP_5_TITLE
@@ -600,7 +651,9 @@ export default function OnboardingScreen() {
                   opacity: contentOpacity,
                 }}
               >
-                <View style={[styles.card, isCompact ? styles.cardCompact : null]}>
+                <View
+                  style={[styles.card, isCompact ? styles.cardCompact : null]}
+                >
                   {step === 2 ? (
                     <>
                       <Text style={styles.label}>Vorname</Text>
@@ -748,7 +801,7 @@ export default function OnboardingScreen() {
 
                   {step === 3 ? (
                     <>
-                      <Text style={styles.label}>Groesse (cm)</Text>
+                      <Text style={styles.label}>Größe (cm)</Text>
                       <Pressable
                         onPress={() => heightInputRef.current?.focus()}
                         style={[
@@ -852,38 +905,49 @@ export default function OnboardingScreen() {
                     <>
                       <Text style={styles.label}>Fitness-Level</Text>
                       <View style={styles.optionContainer}>
-                        {["Anfaenger", "Fortgeschritten", "Experte"].map(
-                          (item) => (
+                        {FITNESS_LEVEL_STEP_OPTIONS.map((item) => {
+                          const isSelected = fitnessLevel === item.value;
+
+                          return (
                             <Pressable
-                              key={item}
-                              onPress={() =>
-                                setFitnessLevel(
-                                  item === "Anfaenger"
-                                    ? "beginner"
-                                    : item === "Fortgeschritten"
-                                      ? "intermediate"
-                                      : "advanced",
-                                )
-                              }
+                              key={item.value}
+                              onPress={() => setFitnessLevel(item.value)}
                               style={[
                                 styles.optionButton,
-                                {
-                                  backgroundColor:
-                                    fitnessLevel ===
-                                    (item === "Anfaenger"
-                                      ? "beginner"
-                                      : item === "Fortgeschritten"
-                                        ? "intermediate"
-                                        : "advanced")
-                                      ? colors.primaryBlue
-                                      : "#1A2332",
-                                },
+                                isSelected ? styles.optionButtonSelected : null,
                               ]}
                             >
-                              <Text style={styles.optionText}>{item}</Text>
+                              <View style={styles.optionContent}>
+                                <View
+                                  style={[
+                                    styles.optionIndicator,
+                                    isSelected
+                                      ? styles.optionIndicatorSelected
+                                      : null,
+                                  ]}
+                                >
+                                  {isSelected ? (
+                                    <Icon
+                                      name="check"
+                                      size={14}
+                                      color={colors.white}
+                                    />
+                                  ) : null}
+                                </View>
+                                <Text
+                                  style={[
+                                    styles.optionText,
+                                    isSelected
+                                      ? styles.optionTextSelected
+                                      : null,
+                                  ]}
+                                >
+                                  {item.label}
+                                </Text>
+                              </View>
                             </Pressable>
-                          ),
-                        )}
+                          );
+                        })}
                       </View>
                       {errors.fitnessLevel ? (
                         <Text style={styles.errorText}>
@@ -891,29 +955,51 @@ export default function OnboardingScreen() {
                         </Text>
                       ) : null}
 
-                      <Text style={styles.label}>Trainingshaeufigkeit</Text>
+                      <Text style={styles.label}>Trainingshäufigkeit</Text>
                       <View style={styles.optionContainer}>
-                        {[
-                          { label: "1-2x pro Woche", value: 2 },
-                          { label: "3-4x pro Woche", value: 4 },
-                          { label: "5+ pro Woche", value: 7 },
-                        ].map((item) => (
-                          <Pressable
-                            key={item.value}
-                            onPress={() => setTrainingFrequency(item.value)}
-                            style={[
-                              styles.optionButton,
-                              {
-                                backgroundColor:
-                                  trainingFrequency === item.value
-                                    ? colors.primaryBlue
-                                    : "#1A2332",
-                              },
-                            ]}
-                          >
-                            <Text style={styles.optionText}>{item.label}</Text>
-                          </Pressable>
-                        ))}
+                        {TRAINING_FREQUENCY_STEP_OPTIONS.map((item) => {
+                          const isSelected = trainingFrequency === item.value;
+
+                          return (
+                            <Pressable
+                              key={item.value}
+                              onPress={() => setTrainingFrequency(item.value)}
+                              style={[
+                                styles.optionButton,
+                                isSelected ? styles.optionButtonSelected : null,
+                              ]}
+                            >
+                              <View style={styles.optionContent}>
+                                <View
+                                  style={[
+                                    styles.optionIndicator,
+                                    isSelected
+                                      ? styles.optionIndicatorSelected
+                                      : null,
+                                  ]}
+                                >
+                                  {isSelected ? (
+                                    <Icon
+                                      name="check"
+                                      size={14}
+                                      color={colors.white}
+                                    />
+                                  ) : null}
+                                </View>
+                                <Text
+                                  style={[
+                                    styles.optionText,
+                                    isSelected
+                                      ? styles.optionTextSelected
+                                      : null,
+                                  ]}
+                                >
+                                  {item.label}
+                                </Text>
+                              </View>
+                            </Pressable>
+                          );
+                        })}
                       </View>
                       {errors.trainingFrequency ? (
                         <Text style={styles.errorText}>
@@ -921,29 +1007,51 @@ export default function OnboardingScreen() {
                         </Text>
                       ) : null}
 
-                      <Text style={styles.label}>Primaeres Ziel</Text>
+                      <Text style={styles.label}>Primäres Ziel</Text>
                       <View style={styles.optionContainer}>
-                        {[
-                          { label: "Muskelaufbau", value: "build muscle" },
-                          { label: "Abnehmen", value: "lose weight" },
-                          { label: "Gewicht halten", value: "stay at weight" },
-                        ].map((item) => (
-                          <Pressable
-                            key={item.value}
-                            onPress={() => setPrimaryGoal(item.value)}
-                            style={[
-                              styles.optionButton,
-                              {
-                                backgroundColor:
-                                  primaryGoal === item.value
-                                    ? colors.primaryBlue
-                                    : "#1A2332",
-                              },
-                            ]}
-                          >
-                            <Text style={styles.optionText}>{item.label}</Text>
-                          </Pressable>
-                        ))}
+                        {PRIMARY_GOAL_STEP_OPTIONS.map((item) => {
+                          const isSelected = primaryGoal === item.value;
+
+                          return (
+                            <Pressable
+                              key={item.value}
+                              onPress={() => setPrimaryGoal(item.value)}
+                              style={[
+                                styles.optionButton,
+                                isSelected ? styles.optionButtonSelected : null,
+                              ]}
+                            >
+                              <View style={styles.optionContent}>
+                                <View
+                                  style={[
+                                    styles.optionIndicator,
+                                    isSelected
+                                      ? styles.optionIndicatorSelected
+                                      : null,
+                                  ]}
+                                >
+                                  {isSelected ? (
+                                    <Icon
+                                      name="check"
+                                      size={14}
+                                      color={colors.white}
+                                    />
+                                  ) : null}
+                                </View>
+                                <Text
+                                  style={[
+                                    styles.optionText,
+                                    isSelected
+                                      ? styles.optionTextSelected
+                                      : null,
+                                  ]}
+                                >
+                                  {item.label}
+                                </Text>
+                              </View>
+                            </Pressable>
+                          );
+                        })}
                       </View>
                       {errors.primaryGoal ? (
                         <Text style={styles.errorText}>
@@ -1188,7 +1296,10 @@ export default function OnboardingScreen() {
               </Animated.View>
 
               <View
-                style={[styles.navigation, isCompact ? styles.navigationCompact : null]}
+                style={[
+                  styles.navigation,
+                  isCompact ? styles.navigationCompact : null,
+                ]}
               >
                 <TouchableOpacity
                   style={styles.arrowButton}
@@ -1384,15 +1495,50 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   optionButton: {
-    padding: spacing.md,
-    borderRadius: 16,
+    minHeight: 54,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    borderColor: "#D8E1F0",
+    backgroundColor: colors.white,
+    paddingHorizontal: spacing.md,
+    justifyContent: "center",
+  },
+  optionButtonSelected: {
+    borderColor: colors.primaryBlue,
+    backgroundColor: "#EEF4FF",
+    shadowColor: colors.primaryBlue,
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  optionContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+  optionIndicator: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1.5,
+    borderColor: "#C9D6EA",
+    backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
   },
+  optionIndicatorSelected: {
+    borderColor: colors.primaryBlue,
+    backgroundColor: colors.primaryBlue,
+  },
   optionText: {
-    color: colors.white,
-    fontWeight: "600",
+    flex: 1,
+    color: colors.textPrimary,
+    fontWeight: "700",
     fontSize: 16,
+  },
+  optionTextSelected: {
+    color: colors.primaryBlue,
   },
   unitLabel: {
     fontSize: 13,

@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors } from "@/src/theme/colors";
 import { typography } from "@/src/theme/typography";
 import { spacing } from "@/src/theme/spacing";
@@ -234,9 +235,38 @@ export default function WorkoutModal({
     0,
   );
 
-  const finishWorkout = () => {
-    stopTimer();
-    setIsFinished(true);
+  const finishWorkout = async () => {
+    try {
+      await AsyncStorage.setItem(
+        "last_workout",
+        JSON.stringify({
+          name: planName || "Workout",
+          duration: seconds,
+          date: new Date().toISOString(),
+        }),
+      );
+
+      const streakResponse = await api.post("/users/streaks/update", {
+        type: "training",
+      });
+
+      console.log("Streak update response", streakResponse.data);
+    } catch (err: any) {
+      console.log(
+        "Streak update error",
+        err.response?.status,
+        err.response?.data,
+        err.message,
+      );
+      Alert.alert(
+        "Hinweis",
+        err.response?.data?.message ||
+          "Streak konnte nicht aktualisiert werden.",
+      );
+    } finally {
+      stopTimer();
+      setIsFinished(true);
+    }
   };
 
   return (

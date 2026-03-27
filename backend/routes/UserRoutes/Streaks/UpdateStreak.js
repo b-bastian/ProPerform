@@ -87,3 +87,5 @@ router.post("/update", async (req, res) => {
       .json({ message: "server error.", error: err.message });
   }
 });
+
+export default router;

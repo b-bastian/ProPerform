@@ -37,3 +37,5 @@ router.post("/:type", async (req, res) => {
       .json({ message: "server error.", error: err.message });
   }
 });
+
+export default router;

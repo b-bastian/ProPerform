@@ -1,5 +1,5 @@
 {
-  "name": "properform-expo",
+  "name": "properform",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {

@@ -18,7 +18,7 @@ import TrainingPlans from "./TrainingPlansRoutes/protected/TrainingPlans/index.j
 import UserStreakRoutes from "./UserRoutes/Streaks/index.js";
 
 const routeMounts = [
-  { router: UserStreakRoutes, path: "/streaks", protected: true },
+  { router: UserStreakRoutes, path: "/users/streaks", protected: true },
   { router: UserTrainingPlans, path: "/users/training-plans", protected: true },
   { router: publicUserRoutes, path: "/users", protected: false },
   { router: publicTrainerRoutes, path: "/trainers", protected: false },

@@ -17,6 +17,9 @@ import PostResendVerificationCode from "./pages/api-reference/auth/post-resend-v
 import PostResetPassword from "./pages/api-reference/auth/post-reset-password";
 import PostResetPasswordToken from "./pages/api-reference/auth/post-reset-password-token";
 import PostAuthRefresh from "./pages/api-reference/auth/post-refresh";
+import GetAuthVerifyToken from "./pages/api-reference/auth/get-auth-verify-token";
+import PostLoginTrainer from "./pages/api-reference/auth/post-login-trainer";
+import PostRegisterTrainer from "./pages/api-reference/auth/post-register-trainer";
 
 // exercises
 import GetExercises from "./pages/api-reference/exercises/get-exercises";
@@ -35,12 +38,12 @@ import PostSystemSaveLog from "./pages/api-reference/system/post-system-save-log
 
 // trainers
 import DeleteTrainersTid from "./pages/api-reference/trainers/delete-trainer-tid";
-import ConnectTrainer from "./pages/api-reference/trainers/get-trainer-connect";
 import DisconnectTrainer from "./pages/api-reference/trainers/get-trainer-disconnect";
 import GetTrainerAthletes from "./pages/api-reference/trainers/get-trainers-tid-athletes";
 import GetMyTrainer from "./pages/api-reference/trainers/get-trainer-me";
 import RegenerateTrainerCode from "./pages/api-reference/trainers/patch-trainers-regen-code";
 import CheckInviteCode from "./pages/api-reference/trainers/post-trainer-check-inv-code";
+import PostTrainersConnect from "./pages/api-reference/trainers/post-trainers-connect";
 
 // users
 import DeleteUsersUid from "./pages/api-reference/users/delete-users-uid";
@@ -48,6 +51,10 @@ import GetUsersMe from "./pages/api-reference/users/get-users-me";
 import GetUsers from "./pages/api-reference/users/get-users";
 import GetUsersRole from "./pages/api-reference/users/get-users-role";
 import GetUsersStats from "./pages/api-reference/users/get-users-stats";
+import GetUsersMeTrainer from "./pages/api-reference/users/get-users-me-trainer";
+import PutUsersMe from "./pages/api-reference/users/put-users-me";
+import PostStreakUpdate from "./pages/api-reference/users/post-streak-update";
+import PostStreakType from "./pages/api-reference/users/post-streak-type";
 
 // weight
 import GetLogsWeight from "./pages/api-reference/weight/get-logs-weight";
@@ -67,6 +74,7 @@ import GetUserTrainingPlans from "./pages/api-reference/training-plans/get-users
 import PostUserTrainingPlans from "./pages/api-reference/training-plans/post-users-training-plans";
 import GetUserSelectedTrainingPlan from "./pages/api-reference/training-plans/get-users-training-plans-selected";
 import GetCurrentTrainingWithExercises from "./pages/api-reference/training-plans/get-users-training-plans-start-current";
+import GetUsersTrainingPlansTrainingToday from "./pages/api-reference/training-plans/get-users-training-plans-training-today";
 import PatchSelectUserTrainingPlan from "./pages/api-reference/training-plans/patch-users-training-plans-id-select";
 import DeleteUserTrainingPlan from "./pages/api-reference/training-plans/delete-users-training-plans-id";
 
@@ -98,8 +106,11 @@ export const apiRoutes = [
   { path: "api/auth/register", element: <PostRegister /> },
   { path: "api/auth/admin/login", element: <PostAdminLogin /> },
   { path: "api/auth/admin/register", element: <PostAdminRegister /> },
+  { path: "api/auth/trainers/login", element: <PostLoginTrainer /> },
+  { path: "api/auth/trainers/register", element: <PostRegisterTrainer /> },
   { path: "api/auth/push-token", element: <PostAuthPushToken /> },
   { path: "api/auth/refresh", element: <PostAuthRefresh /> },
+  { path: "api/auth/verify-token", element: <GetAuthVerifyToken /> },
   {
     path: "api/auth/check-verification-code",
     element: <PostCheckVerificationCode />,
@@ -119,8 +130,12 @@ export const apiRoutes = [
   { path: "api/users", element: <GetUsers /> },
   { path: "api/users/:role", element: <GetUsersRole /> },
   { path: "api/users/me", element: <GetUsersMe /> },
+  { path: "api/users/me/update", element: <PutUsersMe /> },
+  { path: "api/users/me/trainer", element: <GetUsersMeTrainer /> },
   { path: "api/users/stats", element: <GetUsersStats /> },
   { path: "api/users/delete/:uid", element: <DeleteUsersUid /> },
+  { path: "api/streak/update", element: <PostStreakUpdate /> },
+  { path: "api/streak/:type", element: <PostStreakType /> },
 
   // weight
   { path: "api/logs/weight", element: <PostLogsWeight /> },
@@ -136,7 +151,7 @@ export const apiRoutes = [
     path: "api/trainers/check-invite-code",
     element: <CheckInviteCode />,
   },
-  { path: "api/trainers/connect", element: <ConnectTrainer /> },
+  { path: "api/trainers/connect", element: <PostTrainersConnect /> },
   {
     path: "api/trainers/disconnect",
     element: <DisconnectTrainer />,
@@ -213,6 +228,10 @@ export const apiRoutes = [
   {
     path: "api/users/training-plans/selected",
     element: <GetUserSelectedTrainingPlan />,
+  },
+  {
+    path: "api/users/training-plans/training/today",
+    element: <GetUsersTrainingPlansTrainingToday />,
   },
   {
     path: "api/users/training-plans/start/current",

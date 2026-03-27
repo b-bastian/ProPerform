@@ -12,8 +12,10 @@ export default function GetMedia() {
       </div>
 
       <Text>
-        Retrieves all uploaded media files. Requires authentication and the
-        owner role. Returns files sorted by creation date (newest first).
+        Retrieves uploaded media files. Requires authentication and either the
+        owner or trainer role. Owners can view all media, while trainers only
+        receive media entries created by their own user ID. Results are sorted
+        by creation date (newest first).
       </Text>
 
       <Heading>Authorization Header</Heading>
@@ -53,20 +55,21 @@ export default function GetMedia() {
   "error": "Unauthorized"
 }
 
-// Forbidden - not owner (403)
+// Forbidden - missing owner/trainer role (403)
 {
   "error": "Forbidden"
 }
 
 // Server error (500)
 {
-  "error": "internal server error"
+  "error": "internal server error."
 }`}
       />
 
       <Heading>Requirements</Heading>
       <Text>
-        Requires authentication and the <code>owner</code> role.
+        Requires authentication and either <code>owner</code> or
+        <code> trainer</code> role.
       </Text>
     </div>
   );

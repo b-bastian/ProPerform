@@ -14,7 +14,8 @@ export default function PutMediaMid() {
       <Text>
         Updates the filename of a media file. Renames the physical file on the
         media server and updates the database record. Requires authentication
-        and the owner role.
+        with owner or trainer role. Trainers can only update media they created
+        themselves.
       </Text>
 
       <Heading>Authorization Header</Heading>
@@ -40,12 +41,18 @@ export default function PutMediaMid() {
         code={`filename  (string, required, non-empty)`}
       />
 
+      <Heading>Allowed Extensions</Heading>
+      <CodeBlock
+        language="text"
+        code={`.jpg, .jpeg, .png, .webp, .mp4, .mov`}
+      />
+
       <Heading>Success Response (200)</Heading>
       <CodeBlock
         language="json"
         code={`{
-  "status": "ok",
-  "message": "media with id 42 updated"
+        "status": "ok.",
+        "message": "media with id 42 updated."
 }`}
       />
 
@@ -54,12 +61,22 @@ export default function PutMediaMid() {
         language="json"
         code={`// Missing filename (400)
 {
-  "error": "filename is required"
+  "error": "filename is required."
 }
 
-// Media not found (404)
+// Filename already exists (400)
 {
-  "error": "media not found"
+  "error": "filename already exists."
+}
+
+// Invalid file type (400)
+{
+  "error": "invalid file type."
+}
+
+// Media not found or access denied (404)
+{
+  "error": "media not found or access denied."
 }
 
 // Unauthorized (401)
@@ -67,14 +84,14 @@ export default function PutMediaMid() {
   "error": "Unauthorized"
 }
 
-// Forbidden - not owner (403)
+// Forbidden - missing owner/trainer role (403)
 {
   "error": "Forbidden"
 }
 
 // Server error (500)
 {
-  "error": "internal server error"
+  "error": "internal server error."
 }`}
       />
 
@@ -86,7 +103,8 @@ export default function PutMediaMid() {
 
       <Heading>Requirements</Heading>
       <Text>
-        Requires authentication and the <code>owner</code> role.
+        Requires authentication and either <code>owner</code> or
+        <code> trainer</code> role.
       </Text>
     </div>
   );

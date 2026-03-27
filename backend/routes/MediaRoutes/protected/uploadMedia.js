@@ -5,7 +5,6 @@ import { upload } from "../../../helpers/multerMedia.js";
 import { db } from "../../../db.js";
 
 import { requireRole } from "../../../middleware/role.js";
-import { createRateLimiter } from "../../../middleware/rate.js";
 
 import { requireAuth } from "../../../middleware/auth.js";
 
@@ -14,8 +13,7 @@ const router = express.Router();
 router.post(
   "/",
   requireAuth,
-  requireRole("owner"),
-  createRateLimiter({ windowMs: 15 * 60 * 1000, max: 30 }),
+  requireRole("owner", "trainer"),
   upload.single("file"),
   async (req, res) => {
     try {
@@ -40,17 +38,24 @@ router.post(
 
       const fileName = req.file.filename;
 
+      const createdByUser =
+        req.user.role === "owner" ? req.user.uid : req.user.tid;
+
+      const createdByRole = req.user.role;
+
       const [result] = await db.query(
         `
           INSERT INTO media (
             type,
             filename,
             url,
-            size
+            size,
+            created_by_user,
+            created_by_role
           )
-          VALUES (?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?, ?)
         `,
-        [fileType, fileName, url, fileSize],
+        [fileType, fileName, url, fileSize, createdByUser, createdByRole],
       );
 
       res.json({

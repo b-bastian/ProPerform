@@ -104,6 +104,13 @@ export const searchIndex: SearchIndexItem[] = [
       "Get current user profile, fetch my profile, user information, current user data, authenticated user details",
   },
   {
+    to: "/api/users/me/update",
+    label: "PUT /users/me",
+    category: "API Reference → Users",
+    content:
+      "Update current user profile, edit my profile, update weight height fitness_level training_frequency primary_goal, authenticated user update",
+  },
+  {
     to: "/api/users/stats",
     label: "GET /users/stats",
     category: "API Reference → Users",
@@ -115,6 +122,20 @@ export const searchIndex: SearchIndexItem[] = [
     label: "DELETE /users/:uid",
     category: "API Reference → Users",
     content: "Delete user by ID, remove user account, delete user uid",
+  },
+  {
+    to: "/api/streak/update",
+    label: "POST /streak/update",
+    category: "API Reference -> Users",
+    content:
+      "Update user streak, create daily streak log, streak update by type, current streak, longest streak, habit tracking",
+  },
+  {
+    to: "/api/streak/:type",
+    label: "POST /streak/:type",
+    category: "API Reference -> Users",
+    content:
+      "Get streak by type, current streak value, longest streak value, last activity date, streak status for user",
   },
   {
     to: "/api/logs/weight",

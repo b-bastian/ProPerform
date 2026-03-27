@@ -1,9 +1,10 @@
 import express from "express";
 import { db } from "../../../db.js";
+import { requireAuth } from "../../../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/update", async (req, res) => {
+router.post("/update", requireAuth, async (req, res) => {
   const uid = req.user.uid;
   const { type } = req.body;
 

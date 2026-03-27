@@ -14,7 +14,7 @@ router.get(
   requireRole("owner", "trainer"),
   async (req, res) => {
     const userRole = req.user.role;
-    const userId = req.user.uid;
+    const userId = req.user.role === "owner" ? req.user.uid : req.user.tid;
 
     try {
       let query = `
@@ -27,7 +27,7 @@ router.get(
         query += `ORDER BY created_at DESC`;
       } else if (userRole === "trainer") {
         // Trainer
-        query += `WHERE uid = ? ORDER BY created_at DESC`;
+        query += `WHERE created_by_user = ? ORDER BY created_at DESC`;
       }
 
       const [rows] = await db.query(

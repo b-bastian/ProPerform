@@ -3,7 +3,7 @@ import { db } from "../../../db";
 
 const router = express.Router();
 
-router.post("/streak/update", async (req, res) => {
+router.post("/update", async (req, res) => {
   const uid = req.user.uid;
   const { type } = req.body;
 

@@ -3,9 +3,9 @@ import { db } from "../../../db";
 
 const router = express.Router();
 
-router.post("/streak/:type", async (req, res) => {
+router.post("/:type", async (req, res) => {
   const uid = req.user.uid;
-  const { type } = req.body;
+  const { type } = req.params;
 
   if (!type) {
     return res.status(400).json({ message: "type is required." });

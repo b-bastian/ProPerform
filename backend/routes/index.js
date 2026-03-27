@@ -15,8 +15,10 @@ import notificationRoutes from "./AdminRoutes/protected/notificationRoutes.js";
 import notificationsMe from "./UserRoutes/Notifications/notificationsMe.js";
 import UserTrainingPlans from "./TrainingPlansRoutes/protected/UserTrainingPlans/index.js";
 import TrainingPlans from "./TrainingPlansRoutes/protected/TrainingPlans/index.js";
+import UserStreakRoutes from "./UserRoutes/Streaks/index.js";
 
 const routeMounts = [
+  { router: UserStreakRoutes, path: "/streaks", protected: true },
   { router: UserTrainingPlans, path: "/users/training-plans", protected: true },
   { router: publicUserRoutes, path: "/users", protected: false },
   { router: publicTrainerRoutes, path: "/trainers", protected: false },

@@ -229,7 +229,11 @@ export default function HomeScreen() {
           {lastActivityDate ? (
             <Text style={styles.streakSubtext}>
               Letzte Aktivität:{" "}
-              {new Date(lastActivityDate).toLocaleDateString("de-AT")}
+              {new Date(lastActivityDate).toLocaleDateString("de-AT", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })}
             </Text>
           ) : null}
 
@@ -260,7 +264,11 @@ export default function HomeScreen() {
             {lastWorkout ? (
               <View style={styles.lastWorkoutBadge}>
                 <Text style={styles.lastWorkoutBadgeText}>
-                  {new Date(lastWorkout.date).toLocaleDateString("de-AT")}
+                  {new Date(lastWorkout.date).toLocaleDateString("de-AT", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
                 </Text>
               </View>
             ) : null}
@@ -321,7 +329,7 @@ export default function HomeScreen() {
             <>
               <Text style={styles.trainingMain}>Lade Trainingsplan...</Text>
               <View style={styles.trainingButtonWrap}>
-                <SecondaryButton text="TRAINING STARTEN" />
+                <SecondaryButton text="TRAINING STARTEN" disabled />
               </View>
             </>
           ) : selectedTrainingPlan ? (
@@ -350,13 +358,14 @@ export default function HomeScreen() {
               </Text>
 
               <View style={styles.trainingButtonWrap}>
-                <View style={styles.disabledButtonWrap}>
+                <View style={styles.disabledButtonWrap} pointerEvents="none">
                   <SecondaryButton
                     text={
                       selectedTrainingMissing
                         ? "NICHT AUSGEWÄHLT"
                         : "TRAININGSPLAN AUSWÄHLEN"
                     }
+                    disabled
                   />
                 </View>
               </View>

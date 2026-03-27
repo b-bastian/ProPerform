@@ -1,24 +1,31 @@
-import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ViewStyle } from 'react-native';
+import React from "react";
+import { TouchableOpacity, Text, StyleSheet, ViewStyle } from "react-native";
 
 interface SecondaryButtonProps {
   text: string;
   icon?: React.ReactNode;
   onPress?: () => void;
   color?: string;
+  disabled?: boolean;
 }
 
 const SecondaryButton: React.FC<SecondaryButtonProps> = ({
   text,
   icon,
   onPress,
-  color = '#F97316',
+  color = "#F97316",
+  disabled = false,
 }) => {
   return (
     <TouchableOpacity
-      onPress={onPress}
-      style={[styles.button, { backgroundColor: color }]}
-      activeOpacity={0.8}
+      onPress={disabled ? undefined : onPress}
+      disabled={disabled}
+      style={[
+        styles.button,
+        { backgroundColor: color },
+        disabled && styles.buttonDisabled,
+      ]}
+      activeOpacity={disabled ? 1 : 0.8}
     >
       {icon && <>{icon}</>}
       <Text style={styles.text}>{text}</Text>
@@ -28,13 +35,13 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 16,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 4, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
@@ -42,10 +49,13 @@ const styles = StyleSheet.create({
     marginTop: 15,
   } as ViewStyle,
   text: {
-    color: '#1E3A8A',
-    fontWeight: 'bold',
+    color: "#1E3A8A",
+    fontWeight: "bold",
     fontSize: 24,
     marginLeft: 6,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
 });
 

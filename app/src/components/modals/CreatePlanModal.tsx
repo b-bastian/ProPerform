@@ -240,13 +240,13 @@ export default function CreatePlanModal({
           style={styles.sheet}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
-          <View style={styles.handle} />
           <View style={styles.header}>
+            <View style={styles.headerSpacer} />
             <Text style={styles.title}>
               {step === 1 ? "Neuer Trainingsplan" : "Übungen auswählen"}
             </Text>
-            <TouchableOpacity onPress={onClose}>
-              <Icon name="close" size={24} color={colors.textSecondary} />
+            <TouchableOpacity style={styles.iconButton} onPress={onClose}>
+              <Icon name="close" size={24} color={colors.textPrimary} />
             </TouchableOpacity>
           </View>
 
@@ -479,26 +479,37 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 24,
     paddingHorizontal: spacing.screenPaddingHorizontal,
     paddingBottom: spacing.xl,
+    paddingTop: spacing.md,
     height: "80%",
-  },
-  handle: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: "#E0E0E0",
-    alignSelf: "center",
-    marginTop: spacing.sm,
-    marginBottom: spacing.sm,
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: spacing.md,
+  },
+  headerSpacer: {
+    width: 42,
+    height: 42,
   },
   title: {
     ...typography.title,
     fontSize: 20,
+    flex: 1,
+    textAlign: "center",
+  },
+  iconButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
   content: {
     gap: spacing.md,

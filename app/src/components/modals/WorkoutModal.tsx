@@ -65,6 +65,7 @@ export default function WorkoutModal({
   const [isFinished, setIsFinished] = useState(false);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const activeWorkoutPlanIdRef = useRef<number | null>(null);
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -73,9 +74,11 @@ export default function WorkoutModal({
     }
   }, []);
 
-  const startTimer = useCallback(() => {
+  const startTimer = useCallback((resetSeconds = true) => {
     stopTimer();
-    setSeconds(0);
+    if (resetSeconds) {
+      setSeconds(0);
+    }
     timerRef.current = setInterval(() => {
       setSeconds((prev) => prev + 1);
     }, 1000);
@@ -83,6 +86,7 @@ export default function WorkoutModal({
 
   const resetWorkout = useCallback(() => {
     stopTimer();
+    activeWorkoutPlanIdRef.current = null;
     setWorkoutData([]);
     setSeconds(0);
     setIsFinished(false);
@@ -122,21 +126,46 @@ export default function WorkoutModal({
   }, [onClose, planId]);
 
   useEffect(() => {
-    if (!visible || !planId) {
+    if (!planId) {
       stopTimer();
       return;
     }
 
+    if (!visible) {
+      return;
+    }
+
+    if (isFinished) {
+      return;
+    }
+
+    const hasOpenWorkout =
+      activeWorkoutPlanIdRef.current === planId &&
+      workoutData.length > 0 &&
+      !isFinished;
+
+    if (hasOpenWorkout) {
+      if (!timerRef.current) {
+        startTimer(false);
+      }
+      return;
+    }
+
+    activeWorkoutPlanIdRef.current = planId;
     setWorkoutData([]);
     setIsFinished(false);
     void loadExercises();
     startTimer();
+  }, [visible, planId, workoutData.length, isFinished, loadExercises, startTimer, stopTimer]);
 
+  useEffect(() => {
     return () => stopTimer();
-  }, [visible, planId, loadExercises, startTimer, stopTimer]);
+  }, [stopTimer]);
 
   const handleClose = () => {
-    resetWorkout();
+    if (isFinished) {
+      resetWorkout();
+    }
     onClose();
   };
 

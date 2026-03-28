@@ -13,21 +13,26 @@ router.post("/update", requireAuth, async (req, res) => {
   }
 
   try {
-    const today = new Date().toISOString().slice(0, 10);
+    // ✅ LOCAL DATE (kein UTC Bug mehr)
+    const today = new Date().toLocaleDateString("en-CA");
 
-    // check if a new log entry is created
+    // insert log (nur einmal pro tag)
     const [logResult] = await db.query(
       `
-      insert ignore into streak_logs (uid, type, activity_date)
-      values (?, ?, ?)
+      INSERT IGNORE INTO streak_logs (uid, type, activity_date)
+      VALUES (?, ?, ?)
       `,
       [uid, type, today],
     );
 
-    // if no row inserted, streak already updated today
+    // wenn schon heute gemacht → einfach zurückgeben
     if (logResult.affectedRows === 0) {
       const [rows] = await db.query(
-        `select current_streak, longest_streak from streaks where uid = ? and type = ?`,
+        `
+        SELECT current_streak, longest_streak 
+        FROM streaks 
+        WHERE uid = ? AND type = ?
+        `,
         [uid, type],
       );
 
@@ -40,17 +45,18 @@ router.post("/update", requireAuth, async (req, res) => {
 
     const [rows] = await db.query(
       `
-      select * from streaks where uid = ? and type = ?
+      SELECT * FROM streaks 
+      WHERE uid = ? AND type = ?
       `,
       [uid, type],
     );
 
-    // create initial streak if none exists
+    // initial erstellen
     if (!rows.length) {
       await db.query(
         `
-        insert into streaks (uid, type, current_streak, longest_streak, last_activity_date)
-        values (?, ?, 1, 1, ?)
+        INSERT INTO streaks (uid, type, current_streak, longest_streak, last_activity_date)
+        VALUES (?, ?, 1, 1, ?)
         `,
         [uid, type, today],
       );
@@ -63,18 +69,21 @@ router.post("/update", requireAuth, async (req, res) => {
     }
 
     const streak = rows[0];
-    const lastDate = streak.last_activity_date;
 
+    // gestern (lokal!)
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
 
+    const yest = yesterday.toLocaleDateString("en-CA");
+
     let newCurrent = 1;
 
-    if (lastDate) {
-      const last = new Date(lastDate).toISOString().slice(0, 10);
-      const yest = yesterday.toISOString().slice(0, 10);
+    if (streak.last_activity_date) {
+      // DB DATE → sauber vergleichen (kein ISO mehr!)
+      const last = new Date(streak.last_activity_date).toLocaleDateString(
+        "en-CA",
+      );
 
-      // increase streak if last activity was yesterday
       if (last === yest) {
         newCurrent = streak.current_streak + 1;
       }
@@ -84,15 +93,15 @@ router.post("/update", requireAuth, async (req, res) => {
 
     await db.query(
       `
-      update streaks
-      set current_streak = ?, longest_streak = ?, last_activity_date = ?
-      where uid = ? and type = ?
+      UPDATE streaks
+      SET current_streak = ?, longest_streak = ?, last_activity_date = ?
+      WHERE uid = ? AND type = ?
       `,
       [newCurrent, newLongest, today, uid, type],
     );
 
     return res.status(200).json({
-      message: "streak updated succesfully.",
+      message: "streak updated successfully.",
       current_streak: newCurrent,
       longest_streak: newLongest,
     });

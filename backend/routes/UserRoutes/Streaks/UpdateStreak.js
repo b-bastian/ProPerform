@@ -4,7 +4,7 @@ import { requireAuth } from "../../../middleware/auth.js";
 
 const router = express.Router();
 
-// helper ohne UTC bug
+// helper
 function getYesterday(dateStr) {
   const [y, m, d] = dateStr.split("-").map(Number);
   const date = new Date(y, m - 1, d);
@@ -16,16 +16,15 @@ router.post("/update", requireAuth, async (req, res) => {
   const uid = req.user.uid;
   const { type, date } = req.body;
 
-  if (!type) {
-    return res.status(400).json({ message: "type is required." });
+  if (!type || !date) {
+    return res.status(400).json({ message: "type and date are required." });
   }
 
   try {
-    // dev override
     const today = date;
 
-    // insert log (1 pro tag dank UNIQUE)
-    const [logResult] = await db.query(
+    // insert log
+    await db.query(
       `
       INSERT IGNORE INTO streak_logs (uid, type, activity_date)
       VALUES (?, ?, ?)
@@ -33,6 +32,35 @@ router.post("/update", requireAuth, async (req, res) => {
       [uid, type, today],
     );
 
+    // hol ALLE logs
+    const [logs] = await db.query(
+      `
+      SELECT activity_date
+      FROM streak_logs
+      WHERE uid = ? AND type = ?
+      ORDER BY activity_date DESC
+      `,
+      [uid, type],
+    );
+
+    // 🔥 streak berechnen (robust)
+    let newCurrent = 0;
+    let expectedDate = today;
+
+    for (const log of logs) {
+      if (log.activity_date === expectedDate) {
+        newCurrent++;
+
+        const [y, m, d] = expectedDate.split("-").map(Number);
+        const dObj = new Date(y, m - 1, d);
+        dObj.setDate(dObj.getDate() - 1);
+        expectedDate = dObj.toLocaleDateString("en-CA");
+      } else {
+        break;
+      }
+    }
+
+    // streak row holen
     const [rows] = await db.query(
       `
       SELECT * FROM streaks 
@@ -41,44 +69,23 @@ router.post("/update", requireAuth, async (req, res) => {
       [uid, type],
     );
 
-    // initial erstellen
     if (!rows.length) {
       await db.query(
         `
         INSERT INTO streaks (uid, type, current_streak, longest_streak, last_activity_date)
-        VALUES (?, ?, 1, 1, ?)
+        VALUES (?, ?, ?, ?, ?)
         `,
-        [uid, type, today],
+        [uid, type, newCurrent, newCurrent, today],
       );
 
       return res.status(200).json({
         message: "streak created.",
-        current_streak: 1,
-        longest_streak: 1,
+        current_streak: newCurrent,
+        longest_streak: newCurrent,
       });
     }
 
     const streak = rows[0];
-
-    if (logResult.affectedRows === 0) {
-      return res.status(200).json({
-        message: "streak already updated today.",
-        current_streak: streak.current_streak,
-        longest_streak: streak.longest_streak,
-      });
-    }
-
-    const yest = getYesterday(today);
-
-    let newCurrent = 1;
-
-    if (streak.last_activity_date) {
-      const last = streak.last_activity_date;
-
-      if (last === yest) {
-        newCurrent = streak.current_streak + 1;
-      }
-    }
 
     const newLongest = Math.max(newCurrent, streak.longest_streak);
 

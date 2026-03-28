@@ -202,6 +202,15 @@ export default function ExerciseScreen() {
           />
         ) : (
           <>
+            {searchQuery.trim().length === 0 && filtered.length === 0 && (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyTitle}>Keine Übungen vorhanden</Text>
+                <Text style={styles.emptySubtitle}>
+                  Für diese Kategorie sind aktuell keine Übungen verfügbar.
+                </Text>
+              </View>
+            )}
+
             {filtered.map((exercise) => (
               <TouchableOpacity
                 key={exercise.eid}
@@ -397,6 +406,22 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: "red",
     fontSize: 14,
+  },
+  emptyContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: spacing.xl,
+    gap: spacing.sm,
+  },
+  emptyTitle: {
+    ...typography.title,
+    fontSize: 20,
+  },
+  emptySubtitle: {
+    ...typography.body,
+    color: colors.textSecondary,
+    fontSize: 14,
+    textAlign: "center",
   },
   retryText: {
     ...typography.body,

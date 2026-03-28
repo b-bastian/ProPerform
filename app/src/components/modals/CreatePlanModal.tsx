@@ -45,6 +45,10 @@ const SPORTS = [
 ];
 
 const formatDate = (date: Date) => date.toISOString().split("T")[0];
+const getSportFilter = (sportId: number) =>
+  SPORTS.find((sport) => sport.id === sportId)?.value ?? "gym";
+const getSportLabel = (sportId: number) =>
+  SPORTS.find((sport) => sport.id === sportId)?.label ?? "Gym";
 
 export default function CreatePlanModal({
   visible,
@@ -57,7 +61,7 @@ export default function CreatePlanModal({
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [sportId, setSportId] = useState(1);
+  const [sportId, setSportId] = useState(2);
   const [sessionsPerWeek, setSessionsPerWeek] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [tempStartDate, setTempStartDate] = useState<Date>(new Date());
@@ -66,14 +70,13 @@ export default function CreatePlanModal({
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [selectedEids, setSelectedEids] = useState<number[]>([]);
   const [loadingExercises, setLoadingExercises] = useState(false);
-  const [activeFilter, setActiveFilter] = useState("gym");
 
   useEffect(() => {
     if (visible) {
       setStep(1);
       setName("");
       setDescription("");
-      setSportId(1);
+      setSportId(2);
       setSessionsPerWeek("");
       setShowDatePicker(false);
       setTempStartDate(new Date());
@@ -85,9 +88,9 @@ export default function CreatePlanModal({
 
   useEffect(() => {
     if (step === 2) {
-      fetchExercises(activeFilter);
+      fetchExercises(getSportFilter(sportId));
     }
-  }, [step, activeFilter]);
+  }, [step, sportId]);
 
   const fetchExercises = async (filter: string) => {
     try {
@@ -364,25 +367,11 @@ export default function CreatePlanModal({
           {step === 2 && (
             <View style={styles.stepTwoContainer}>
               <View style={styles.filterRow}>
-                {SPORTS.map((s) => (
-                  <TouchableOpacity
-                    key={s.id}
-                    style={[
-                      styles.chip,
-                      activeFilter === s.value && styles.chipActive,
-                    ]}
-                    onPress={() => setActiveFilter(s.value)}
-                  >
-                    <Text
-                      style={[
-                        styles.chipText,
-                        activeFilter === s.value && styles.chipTextActive,
-                      ]}
-                    >
-                      {s.label}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+                <View style={[styles.chip, styles.chipActive]}>
+                  <Text style={[styles.chipText, styles.chipTextActive]}>
+                    {getSportLabel(sportId)}
+                  </Text>
+                </View>
                 <Text style={styles.selectedCount}>
                   {selectedEids.length} ausgewählt
                 </Text>

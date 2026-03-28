@@ -4,6 +4,14 @@ import { requireAuth } from "../../../middleware/auth.js";
 
 const router = express.Router();
 
+// helper ohne UTC bug
+function getYesterday(dateStr) {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  date.setDate(date.getDate() - 1);
+  return date.toLocaleDateString("en-CA");
+}
+
 router.post("/update", requireAuth, async (req, res) => {
   const uid = req.user.uid;
   const { type, date } = req.body;
@@ -13,12 +21,13 @@ router.post("/update", requireAuth, async (req, res) => {
   }
 
   try {
-    // ✅ DEV override möglich
+    // dev override
     const today =
       process.env.NODE_ENV === "development" && date
         ? date
         : new Date().toLocaleDateString("en-CA");
 
+    // insert log (1 pro tag dank UNIQUE)
     const [logResult] = await db.query(
       `
       INSERT IGNORE INTO streak_logs (uid, type, activity_date)
@@ -26,23 +35,6 @@ router.post("/update", requireAuth, async (req, res) => {
       `,
       [uid, type, today],
     );
-
-    if (logResult.affectedRows === 0) {
-      const [rows] = await db.query(
-        `
-        SELECT current_streak, longest_streak 
-        FROM streaks 
-        WHERE uid = ? AND type = ?
-        `,
-        [uid, type],
-      );
-
-      return res.status(200).json({
-        message: "streak already updated today.",
-        current_streak: rows[0]?.current_streak ?? 1,
-        longest_streak: rows[0]?.longest_streak ?? 1,
-      });
-    }
 
     const [rows] = await db.query(
       `
@@ -52,6 +44,7 @@ router.post("/update", requireAuth, async (req, res) => {
       [uid, type],
     );
 
+    // initial erstellen
     if (!rows.length) {
       await db.query(
         `
@@ -70,9 +63,15 @@ router.post("/update", requireAuth, async (req, res) => {
 
     const streak = rows[0];
 
-    const yesterday = new Date(today); // nutzt override korrekt
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yest = yesterday.toLocaleDateString("en-CA");
+    if (logResult.affectedRows === 0) {
+      return res.status(200).json({
+        message: "streak already updated today.",
+        current_streak: streak.current_streak,
+        longest_streak: streak.longest_streak,
+      });
+    }
+
+    const yest = getYesterday(today);
 
     let newCurrent = 1;
 

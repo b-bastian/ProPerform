@@ -13,10 +13,8 @@ router.post("/update", requireAuth, async (req, res) => {
   }
 
   try {
-    // ✅ LOCAL DATE (kein UTC Bug mehr)
     const today = new Date().toLocaleDateString("en-CA");
 
-    // insert log (nur einmal pro tag)
     const [logResult] = await db.query(
       `
       INSERT IGNORE INTO streak_logs (uid, type, activity_date)
@@ -25,7 +23,6 @@ router.post("/update", requireAuth, async (req, res) => {
       [uid, type, today],
     );
 
-    // wenn schon heute gemacht → einfach zurückgeben
     if (logResult.affectedRows === 0) {
       const [rows] = await db.query(
         `
@@ -51,7 +48,6 @@ router.post("/update", requireAuth, async (req, res) => {
       [uid, type],
     );
 
-    // initial erstellen
     if (!rows.length) {
       await db.query(
         `
@@ -70,19 +66,14 @@ router.post("/update", requireAuth, async (req, res) => {
 
     const streak = rows[0];
 
-    // gestern (lokal!)
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-
     const yest = yesterday.toLocaleDateString("en-CA");
 
     let newCurrent = 1;
 
     if (streak.last_activity_date) {
-      // DB DATE → sauber vergleichen (kein ISO mehr!)
-      const last = new Date(streak.last_activity_date).toLocaleDateString(
-        "en-CA",
-      );
+      const last = streak.last_activity_date;
 
       if (last === yest) {
         newCurrent = streak.current_streak + 1;

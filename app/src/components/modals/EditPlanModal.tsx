@@ -45,6 +45,16 @@ type Props = {
   onPlanUpdated: () => void;
 };
 
+const sanitizeSessionsInput = (value: string) => {
+  const digitsOnly = value.replace(/\D/g, "");
+
+  if (!digitsOnly) {
+    return "";
+  }
+
+  return String(Math.min(parseInt(digitsOnly, 10), 7));
+};
+
 export default function EditPlanModal({
   visible,
   plan,
@@ -253,7 +263,9 @@ export default function EditPlanModal({
                 placeholder="z.B. 4"
                 placeholderTextColor={colors.textSecondary}
                 value={sessionsPerWeek}
-                onChangeText={setSessionsPerWeek}
+                onChangeText={(value) =>
+                  setSessionsPerWeek(sanitizeSessionsInput(value))
+                }
                 keyboardType="numeric"
               />
 

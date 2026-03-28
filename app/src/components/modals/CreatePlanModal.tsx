@@ -49,6 +49,15 @@ const getSportFilter = (sportId: number) =>
   SPORTS.find((sport) => sport.id === sportId)?.value ?? "gym";
 const getSportLabel = (sportId: number) =>
   SPORTS.find((sport) => sport.id === sportId)?.label ?? "Gym";
+const sanitizeSessionsInput = (value: string) => {
+  const digitsOnly = value.replace(/\D/g, "");
+
+  if (!digitsOnly) {
+    return "";
+  }
+
+  return String(Math.min(parseInt(digitsOnly, 10), 7));
+};
 
 export default function CreatePlanModal({
   visible,
@@ -305,7 +314,9 @@ export default function CreatePlanModal({
                 placeholder="z.B. 4"
                 placeholderTextColor={colors.textSecondary}
                 value={sessionsPerWeek}
-                onChangeText={setSessionsPerWeek}
+                onChangeText={(value) =>
+                  setSessionsPerWeek(sanitizeSessionsInput(value))
+                }
                 keyboardType="numeric"
               />
 

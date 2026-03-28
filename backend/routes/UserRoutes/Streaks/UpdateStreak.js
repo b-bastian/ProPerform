@@ -22,10 +22,7 @@ router.post("/update", requireAuth, async (req, res) => {
 
   try {
     // dev override
-    const today =
-      process.env.NODE_ENV === "development" && date
-        ? date
-        : new Date().toLocaleDateString("en-CA");
+    const today = date;
 
     // insert log (1 pro tag dank UNIQUE)
     const [logResult] = await db.query(

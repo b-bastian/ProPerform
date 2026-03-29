@@ -39,6 +39,7 @@ export default function SettingsScreen() {
       "home_streak_current",
       "home_streak_week_visits",
       "last_workout",
+      "workout_history",
     ]);
   };
 

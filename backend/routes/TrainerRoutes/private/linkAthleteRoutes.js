@@ -32,7 +32,7 @@ router.post("/connect", requireAuth, async (req, res) => {
       const trainer = trainerRows[0];
 
       const [existing] = await db.execute(
-        "SELECT tid FROM trainer_athletes WHERE athlete_uid = ?",
+        "SELECT tid FROM trainer_athletes WHERE uid = ?",
         [uid],
       );
 
@@ -43,7 +43,7 @@ router.post("/connect", requireAuth, async (req, res) => {
       }
 
       await db.execute(
-        "INSERT INTO trainer_athletes (tid, athlete_uid, assigned_date) VALUES (?, ?, CURDATE())",
+        "INSERT INTO trainer_athletes (tid, uid, assigned_date) VALUES (?, ?, CURDATE())",
         [trainer.tid, uid],
       );
 
@@ -67,7 +67,7 @@ router.post("/connect", requireAuth, async (req, res) => {
       const tid = req.user.tid;
 
       const [existing] = await db.execute(
-        "SELECT tid FROM trainer_athletes WHERE athlete_uid = ?",
+        "SELECT tid FROM trainer_athletes WHERE uid = ?",
         [athleteUid],
       );
 
@@ -84,7 +84,7 @@ router.post("/connect", requireAuth, async (req, res) => {
       }
 
       await db.execute(
-        "INSERT INTO trainer_athletes (tid, athlete_uid, assigned_date) VALUES (?, ?, CURDATE())",
+        "INSERT INTO trainer_athletes (tid, uid, assigned_date) VALUES (?, ?, CURDATE())",
         [tid, athleteUid],
       );
 

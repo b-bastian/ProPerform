@@ -13,7 +13,7 @@ async function disconnectTrainerConnection(req, res) {
     }
 
     const params = [uid];
-    let query = "DELETE FROM trainer_athletes WHERE athlete_uid = ?";
+    let query = "DELETE FROM trainer_athletes WHERE uid = ?";
 
     if (req.user.role === "trainer") {
       query += " AND tid = ?";

@@ -6,6 +6,7 @@ import deleteTrainerToUser from "./deleteTrainerToUser.js";
 import trainerAthleteRoutes from "./trainerAthleteRoutes.js";
 import trainersMe from "./trainersMe.js";
 import TrainerToUserRoutes from "./TrainerToUserRoutes.js";
+import UserRequestTrainerCode from "./UserRequestTrainerCode.js";
 
 const router = express.Router();
 
@@ -16,5 +17,6 @@ router.use(deleteTrainerToUser);
 router.use(trainerAthleteRoutes);
 router.use(trainersMe);
 router.use(TrainerToUserRoutes);
+router.use(UserRequestTrainerCode);
 
 export default router;

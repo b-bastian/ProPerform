@@ -10,8 +10,6 @@ import protectedExerciseRoutes from "./ExerciseRoutes/protected/index.js";
 import listExerciseAll from "./ExerciseRoutes/protected/listExercisesAll.js";
 import protectedMediaRoutes from "./MediaRoutes/protected/index.js";
 import protectedAuthRoutes from "./AuthRoutes/protectedAuthRoutes.js";
-import trainerRequestsRoutes from "./TrainerRoutes/private/trainerRequestsRoutes.js";
-import trainerExercisesRoutes from "./TrainerRoutes/private/trainerExercisesRoutes.js";
 
 import AdminRoutes from "./AdminRoutes/protected/index.js";
 import notificationsMe from "./UserRoutes/Notifications/notificationsMe.js";
@@ -30,8 +28,6 @@ const routeMounts = [
   { router: protectedUserRoutes, path: "/users", protected: true },
   { router: protectedSystemRoutes, path: "/system", protected: true },
   { router: privateTrainerRoutes, path: "/trainers", protected: true },
-  { router: trainerRequestsRoutes, path: "/trainer-requests", protected: true },
-  { router: trainerExercisesRoutes, path: "/trainer", protected: true },
   { router: weightLogRoutes, path: "/logs", protected: true },
   { router: protectedExerciseRoutes, path: "/admin", protected: true },
   { router: protectedMediaRoutes, path: "/media", protected: true },

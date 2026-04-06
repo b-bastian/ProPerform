@@ -7,6 +7,8 @@ import trainerAthleteRoutes from "./trainerAthleteRoutes.js";
 import trainersMe from "./trainersMe.js";
 import TrainerToUserRoutes from "./TrainerToUserRoutes.js";
 import UserRequestTrainerCode from "./UserRequestTrainerCode.js";
+import trainerRequestsRoutes from "./trainerRequestsRoutes.js";
+import trainerExercisesRoutes from "./trainerExercisesRoutes.js";
 
 const router = express.Router();
 
@@ -18,5 +20,7 @@ router.use(trainerAthleteRoutes);
 router.use(trainersMe);
 router.use(TrainerToUserRoutes);
 router.use(UserRequestTrainerCode);
+router.use(trainerRequestsRoutes);
+router.use(trainerExercisesRoutes);
 
 export default router;

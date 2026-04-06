@@ -27,7 +27,14 @@ import { API_BASE_URL } from "../config/api";
 
 type Athlete = { uid: string; firstname: string; email: string };
 type VideoItem = { id: string; name: string };
-type Exercise = { eid: string; name: string; duration_minutes?: number };
+type Exercise = {
+  eid: string;
+  name: string;
+  description?: string;
+  duration_minutes?: number;
+  sport?: string;
+  difficulty?: string;
+};
 type TrainingPlan = {
   tpid: string;
   name: string;
@@ -48,6 +55,21 @@ type AthleteTrainingPlan = {
   difficulty?: string;
   start_date?: string;
   status?: string;
+};
+type TrainingPlanExercise = {
+  id: string;
+  tpid: string;
+  eid: string;
+  name: string;
+  description?: string;
+  week_number?: number;
+  day_number?: number;
+  exercise_order?: number;
+  sets?: number;
+  reps?: number;
+  duration_minutes?: number;
+  rest_seconds?: number;
+  notes?: string;
 };
 type UploadedMedia = {
   mid: string;
@@ -74,6 +96,7 @@ type ModalType =
   | "exercise"
   | "createExercise"
   | "createTrainingPlan"
+  | "assignExerciseToPlan"
   | "assignTrainingPlan"
   | "videoUpload"
   | "videoAssign"
@@ -95,6 +118,18 @@ type TrainingPlanFormState = {
   duration_weeks: string;
   sessions_per_week: string;
   is_template: boolean;
+};
+
+type TrainingPlanExerciseFormState = {
+  eid: string;
+  weekNumber: string;
+  dayNumber: string;
+  exerciseOrder: string;
+  sets: string;
+  reps: string;
+  durationMinutes: string;
+  restSeconds: string;
+  notes: string;
 };
 
 type RequestFilter = "all" | "pending" | "accepted" | "rejected";
@@ -191,6 +226,10 @@ export default function Dashboard() {
   const [selectedAthletePlans, setSelectedAthletePlans] = useState<
     AthleteTrainingPlan[]
   >([]);
+  const [selectedTrainingPlanForExercise, setSelectedTrainingPlanForExercise] =
+    useState<TrainingPlan | null>(null);
+  const [selectedTrainingPlanExercises, setSelectedTrainingPlanExercises] =
+    useState<TrainingPlanExercise[]>([]);
   const [isUploadingExerciseMedia, setIsUploadingExerciseMedia] = useState<
     "video" | "thumbnail" | null
   >(null);
@@ -198,6 +237,10 @@ export default function Dashboard() {
   const [copiedTrainerCode, setCopiedTrainerCode] = useState(false);
   const [isCreatingExercise, setIsCreatingExercise] = useState(false);
   const [isCreatingTrainingPlan, setIsCreatingTrainingPlan] = useState(false);
+  const [isLoadingTrainingPlanExercises, setIsLoadingTrainingPlanExercises] =
+    useState(false);
+  const [isAddingExerciseToTrainingPlan, setIsAddingExerciseToTrainingPlan] =
+    useState(false);
   const [isAssigningTrainingPlans, setIsAssigningTrainingPlans] =
     useState(false);
   const [processingRequestId, setProcessingRequestId] = useState<string | null>(
@@ -218,6 +261,18 @@ export default function Dashboard() {
       duration_weeks: "",
       sessions_per_week: "",
       is_template: false,
+    });
+  const [trainingPlanExerciseForm, setTrainingPlanExerciseForm] =
+    useState<TrainingPlanExerciseFormState>({
+      eid: "",
+      weekNumber: "1",
+      dayNumber: "1",
+      exerciseOrder: "1",
+      sets: "",
+      reps: "",
+      durationMinutes: "",
+      restSeconds: "",
+      notes: "",
     });
 
   const trainerCode = localStorage.getItem("inviteCode") ?? "-";
@@ -371,6 +426,20 @@ export default function Dashboard() {
     });
   };
 
+  const resetTrainingPlanExerciseForm = () => {
+    setTrainingPlanExerciseForm({
+      eid: "",
+      weekNumber: "1",
+      dayNumber: "1",
+      exerciseOrder: "1",
+      sets: "",
+      reps: "",
+      durationMinutes: "",
+      restSeconds: "",
+      notes: "",
+    });
+  };
+
   const openCreateExerciseModal = () => {
     resetExerciseForm();
     setActiveModal("createExercise");
@@ -440,6 +509,124 @@ export default function Dashboard() {
     setSelectedTrainingPlanIds((prev) =>
       prev.includes(tpid) ? prev.filter((id) => id !== tpid) : [...prev, tpid],
     );
+  };
+
+  const loadTrainingPlanExercises = async (tpid: string) => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) return [];
+
+    setIsLoadingTrainingPlanExercises(true);
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/trainers/training-plans/${tpid}/exercises`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      if (res.status === 404) {
+        setSelectedTrainingPlanExercises([]);
+        return [];
+      }
+
+      const data = await res.json();
+      const planExercises = data?.exercises || [];
+      setSelectedTrainingPlanExercises(planExercises);
+      return planExercises;
+    } catch (error) {
+      console.error("Plan-Uebungen konnten nicht geladen werden:", error);
+      setSelectedTrainingPlanExercises([]);
+      return [];
+    } finally {
+      setIsLoadingTrainingPlanExercises(false);
+    }
+  };
+
+  const openAssignExerciseToPlanModal = async (plan: TrainingPlan) => {
+    setSelectedTrainingPlanForExercise(plan);
+    resetTrainingPlanExerciseForm();
+    setSelectedTrainingPlanExercises([]);
+    setActiveModal("assignExerciseToPlan");
+    await loadTrainingPlanExercises(plan.tpid);
+  };
+
+  const handleAssignExerciseToTrainingPlan = async () => {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    if (!selectedTrainingPlanForExercise) {
+      alert("Bitte zuerst einen Trainingsplan waehlen.");
+      return;
+    }
+
+    if (
+      !trainingPlanExerciseForm.eid ||
+      !trainingPlanExerciseForm.weekNumber.trim() ||
+      !trainingPlanExerciseForm.dayNumber.trim() ||
+      !trainingPlanExerciseForm.exerciseOrder.trim()
+    ) {
+      alert("Bitte Uebung, Woche, Tag und Reihenfolge ausfuellen.");
+      return;
+    }
+
+    setIsAddingExerciseToTrainingPlan(true);
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/trainers/training-plans/${selectedTrainingPlanForExercise.tpid}/exercises`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            eid: Number(trainingPlanExerciseForm.eid),
+            weekNumber: Number(trainingPlanExerciseForm.weekNumber),
+            dayNumber: Number(trainingPlanExerciseForm.dayNumber),
+            exerciseOrder: Number(trainingPlanExerciseForm.exerciseOrder),
+            sets: trainingPlanExerciseForm.sets
+              ? Number(trainingPlanExerciseForm.sets)
+              : undefined,
+            reps: trainingPlanExerciseForm.reps
+              ? Number(trainingPlanExerciseForm.reps)
+              : undefined,
+            durationMinutes: trainingPlanExerciseForm.durationMinutes
+              ? Number(trainingPlanExerciseForm.durationMinutes)
+              : undefined,
+            restSeconds: trainingPlanExerciseForm.restSeconds
+              ? Number(trainingPlanExerciseForm.restSeconds)
+              : undefined,
+            notes: trainingPlanExerciseForm.notes.trim() || undefined,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data?.error ||
+            data?.message ||
+            "Uebung konnte dem Trainingsplan nicht zugewiesen werden.",
+        );
+      }
+
+      resetTrainingPlanExerciseForm();
+      await loadTrainingPlanExercises(selectedTrainingPlanForExercise.tpid);
+    } catch (error) {
+      console.error("Uebung konnte nicht zum Plan hinzugefuegt werden:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Uebung konnte nicht zum Plan hinzugefuegt werden.",
+      );
+    } finally {
+      setIsAddingExerciseToTrainingPlan(false);
+    }
   };
 
   const uploadExerciseMedia = async (
@@ -1438,7 +1625,7 @@ export default function Dashboard() {
                 exercises.map((exercise, i) => (
                   <div
                     key={exercise.eid}
-                    className={`flex items-center gap-4 px-5 py-4 ${i !== exercises.length - 1 ? "border-b border-slate-100 dark:border-slate-700" : ""}`}
+                    className={`flex items-start gap-4 px-5 py-4 ${i !== exercises.length - 1 ? "border-b border-slate-100 dark:border-slate-700" : ""}`}
                   >
                     <div className="w-9 h-9 rounded-xl bg-[#F97316]/10 flex items-center justify-center shrink-0">
                       <Zap size={15} className="text-[#F97316]" />
@@ -1447,9 +1634,17 @@ export default function Dashboard() {
                       <p className="text-sm font-semibold text-[#1E3A8A] dark:text-white">
                         {exercise.name}
                       </p>
-                      {exercise.duration_minutes && (
-                        <p className="text-xs text-[#64748b] dark:text-[#94A3B8] mt-0.5">
-                          {exercise.duration_minutes} Min.
+                      <p className="text-xs text-[#64748b] dark:text-[#94A3B8] mt-0.5">
+                        EID: {exercise.eid}
+                        {exercise.sport ? ` · ${exercise.sport}` : ""}
+                        {exercise.difficulty ? ` · ${exercise.difficulty}` : ""}
+                        {exercise.duration_minutes
+                          ? ` · ${exercise.duration_minutes} Min.`
+                          : ""}
+                      </p>
+                      {exercise.description && (
+                        <p className="text-xs text-[#64748b] dark:text-[#94A3B8] mt-1 line-clamp-2">
+                          {exercise.description}
                         </p>
                       )}
                     </div>
@@ -1496,7 +1691,7 @@ export default function Dashboard() {
                 trainingPlans.map((plan, i) => (
                   <div
                     key={plan.tpid}
-                    className={`flex items-center gap-4 px-5 py-4 ${i !== trainingPlans.length - 1 ? "border-b border-slate-100 dark:border-slate-700" : ""}`}
+                    className={`flex items-start gap-4 px-5 py-4 ${i !== trainingPlans.length - 1 ? "border-b border-slate-100 dark:border-slate-700" : ""}`}
                   >
                     <div className="w-9 h-9 rounded-xl bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center shrink-0">
                       <FileText
@@ -1509,7 +1704,8 @@ export default function Dashboard() {
                         {plan.name}
                       </p>
                       <p className="text-xs text-[#64748b] dark:text-[#94A3B8] mt-0.5">
-                        {plan.sport || "Sport unbekannt"}
+                        TPID: {plan.tpid}
+                        {plan.sport ? ` · ${plan.sport}` : ""}
                         {plan.difficulty ? ` · ${plan.difficulty}` : ""}
                         {plan.duration_weeks
                           ? ` · ${plan.duration_weeks} Wochen`
@@ -1517,6 +1713,9 @@ export default function Dashboard() {
                         {plan.sessions_per_week
                           ? ` · ${plan.sessions_per_week}x/Woche`
                           : ""}
+                      </p>
+                      <p className="text-xs text-[#64748b] dark:text-[#94A3B8] mt-1">
+                        {plan.is_template ? "Vorlage" : "Individueller Plan"}
                       </p>
                       {plan.description && (
                         <p className="text-xs text-[#64748b] dark:text-[#94A3B8] mt-1 line-clamp-2">
@@ -1528,6 +1727,13 @@ export default function Dashboard() {
                       <span className="text-xs font-semibold px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-[#1E3A8A] dark:text-white">
                         {plan.assigned_count ?? 0} zugewiesen
                       </span>
+                      <button
+                        className="inline-flex items-center gap-1.5 bg-orange-50 dark:bg-orange-500/10 hover:bg-orange-100 dark:hover:bg-orange-500/20 text-orange-700 dark:text-orange-300 text-xs font-semibold px-3 py-2 rounded-lg border-0 cursor-pointer transition-colors"
+                        onClick={() => openAssignExerciseToPlanModal(plan)}
+                      >
+                        <Dumbbell size={13} />
+                        Übungen
+                      </button>
                       <button
                         className="inline-flex items-center gap-1.5 bg-violet-50 dark:bg-violet-500/10 hover:bg-violet-100 dark:hover:bg-violet-500/20 text-violet-700 dark:text-violet-300 text-xs font-semibold px-3 py-2 rounded-lg border-0 cursor-pointer transition-colors"
                         onClick={() => setActiveTab("athletes")}
@@ -1983,6 +2189,247 @@ export default function Dashboard() {
       </Modal>
 
       <Modal
+        visible={activeModal === "assignExerciseToPlan"}
+        onClose={() => setActiveModal(null)}
+      >
+        <div className={modalCard}>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-base font-bold text-[#1E3A8A] dark:text-white">
+                Übung zu Trainingsplan
+              </p>
+              <p className="text-xs text-[#64748b] dark:text-[#94A3B8]">
+                {selectedTrainingPlanForExercise?.name || "Kein Plan gewählt"}
+              </p>
+            </div>
+            <button
+              className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 border-0 cursor-pointer"
+              onClick={() => setActiveModal(null)}
+            >
+              <X size={14} className="text-[#64748b] dark:text-slate-400" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <div className="sm:col-span-2 flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                Übung *
+              </label>
+              <select
+                value={trainingPlanExerciseForm.eid}
+                onChange={(e) =>
+                  setTrainingPlanExerciseForm((prev) => ({
+                    ...prev,
+                    eid: e.target.value,
+                  }))
+                }
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all"
+              >
+                <option value="">Übung wählen</option>
+                {exercises.map((exercise) => (
+                  <option key={exercise.eid} value={exercise.eid}>
+                    {exercise.name} (EID {exercise.eid})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                Woche *
+              </label>
+              <input
+                value={trainingPlanExerciseForm.weekNumber}
+                onChange={(e) =>
+                  setTrainingPlanExerciseForm((prev) => ({
+                    ...prev,
+                    weekNumber: e.target.value,
+                  }))
+                }
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all"
+                placeholder="1"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                Tag *
+              </label>
+              <input
+                value={trainingPlanExerciseForm.dayNumber}
+                onChange={(e) =>
+                  setTrainingPlanExerciseForm((prev) => ({
+                    ...prev,
+                    dayNumber: e.target.value,
+                  }))
+                }
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all"
+                placeholder="1"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                Reihenfolge *
+              </label>
+              <input
+                value={trainingPlanExerciseForm.exerciseOrder}
+                onChange={(e) =>
+                  setTrainingPlanExerciseForm((prev) => ({
+                    ...prev,
+                    exerciseOrder: e.target.value,
+                  }))
+                }
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all"
+                placeholder="1"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                Sets
+              </label>
+              <input
+                value={trainingPlanExerciseForm.sets}
+                onChange={(e) =>
+                  setTrainingPlanExerciseForm((prev) => ({
+                    ...prev,
+                    sets: e.target.value,
+                  }))
+                }
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all"
+                placeholder="z.B. 4"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                Reps
+              </label>
+              <input
+                value={trainingPlanExerciseForm.reps}
+                onChange={(e) =>
+                  setTrainingPlanExerciseForm((prev) => ({
+                    ...prev,
+                    reps: e.target.value,
+                  }))
+                }
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all"
+                placeholder="z.B. 10"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                Dauer (Min)
+              </label>
+              <input
+                value={trainingPlanExerciseForm.durationMinutes}
+                onChange={(e) =>
+                  setTrainingPlanExerciseForm((prev) => ({
+                    ...prev,
+                    durationMinutes: e.target.value,
+                  }))
+                }
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all"
+                placeholder="optional"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                Pause (Sek)
+              </label>
+              <input
+                value={trainingPlanExerciseForm.restSeconds}
+                onChange={(e) =>
+                  setTrainingPlanExerciseForm((prev) => ({
+                    ...prev,
+                    restSeconds: e.target.value,
+                  }))
+                }
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all"
+                placeholder="optional"
+              />
+            </div>
+            <div className="sm:col-span-2 flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                Notiz
+              </label>
+              <textarea
+                value={trainingPlanExerciseForm.notes}
+                onChange={(e) =>
+                  setTrainingPlanExerciseForm((prev) => ({
+                    ...prev,
+                    notes: e.target.value,
+                  }))
+                }
+                className="w-full min-h-20 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all resize-none"
+                placeholder="optional"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-3 mb-4">
+            <button
+              className={`${ghostBtn} flex-1`}
+              onClick={() => setActiveModal(null)}
+            >
+              Schließen
+            </button>
+            <button
+              className={`${primaryBtn} flex-1 ${isAddingExerciseToTrainingPlan ? "opacity-60 cursor-not-allowed" : ""}`}
+              onClick={handleAssignExerciseToTrainingPlan}
+              disabled={isAddingExerciseToTrainingPlan}
+            >
+              {isAddingExerciseToTrainingPlan ? (
+                <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-[spin_0.8s_linear_infinite]" />
+              ) : (
+                "Zum Plan hinzufügen"
+              )}
+            </button>
+          </div>
+
+          <div className="border-t border-slate-200 dark:border-slate-700 pt-3">
+            <p className="text-xs font-semibold text-[#64748b] dark:text-[#94A3B8] uppercase tracking-wider mb-2">
+              Bereits im Plan
+            </p>
+            <div className="max-h-52 overflow-y-auto flex flex-col gap-2">
+              {isLoadingTrainingPlanExercises ? (
+                <p className="text-xs text-[#64748b] dark:text-[#94A3B8] py-3 text-center">
+                  Lädt...
+                </p>
+              ) : selectedTrainingPlanExercises.length === 0 ? (
+                <p className="text-xs text-[#64748b] dark:text-[#94A3B8] py-3 text-center">
+                  Noch keine Übungen im Plan.
+                </p>
+              ) : (
+                selectedTrainingPlanExercises.map((planExercise) => (
+                  <div
+                    key={planExercise.id}
+                    className="rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2"
+                  >
+                    <p className="text-xs font-semibold text-[#1E3A8A] dark:text-white">
+                      {planExercise.name}
+                    </p>
+                    <p className="text-xs text-[#64748b] dark:text-[#94A3B8] mt-0.5">
+                      Woche {planExercise.week_number || "-"} · Tag{" "}
+                      {planExercise.day_number || "-"} · Slot{" "}
+                      {planExercise.exercise_order || "-"}
+                      {planExercise.sets ? ` · ${planExercise.sets} Sets` : ""}
+                      {planExercise.reps ? ` · ${planExercise.reps} Reps` : ""}
+                      {planExercise.duration_minutes
+                        ? ` · ${planExercise.duration_minutes} Min.`
+                        : ""}
+                    </p>
+                    {planExercise.description && (
+                      <p className="text-xs text-[#64748b] dark:text-[#94A3B8] mt-1 line-clamp-2">
+                        {planExercise.description}
+                      </p>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
         visible={activeModal === "createTrainingPlan"}
         onClose={closeCreateTrainingPlanModal}
       >
@@ -2195,12 +2642,13 @@ export default function Dashboard() {
               </p>
             ) : (
               trainingPlans.map((plan) => {
-                const isSelected = selectedTrainingPlanIds.includes(plan.tpid);
+                const planId = String(plan.tpid);
+                const isSelected = selectedTrainingPlanIds.includes(planId);
                 return (
                   <button
-                    key={plan.tpid}
+                    key={planId}
                     className={`flex items-center gap-3 rounded-xl p-3 border cursor-pointer text-left w-full transition-colors ${isSelected ? "bg-violet-50 dark:bg-violet-500/10 border-violet-300 dark:border-violet-500/30" : "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"}`}
-                    onClick={() => toggleTrainingPlanSelection(plan.tpid)}
+                    onClick={() => toggleTrainingPlanSelection(planId)}
                   >
                     <div
                       className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${isSelected ? "bg-violet-600 border-violet-600" : "border-slate-300 dark:border-slate-600"}`}
@@ -2225,13 +2673,18 @@ export default function Dashboard() {
                       >
                         {plan.name}
                       </p>
-                      <p className="text-xs text-[#64748b] dark:text-[#94A3B8] truncate">
+                      <p className="text-xs text-[#64748b] dark:text-[#94A3B8]">
                         {plan.sport || "Sport unbekannt"}
                         {plan.difficulty ? ` · ${plan.difficulty}` : ""}
                         {plan.duration_weeks
                           ? ` · ${plan.duration_weeks} Wochen`
                           : ""}
                       </p>
+                      {plan.description && (
+                        <p className="text-xs text-[#64748b] dark:text-[#94A3B8] mt-1 line-clamp-2">
+                          {plan.description}
+                        </p>
+                      )}
                     </div>
                   </button>
                 );

@@ -503,4 +503,224 @@ router.get(
   },
 );
 
+router.get(
+  "/training-plans/:tpid/exercises",
+  requireAuth,
+  requireRole("trainer"),
+  async (req, res) => {
+    const tid = await requireTrainerContext(req, res);
+    if (!tid) return;
+
+    const trainingPlanId = Number(req.params.tpid);
+    if (!Number.isInteger(trainingPlanId)) {
+      return res.status(400).json({ error: "invalid training plan id." });
+    }
+
+    try {
+      const [planRows] = await db.query(
+        "SELECT tpid FROM training_plans WHERE tpid = ? AND created_by_trainer = ?",
+        [trainingPlanId, tid],
+      );
+
+      if (planRows.length === 0) {
+        return res.status(404).json({ error: "training plan not found." });
+      }
+
+      const [rows] = await db.query(
+        `SELECT
+         tpe.id,
+         tpe.tpid,
+         tpe.eid,
+         e.name,
+         e.description,
+         e.sid,
+         s.name AS sport,
+         e.dlid,
+         dl.name AS difficulty,
+         tpe.week_number,
+         tpe.day_number,
+         tpe.exercise_order,
+         tpe.sets,
+         tpe.reps,
+         tpe.duration_minutes,
+         tpe.rest_seconds,
+         tpe.notes
+       FROM training_plan_exercises tpe
+       JOIN exercises e ON e.eid = tpe.eid
+       LEFT JOIN sports s ON s.sid = e.sid
+       LEFT JOIN difficulty_levels dl ON dl.dlid = e.dlid
+       WHERE tpe.tpid = ?
+       ORDER BY tpe.week_number ASC, tpe.day_number ASC, tpe.exercise_order ASC`,
+        [trainingPlanId],
+      );
+
+      return res.status(200).json({
+        trainingPlanId,
+        count: rows.length,
+        exercises: rows,
+      });
+    } catch (error) {
+      console.error("trainer training plan exercises fetch failed.", error);
+      return res.status(500).json({ error: "internal server error." });
+    }
+  },
+);
+
+router.post(
+  "/training-plans/:tpid/exercises",
+  requireAuth,
+  requireRole("trainer"),
+  async (req, res) => {
+    const tid = await requireTrainerContext(req, res);
+    if (!tid) return;
+
+    const trainingPlanId = Number(req.params.tpid);
+    if (!Number.isInteger(trainingPlanId)) {
+      return res.status(400).json({ error: "invalid training plan id." });
+    }
+
+    const {
+      eid,
+      weekNumber,
+      dayNumber,
+      exerciseOrder,
+      sets,
+      reps,
+      durationMinutes,
+      restSeconds,
+      notes,
+    } = req.body;
+
+    if (!eid || !weekNumber || !dayNumber || !exerciseOrder) {
+      return res.status(400).json({
+        error: "eid, weekNumber, dayNumber and exerciseOrder are required.",
+      });
+    }
+
+    const parsedEid = Number(eid);
+    const parsedWeekNumber = Number(weekNumber);
+    const parsedDayNumber = Number(dayNumber);
+    const parsedExerciseOrder = Number(exerciseOrder);
+    const parsedSets =
+      sets === undefined || sets === null || sets === "" ? null : Number(sets);
+    const parsedReps =
+      reps === undefined || reps === null || reps === "" ? null : Number(reps);
+    const parsedDurationMinutes =
+      durationMinutes === undefined ||
+      durationMinutes === null ||
+      durationMinutes === ""
+        ? null
+        : Number(durationMinutes);
+    const parsedRestSeconds =
+      restSeconds === undefined || restSeconds === null || restSeconds === ""
+        ? null
+        : Number(restSeconds);
+
+    if (
+      !Number.isInteger(parsedEid) ||
+      !Number.isInteger(parsedWeekNumber) ||
+      !Number.isInteger(parsedDayNumber) ||
+      !Number.isInteger(parsedExerciseOrder)
+    ) {
+      return res.status(400).json({
+        error: "eid, weekNumber, dayNumber and exerciseOrder must be integers.",
+      });
+    }
+
+    if (
+      (parsedSets !== null && !Number.isInteger(parsedSets)) ||
+      (parsedReps !== null && !Number.isInteger(parsedReps)) ||
+      (parsedDurationMinutes !== null &&
+        !Number.isInteger(parsedDurationMinutes)) ||
+      (parsedRestSeconds !== null && !Number.isInteger(parsedRestSeconds))
+    ) {
+      return res.status(400).json({
+        error:
+          "sets, reps, durationMinutes and restSeconds must be integers when provided.",
+      });
+    }
+
+    try {
+      const [planRows] = await db.query(
+        "SELECT tpid FROM training_plans WHERE tpid = ? AND created_by_trainer = ?",
+        [trainingPlanId, tid],
+      );
+
+      if (planRows.length === 0) {
+        return res.status(404).json({ error: "training plan not found." });
+      }
+
+      const [exerciseRows] = await db.query(
+        "SELECT eid FROM exercises WHERE eid = ?",
+        [parsedEid],
+      );
+
+      if (exerciseRows.length === 0) {
+        return res.status(404).json({ error: "exercise not found." });
+      }
+
+      const [insertResult] = await db.query(
+        `INSERT INTO training_plan_exercises
+         (tpid, eid, week_number, day_number, exercise_order, sets, reps, duration_minutes, rest_seconds, notes)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          trainingPlanId,
+          parsedEid,
+          parsedWeekNumber,
+          parsedDayNumber,
+          parsedExerciseOrder,
+          parsedSets,
+          parsedReps,
+          parsedDurationMinutes,
+          parsedRestSeconds,
+          notes ?? null,
+        ],
+      );
+
+      const [rows] = await db.query(
+        `SELECT
+         tpe.id,
+         tpe.tpid,
+         tpe.eid,
+         e.name,
+         e.description,
+         e.sid,
+         s.name AS sport,
+         e.dlid,
+         dl.name AS difficulty,
+         tpe.week_number,
+         tpe.day_number,
+         tpe.exercise_order,
+         tpe.sets,
+         tpe.reps,
+         tpe.duration_minutes,
+         tpe.rest_seconds,
+         tpe.notes
+       FROM training_plan_exercises tpe
+       JOIN exercises e ON e.eid = tpe.eid
+       LEFT JOIN sports s ON s.sid = e.sid
+       LEFT JOIN difficulty_levels dl ON dl.dlid = e.dlid
+       WHERE tpe.id = ?
+       LIMIT 1`,
+        [insertResult.insertId],
+      );
+
+      return res.status(201).json({
+        message: "exercise added to training plan successfully",
+        exercise: rows[0],
+      });
+    } catch (error) {
+      if (error?.code === "ER_DUP_ENTRY") {
+        return res.status(409).json({
+          error:
+            "exercise already exists for this week/day in the selected training plan.",
+        });
+      }
+
+      console.error("trainer training plan exercise add failed.", error);
+      return res.status(500).json({ error: "internal server error." });
+    }
+  },
+);
+
 export default router;

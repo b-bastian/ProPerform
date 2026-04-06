@@ -1,9 +1,9 @@
-import { colors } from "@/src/theme/colors";
+import { useTheme } from "@/src/context/ThemeContext";
 import { spacing } from "@/src/theme/spacing";
 import { typography } from "@/src/theme/typography";
 import api from "@/src/utils/axiosInstance";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -63,6 +63,7 @@ export default function EditPlanModal({
   onClose,
   onPlanUpdated,
 }: Props) {
+  const { colors, isDark } = useTheme();
   const [internalVisible, setInternalVisible] = useState(false);
   const backdropOpacity = React.useRef(new Animated.Value(0)).current;
   const slideAnim = React.useRef(new Animated.Value(300)).current;
@@ -237,6 +238,217 @@ export default function EditPlanModal({
       setSaving(false);
     }
   };
+
+  const styles = useMemo(() => StyleSheet.create({
+    overlay: {
+      flex: 1,
+      justifyContent: "flex-end" as const,
+    },
+    fullscreenBackdrop: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: "rgba(0,0,0,0.4)",
+      zIndex: 0,
+    },
+    sheet: {
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+      paddingBottom: spacing.xl,
+      height: "80%" as any,
+    },
+    handle: {
+      width: 40,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: colors.borderLight,
+      alignSelf: "center" as const,
+      marginTop: spacing.sm,
+      marginBottom: spacing.sm,
+    },
+    header: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      alignItems: "center" as const,
+      marginBottom: spacing.md,
+    },
+    title: {
+      ...typography.title,
+      fontSize: 20,
+      color: colors.textPrimary,
+    },
+    content: {
+      gap: spacing.md,
+      paddingBottom: spacing.lg,
+    },
+    label: {
+      ...typography.label,
+      color: colors.textPrimary,
+      marginBottom: 4,
+      fontSize: 14,
+    },
+    input: {
+      backgroundColor: colors.inputBg,
+      borderRadius: 14,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 16,
+      ...typography.body,
+      fontSize: 16,
+      color: colors.textPrimary,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    textArea: {
+      height: 90,
+      textAlignVertical: "top" as const,
+    },
+    sportFixed: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: spacing.xs,
+      backgroundColor: colors.inputBg,
+      borderRadius: 14,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 16,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    sportFixedText: {
+      ...typography.body,
+      flex: 1,
+      fontSize: 16,
+      color: colors.textSecondary,
+    },
+    chipRow: {
+      flexDirection: "row" as const,
+      gap: spacing.sm,
+      flexWrap: "wrap" as const,
+    },
+    chip: {
+      paddingHorizontal: spacing.md,
+      paddingVertical: 12,
+      borderRadius: 999,
+      backgroundColor: colors.surfaceElevated,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 4,
+      shadowOffset: { width: 0, height: 1 },
+      elevation: 1,
+    },
+    chipActive: {
+      backgroundColor: colors.primaryBlue,
+    },
+    chipText: {
+      ...typography.body,
+      fontSize: 15,
+      color: colors.textSecondary,
+      fontWeight: "500" as const,
+    },
+    chipTextActive: {
+      color: colors.white,
+      fontWeight: "600" as const,
+    },
+    button: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      backgroundColor: colors.primaryBlue,
+      borderRadius: 999,
+      paddingVertical: 18,
+      gap: spacing.xs,
+      marginTop: spacing.sm,
+    },
+    buttonBottom: {
+      marginTop: spacing.md,
+    },
+    buttonDisabled: {
+      opacity: 0.6,
+    },
+    buttonText: {
+      ...typography.body,
+      color: colors.white,
+      fontWeight: "600" as const,
+      fontSize: 17,
+    },
+    stepTwoContainer: {
+      flex: 1,
+    },
+    sportInfo: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: spacing.xs,
+      marginBottom: spacing.xs,
+    },
+    sportInfoText: {
+      ...typography.body,
+      fontSize: 13,
+      color: colors.textSecondary,
+    },
+    selectedCount: {
+      ...typography.body,
+      fontSize: 13,
+      color: colors.textSecondary,
+      marginBottom: spacing.sm,
+    },
+    loader: {
+      marginTop: spacing.xl,
+    },
+    stepTwoScroll: {
+      flex: 1,
+    },
+    exerciseList: {
+      gap: spacing.xs,
+      paddingBottom: spacing.lg,
+    },
+    exerciseRow: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: 14,
+      padding: spacing.md,
+      gap: spacing.sm,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.03,
+      shadowRadius: 4,
+      shadowOffset: { width: 0, height: 1 },
+      elevation: 1,
+    },
+    exerciseRowSelected: {
+      backgroundColor: colors.primaryBlue,
+    },
+    exerciseIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 10,
+      backgroundColor: isDark ? "#1c3a8a22" : "#F0F4FF",
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    exerciseName: {
+      ...typography.body,
+      flex: 1,
+      fontSize: 15,
+      color: colors.textPrimary,
+      fontWeight: "500" as const,
+    },
+    exerciseNameSelected: {
+      color: colors.white,
+    },
+    absoluteFill: {
+      position: "absolute" as const,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 0,
+    },
+  }), [colors, isDark]);
 
   return (
     <Modal
@@ -444,213 +656,3 @@ export default function EditPlanModal({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  fullscreenBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    zIndex: 0,
-  },
-  sheet: {
-    backgroundColor: colors.white,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-    paddingBottom: spacing.xl,
-    height: "80%",
-  },
-  handle: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: "#E0E0E0",
-    alignSelf: "center",
-    marginTop: spacing.sm,
-    marginBottom: spacing.sm,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: spacing.md,
-  },
-  title: {
-    ...typography.title,
-    fontSize: 20,
-  },
-  content: {
-    gap: spacing.md,
-    paddingBottom: spacing.lg,
-  },
-  label: {
-    ...typography.label,
-    color: colors.textPrimary,
-    marginBottom: 4,
-    fontSize: 14,
-  },
-  input: {
-    backgroundColor: colors.white,
-    borderRadius: 14,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 16,
-    ...typography.body,
-    fontSize: 16,
-    color: colors.textPrimary,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  textArea: {
-    height: 90,
-    textAlignVertical: "top",
-  },
-  sportFixed: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-    backgroundColor: colors.white,
-    borderRadius: 14,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  sportFixedText: {
-    ...typography.body,
-    flex: 1,
-    fontSize: 16,
-    color: colors.textSecondary,
-  },
-  chipRow: {
-    flexDirection: "row",
-    gap: spacing.sm,
-    flexWrap: "wrap",
-  },
-  chip: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: 12,
-    borderRadius: 999,
-    backgroundColor: colors.white,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 1 },
-    elevation: 1,
-  },
-  chipActive: {
-    backgroundColor: colors.primaryBlue,
-  },
-  chipText: {
-    ...typography.body,
-    fontSize: 15,
-    color: colors.textSecondary,
-    fontWeight: "500",
-  },
-  chipTextActive: {
-    color: colors.white,
-    fontWeight: "600",
-  },
-  button: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.primaryBlue,
-    borderRadius: 999,
-    paddingVertical: 18,
-    gap: spacing.xs,
-    marginTop: spacing.sm,
-  },
-  buttonBottom: {
-    marginTop: spacing.md,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    ...typography.body,
-    color: colors.white,
-    fontWeight: "600",
-    fontSize: 17,
-  },
-  stepTwoContainer: {
-    flex: 1,
-  },
-  sportInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-    marginBottom: spacing.xs,
-  },
-  sportInfoText: {
-    ...typography.body,
-    fontSize: 13,
-    color: colors.textSecondary,
-  },
-  selectedCount: {
-    ...typography.body,
-    fontSize: 13,
-    color: colors.textSecondary,
-    marginBottom: spacing.sm,
-  },
-  loader: {
-    marginTop: spacing.xl,
-  },
-  stepTwoScroll: {
-    flex: 1,
-  },
-  exerciseList: {
-    gap: spacing.xs,
-    paddingBottom: spacing.lg,
-  },
-  exerciseRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.white,
-    borderRadius: 14,
-    padding: spacing.md,
-    gap: spacing.sm,
-    shadowColor: "#000",
-    shadowOpacity: 0.03,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 1 },
-    elevation: 1,
-  },
-  exerciseRowSelected: {
-    backgroundColor: colors.primaryBlue,
-  },
-  exerciseIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    backgroundColor: "#F0F4FF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  exerciseName: {
-    ...typography.body,
-    flex: 1,
-    fontSize: 15,
-    color: colors.textPrimary,
-    fontWeight: "500",
-  },
-  exerciseNameSelected: {
-    color: colors.white,
-  },
-  absoluteFill: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 0,
-  },
-});

@@ -1,10 +1,10 @@
-import { colors } from "@/src/theme/colors";
+import { useTheme } from "@/src/context/ThemeContext";
 import { spacing } from "@/src/theme/spacing";
 import api from "@/src/utils/axiosInstance";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useFocusEffect, useRouter } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -17,6 +17,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {
+  const { colors, isDark } = useTheme();
   const router = useRouter();
   const tabBarHeight = useBottomTabBarHeight();
   const { width, height: screenHeight } = useWindowDimensions();
@@ -30,6 +31,135 @@ export default function ProfileScreen() {
   } | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [greeting, setGreeting] = React.useState("");
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    loaderContainer: {
+      flex: 1,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    topSection: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      marginBottom: spacing.xl,
+    },
+    topSectionCompact: {
+      marginBottom: spacing.lg,
+    },
+    profileIconWrap: {
+      width: 90,
+      height: 90,
+      borderRadius: 999,
+      backgroundColor: isDark ? colors.surfaceElevated : "#EEF2F7",
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      marginRight: spacing.lg,
+    },
+    profileIconWrapCompact: {
+      width: 72,
+      height: 72,
+      marginRight: spacing.md,
+    },
+    goodMorning: {
+      fontSize: 14,
+      fontWeight: "700" as const,
+      letterSpacing: 1,
+      color: colors.textSecondary,
+      fontFamily: "Inter",
+    },
+    hello: {
+      fontSize: 28,
+      fontWeight: "900" as const,
+      color: colors.textPrimary,
+      fontFamily: "Inter",
+    },
+    helloCompact: {
+      fontSize: 24,
+    },
+    infoSection: {
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      padding: spacing.lg,
+      marginBottom: spacing.xl,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.05,
+      shadowRadius: 12,
+      elevation: 3,
+    },
+    infoSectionCompact: {
+      padding: spacing.md,
+      marginBottom: spacing.lg,
+    },
+    sectionTitle: {
+      fontSize: 14,
+      fontWeight: "800" as const,
+      letterSpacing: 2,
+      color: colors.borderGray,
+      marginBottom: spacing.lg,
+      fontFamily: "Inter",
+    },
+    row: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      alignItems: "center" as const,
+      paddingVertical: spacing.md,
+    },
+    label: {
+      fontSize: 18,
+      color: colors.textSecondary,
+      fontFamily: "Inter",
+    },
+    value: {
+      fontSize: 18,
+      fontWeight: "700" as const,
+      color: colors.textPrimary,
+      fontFamily: "Inter",
+    },
+    emailValue: {
+      fontSize: 14,
+      maxWidth: "62%" as any,
+      flexShrink: 1,
+      textAlign: "right" as const,
+    },
+    separator: {
+      height: 1,
+      backgroundColor: colors.borderLight,
+    },
+    copyRightText: {
+      textAlign: "center" as const,
+      fontSize: 14,
+      color: colors.textSecondary,
+      marginTop: spacing.xl,
+      fontWeight: "800" as const,
+    },
+    settingsButton: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      paddingVertical: spacing.lg,
+      paddingHorizontal: spacing.lg,
+      backgroundColor: isDark ? colors.surfaceElevated : "#f0f4f8",
+      borderRadius: 12,
+      borderColor: colors.primaryBlue,
+      borderWidth: 1.5,
+    },
+    settingsButtonCompact: {
+      paddingVertical: spacing.md,
+      paddingHorizontal: spacing.md,
+    },
+    settingsButtonText: {
+      flex: 1,
+      fontSize: 16,
+      fontWeight: "600" as const,
+      color: colors.textPrimary,
+      marginLeft: spacing.lg,
+      fontFamily: "Inter",
+    },
+  }), [colors, isDark]);
 
   const calculateGreeting = () => {
     const hour = new Date().getHours();
@@ -167,133 +297,3 @@ export default function ProfileScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  loaderContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  topSection: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: spacing.xl,
-  },
-  topSectionCompact: {
-    marginBottom: spacing.lg,
-  },
-  profileIconWrap: {
-    width: 90,
-    height: 90,
-    borderRadius: 999,
-    backgroundColor: "#EEF2F7",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: spacing.lg,
-  },
-  profileIconWrapCompact: {
-    width: 72,
-    height: 72,
-    marginRight: spacing.md,
-  },
-
-  goodMorning: {
-    fontSize: 14,
-    fontWeight: "700",
-    letterSpacing: 1,
-    color: colors.textSecondary,
-    fontFamily: "Inter",
-  },
-  hello: {
-    fontSize: 28,
-    fontWeight: "900",
-    color: colors.textPrimary,
-    fontFamily: "Inter",
-  },
-  helloCompact: {
-    fontSize: 24,
-  },
-  infoSection: {
-    backgroundColor: colors.white,
-    borderRadius: 20,
-    padding: spacing.lg,
-    marginBottom: spacing.xl,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 12,
-    elevation: 3,
-  },
-  infoSectionCompact: {
-    padding: spacing.md,
-    marginBottom: spacing.lg,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: "800",
-    letterSpacing: 2,
-    color: colors.borderGray,
-    marginBottom: spacing.lg,
-    fontFamily: "Inter",
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: spacing.md,
-  },
-  label: {
-    fontSize: 18,
-    color: colors.textSecondary,
-    fontFamily: "Inter",
-  },
-  value: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: colors.textPrimary,
-    fontFamily: "Inter",
-  },
-  emailValue: {
-    fontSize: 14,
-    maxWidth: "62%",
-    flexShrink: 1,
-    textAlign: "right",
-  },
-  separator: {
-    height: 1,
-    backgroundColor: "#E5E7EB",
-  },
-  copyRightText: {
-    textAlign: "center",
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginTop: spacing.xl,
-    fontWeight: "800",
-  },
-  settingsButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.lg,
-    backgroundColor: "#f0f4f8",
-    borderRadius: 12,
-    borderColor: colors.primaryBlue,
-    borderWidth: 1.5,
-  },
-  settingsButtonCompact: {
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.md,
-  },
-  settingsButtonText: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textPrimary,
-    marginLeft: spacing.lg,
-    fontFamily: "Inter",
-  },
-});

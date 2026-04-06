@@ -1,6 +1,6 @@
 import WorkoutModal from "@/src/components/modals/WorkoutModal";
 import SecondaryButton from "@/src/components/secondaryButton";
-import { colors } from "@/src/theme/colors";
+import { useTheme } from "@/src/context/ThemeContext";
 import { spacing } from "@/src/theme/spacing";
 import { typography } from "@/src/theme/typography";
 import api from "@/src/utils/axiosInstance";
@@ -8,7 +8,7 @@ import { MaterialIcons as Icon } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useFocusEffect } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -173,6 +173,7 @@ type SelectedTrainingPlan = {
 };
 
 export default function HomeScreen() {
+  const { colors, isDark } = useTheme();
   const tabBarHeight = useBottomTabBarHeight();
   const { width, height: screenHeight } = useWindowDimensions();
   const isCompact = width < 380 || screenHeight < 750;
@@ -199,6 +200,450 @@ export default function HomeScreen() {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    loaderContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    scrollContent: {
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+      paddingTop: spacing.screenPaddingTop,
+    },
+    scrollContentCompact: {
+      paddingTop: spacing.md,
+    },
+    topRow: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      marginBottom: spacing.lg,
+    },
+    topRowCompact: {
+      marginBottom: spacing.md,
+    },
+    avatarIconWrap: {
+      width: 48,
+      height: 48,
+      borderRadius: 999,
+      backgroundColor: isDark ? colors.surfaceElevated : "#EEF2F7",
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      marginRight: spacing.md,
+    },
+    avatarIconWrapCompact: {
+      width: 42,
+      height: 42,
+      marginRight: spacing.sm,
+    },
+    greetingBlock: {
+      flex: 1,
+    },
+    goodMorning: {
+      ...typography.secondary,
+      textAlign: "left" as const,
+      fontSize: 14,
+      color: colors.textSecondary,
+    },
+    hello: {
+      ...typography.greeting,
+      textAlign: "left" as const,
+      fontSize: 28,
+      fontWeight: "800" as const,
+      color: colors.textPrimary,
+    },
+    helloCompact: {
+      fontSize: 24,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 24,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.06,
+      shadowRadius: 14,
+      elevation: 3,
+    },
+    cardCompact: {
+      padding: spacing.sm,
+    },
+    streakHeader: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      marginBottom: spacing.md,
+    },
+    streakTitle: {
+      fontFamily: "Inter",
+      fontSize: 18,
+      fontWeight: "700" as const,
+      color: colors.textPrimary,
+      flex: 1,
+    },
+    streakRight: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: spacing.xs,
+    },
+    fire: {
+      fontSize: 16,
+    },
+    streakActive: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      fontWeight: "700" as const,
+      color: colors.accentOrange,
+    },
+    streakSubtext: {
+      fontFamily: "Inter",
+      fontSize: 12,
+      color: colors.textSecondary,
+      marginBottom: spacing.sm,
+    },
+    streakSquaresRow: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      marginBottom: spacing.sm,
+    },
+    streakSquare: {
+      width: 38,
+      height: 38,
+      borderRadius: 8,
+    },
+    streakSquareOn: {
+      backgroundColor: colors.primaryBlue,
+    },
+    streakSquareOff: {
+      backgroundColor: isDark ? "#FFFFFF14" : "#D1D5DB59",
+    },
+    streakDaysRow: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+    },
+    streakDayLabel: {
+      fontFamily: "Inter",
+      fontSize: 12,
+      fontWeight: "600" as const,
+      color: colors.borderGray,
+      width: 38,
+      textAlign: "center" as const,
+    },
+    streakCalendarButton: {
+      marginTop: spacing.md,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      gap: spacing.xs,
+      paddingVertical: spacing.sm,
+      borderRadius: 999,
+      backgroundColor: isDark ? "#1c3a8a22" : "#EEF4FF",
+    },
+    streakCalendarButtonText: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      fontWeight: "700" as const,
+      color: colors.primaryBlue,
+    },
+    lastWorkoutHeader: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      marginBottom: spacing.md,
+      gap: spacing.sm,
+    },
+    lastWorkoutTitle: {
+      fontFamily: "Inter",
+      fontSize: 18,
+      fontWeight: "700" as const,
+      color: colors.textPrimary,
+      flex: 1,
+    },
+    lastWorkoutBadge: {
+      backgroundColor: isDark ? "#1c3a8a22" : "#EEF4FF",
+      borderRadius: 999,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.xs,
+    },
+    lastWorkoutBadgeText: {
+      fontFamily: "Inter",
+      fontSize: 12,
+      fontWeight: "700" as const,
+      color: colors.primaryBlue,
+    },
+    lastWorkoutName: {
+      fontFamily: "Inter",
+      fontSize: 24,
+      fontWeight: "900" as const,
+      color: colors.textPrimary,
+      marginBottom: spacing.md,
+    },
+    lastWorkoutNameCompact: {
+      fontSize: 20,
+      marginBottom: spacing.sm,
+    },
+    lastWorkoutInfoRow: {
+      flexDirection: "row" as const,
+      gap: spacing.sm,
+    },
+    lastWorkoutInfoCard: {
+      flex: 1,
+      backgroundColor: colors.background,
+      borderRadius: 16,
+      paddingVertical: spacing.md,
+      paddingHorizontal: spacing.md,
+    },
+    lastWorkoutInfoLabel: {
+      fontFamily: "Inter",
+      fontSize: 12,
+      fontWeight: "700" as const,
+      color: colors.textSecondary,
+      marginBottom: spacing.xs,
+      letterSpacing: 0.5,
+    },
+    lastWorkoutInfoValue: {
+      fontFamily: "Inter",
+      fontSize: 15,
+      fontWeight: "700" as const,
+      color: colors.textPrimary,
+    },
+    lastWorkoutEmptyText: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      color: colors.textSecondary,
+    },
+    trainingCard: {
+      backgroundColor: colors.primaryBlue,
+      borderRadius: 24,
+      padding: spacing.md,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.08,
+      shadowRadius: 16,
+      elevation: 4,
+      overflow: "hidden" as const,
+    },
+    trainingCardCompact: {
+      padding: spacing.sm,
+    },
+    decoCircle1: {
+      position: "absolute" as const,
+      width: 220,
+      height: 220,
+      borderRadius: 999,
+      right: -80,
+      top: -60,
+      backgroundColor: "#FFFFFF14",
+    },
+    decoCircle2: {
+      position: "absolute" as const,
+      width: 140,
+      height: 140,
+      borderRadius: 999,
+      right: 10,
+      bottom: -60,
+      backgroundColor: "#FFFFFF0F",
+    },
+    trainingTop: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      marginBottom: spacing.md,
+    },
+    trainingTopCompact: {
+      marginBottom: spacing.sm,
+    },
+    trainingLabel: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      fontWeight: "800" as const,
+      letterSpacing: 1,
+      color: "#FFFFFFB3",
+    },
+    durationBadge: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: spacing.xs,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.sm,
+      borderRadius: 999,
+      backgroundColor: "#FFFFFF29",
+      minHeight: 38,
+    },
+    durationText: {
+      fontFamily: "Inter",
+      fontSize: 12,
+      fontWeight: "700" as const,
+      color: colors.white,
+    },
+    trainingMain: {
+      fontFamily: "Inter",
+      fontSize: 28,
+      fontWeight: "900" as const,
+      color: colors.white,
+      marginBottom: spacing.sm,
+    },
+    trainingMainCompact: {
+      fontSize: 24,
+      marginBottom: spacing.xs,
+    },
+    trainingSubtext: {
+      fontFamily: "Inter",
+      fontSize: 16,
+      color: "#FFFFFFCC",
+      marginTop: -spacing.xs,
+      marginBottom: spacing.sm,
+      lineHeight: 18,
+    },
+    trainingSubtextCompact: {
+      fontSize: 13,
+      marginTop: 0,
+      lineHeight: 18,
+    },
+    trainingButtonWrap: {
+      marginTop: -spacing.xs,
+    },
+    disabledButtonWrap: {
+      opacity: 0.6,
+    },
+    modalOverlay: {
+      flex: 1,
+      justifyContent: "flex-end" as const,
+    },
+    modalBackdrop: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: "rgba(0,0,0,0.4)",
+    },
+    modalSheet: {
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      minHeight: "72%" as any,
+    },
+    modalContainer: {
+      flex: 1,
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+      paddingTop: spacing.md,
+      paddingBottom: spacing.lg,
+    },
+    modalHeader: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      marginBottom: spacing.md,
+    },
+    modalHeaderCenter: {
+      flex: 1,
+      alignItems: "center" as const,
+      marginLeft: 42,
+    },
+    modalTitle: {
+      ...typography.body,
+      fontSize: 18,
+      fontWeight: "700" as const,
+      color: colors.textPrimary,
+    },
+    modalSubtitle: {
+      ...typography.body,
+      fontSize: 13,
+      color: colors.textSecondary,
+      marginTop: 2,
+      textTransform: "capitalize" as const,
+    },
+    modalMonthRow: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: spacing.sm,
+      marginTop: 4,
+    },
+    modalMonthNavButton: {
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      backgroundColor: isDark ? "#1c3a8a22" : "#EEF4FF",
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    modalCloseButton: {
+      width: 42,
+      height: 42,
+      borderRadius: 21,
+      backgroundColor: colors.surfaceElevated,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    calendarCard: {
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: 20,
+      padding: spacing.md,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.05,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 3 },
+      elevation: 2,
+    },
+    calendarWeekdaysRow: {
+      flexDirection: "row" as const,
+      marginBottom: spacing.sm,
+    },
+    calendarWeekday: {
+      flex: 1,
+      textAlign: "center" as const,
+      fontFamily: "Inter",
+      fontSize: 12,
+      fontWeight: "700" as const,
+      color: colors.textSecondary,
+    },
+    calendarGrid: {
+      flexDirection: "row" as const,
+      flexWrap: "wrap" as const,
+    },
+    calendarDay: {
+      width: "14.285%" as any,
+      aspectRatio: 1,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    calendarDayEmpty: {
+      backgroundColor: "transparent",
+    },
+    calendarDayInner: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    calendarDayInnerMarked: {
+      backgroundColor: colors.primaryBlue,
+    },
+    calendarDayInnerToday: {
+      borderWidth: 1.5,
+      borderColor: colors.primaryBlue,
+      backgroundColor: isDark ? "#1c3a8a22" : "#EEF4FF",
+    },
+    calendarDayText: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      fontWeight: "700" as const,
+      color: colors.textPrimary,
+    },
+    calendarDayTextEmpty: {
+      color: "transparent",
+    },
+    calendarDayTextMarked: {
+      color: colors.white,
+    },
+    calendarDayTextToday: {
+      color: colors.primaryBlue,
+    },
+  }), [colors, isDark]);
 
   useEffect(() => {
     const getUserData = async () => {
@@ -711,450 +1156,3 @@ export default function HomeScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  loaderContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  scrollContent: {
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-    paddingTop: spacing.screenPaddingTop,
-  },
-  scrollContentCompact: {
-    paddingTop: spacing.md,
-  },
-  topRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: spacing.lg,
-  },
-  topRowCompact: {
-    marginBottom: spacing.md,
-  },
-  avatarIconWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: 999,
-    backgroundColor: "#EEF2F7",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: spacing.md,
-  },
-  avatarIconWrapCompact: {
-    width: 42,
-    height: 42,
-    marginRight: spacing.sm,
-  },
-  greetingBlock: {
-    flex: 1,
-  },
-  goodMorning: {
-    ...typography.secondary,
-    textAlign: "left",
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  hello: {
-    ...typography.greeting,
-    textAlign: "left",
-    fontSize: 28,
-    fontWeight: "800",
-    color: colors.textPrimary,
-  },
-  helloCompact: {
-    fontSize: 24,
-  },
-  card: {
-    backgroundColor: colors.white,
-    borderRadius: 24,
-    padding: spacing.md,
-    marginBottom: spacing.md,
-    shadowColor: "#000",
-    shadowOpacity: 0.06,
-    shadowRadius: 14,
-    elevation: 3,
-  },
-  cardCompact: {
-    padding: spacing.sm,
-  },
-  streakHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: spacing.md,
-  },
-  streakTitle: {
-    fontFamily: "Inter",
-    fontSize: 18,
-    fontWeight: "700",
-    color: colors.textPrimary,
-    flex: 1,
-  },
-  streakRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-  },
-  fire: {
-    fontSize: 16,
-  },
-  streakActive: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    fontWeight: "700",
-    color: colors.accentOrange,
-  },
-  streakSubtext: {
-    fontFamily: "Inter",
-    fontSize: 12,
-    color: colors.textSecondary,
-    marginBottom: spacing.sm,
-  },
-  streakSquaresRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: spacing.sm,
-  },
-  streakSquare: {
-    width: 38,
-    height: 38,
-    borderRadius: 8,
-  },
-  streakSquareOn: {
-    backgroundColor: colors.primaryBlue,
-  },
-  streakSquareOff: {
-    backgroundColor: "#D1D5DB59",
-  },
-  streakDaysRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  streakDayLabel: {
-    fontFamily: "Inter",
-    fontSize: 12,
-    fontWeight: "600",
-    color: colors.borderGray,
-    width: 38,
-    textAlign: "center",
-  },
-  streakCalendarButton: {
-    marginTop: spacing.md,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.xs,
-    paddingVertical: spacing.sm,
-    borderRadius: 999,
-    backgroundColor: "#EEF4FF",
-  },
-  streakCalendarButtonText: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    fontWeight: "700",
-    color: colors.primaryBlue,
-  },
-  lastWorkoutHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: spacing.md,
-    gap: spacing.sm,
-  },
-  lastWorkoutTitle: {
-    fontFamily: "Inter",
-    fontSize: 18,
-    fontWeight: "700",
-    color: colors.textPrimary,
-    flex: 1,
-  },
-  lastWorkoutBadge: {
-    backgroundColor: "#EEF4FF",
-    borderRadius: 999,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-  },
-  lastWorkoutBadgeText: {
-    fontFamily: "Inter",
-    fontSize: 12,
-    fontWeight: "700",
-    color: colors.primaryBlue,
-  },
-  lastWorkoutName: {
-    fontFamily: "Inter",
-    fontSize: 24,
-    fontWeight: "900",
-    color: colors.textPrimary,
-    marginBottom: spacing.md,
-  },
-  lastWorkoutNameCompact: {
-    fontSize: 20,
-    marginBottom: spacing.sm,
-  },
-  lastWorkoutInfoRow: {
-    flexDirection: "row",
-    gap: spacing.sm,
-  },
-  lastWorkoutInfoCard: {
-    flex: 1,
-    backgroundColor: colors.background,
-    borderRadius: 16,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.md,
-  },
-  lastWorkoutInfoLabel: {
-    fontFamily: "Inter",
-    fontSize: 12,
-    fontWeight: "700",
-    color: colors.textSecondary,
-    marginBottom: spacing.xs,
-    letterSpacing: 0.5,
-  },
-  lastWorkoutInfoValue: {
-    fontFamily: "Inter",
-    fontSize: 15,
-    fontWeight: "700",
-    color: colors.textPrimary,
-  },
-  lastWorkoutEmptyText: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  trainingCard: {
-    backgroundColor: colors.primaryBlue,
-    borderRadius: 24,
-    padding: spacing.md,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
-    elevation: 4,
-    overflow: "hidden",
-  },
-  trainingCardCompact: {
-    padding: spacing.sm,
-  },
-  decoCircle1: {
-    position: "absolute",
-    width: 220,
-    height: 220,
-    borderRadius: 999,
-    right: -80,
-    top: -60,
-    backgroundColor: "#FFFFFF14",
-  },
-  decoCircle2: {
-    position: "absolute",
-    width: 140,
-    height: 140,
-    borderRadius: 999,
-    right: 10,
-    bottom: -60,
-    backgroundColor: "#FFFFFF0F",
-  },
-  trainingTop: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: spacing.md,
-  },
-  trainingTopCompact: {
-    marginBottom: spacing.sm,
-  },
-  trainingLabel: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    fontWeight: "800",
-    letterSpacing: 1,
-    color: "#FFFFFFB3",
-  },
-  durationBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: 999,
-    backgroundColor: "#FFFFFF29",
-    minHeight: 38,
-  },
-  durationIcon: {
-    fontSize: 14,
-  },
-  durationText: {
-    fontFamily: "Inter",
-    fontSize: 12,
-    fontWeight: "700",
-    color: colors.white,
-  },
-  trainingMain: {
-    fontFamily: "Inter",
-    fontSize: 28,
-    fontWeight: "900",
-    color: colors.white,
-    marginBottom: spacing.sm,
-  },
-  trainingMainCompact: {
-    fontSize: 24,
-    marginBottom: spacing.xs,
-  },
-  trainingSubtext: {
-    fontFamily: "Inter",
-    fontSize: 16,
-    color: "#FFFFFFCC",
-    marginTop: -spacing.xs,
-    marginBottom: spacing.sm,
-    lineHeight: 18,
-  },
-  trainingSubtextCompact: {
-    fontSize: 13,
-    marginTop: 0,
-    lineHeight: 18,
-  },
-  trainingButtonWrap: {
-    marginTop: -spacing.xs,
-  },
-  disabledButtonWrap: {
-    opacity: 0.6,
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  modalBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.4)",
-  },
-  modalSheet: {
-    backgroundColor: colors.background,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    minHeight: "72%",
-  },
-  modalContainer: {
-    flex: 1,
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
-  },
-  modalHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: spacing.md,
-  },
-  modalHeaderCenter: {
-    flex: 1,
-    alignItems: "center",
-    marginLeft: 42,
-  },
-  modalTitle: {
-    ...typography.body,
-    fontSize: 18,
-    fontWeight: "700",
-    color: colors.textPrimary,
-  },
-  modalSubtitle: {
-    ...typography.body,
-    fontSize: 13,
-    color: colors.textSecondary,
-    marginTop: 2,
-    textTransform: "capitalize",
-  },
-  modalMonthRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    marginTop: 4,
-  },
-  modalMonthNavButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: "#EEF4FF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  modalCloseButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: colors.white,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  calendarCard: {
-    backgroundColor: colors.white,
-    borderRadius: 20,
-    padding: spacing.md,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2,
-  },
-  calendarWeekdaysRow: {
-    flexDirection: "row",
-    marginBottom: spacing.sm,
-  },
-  calendarWeekday: {
-    flex: 1,
-    textAlign: "center",
-    fontFamily: "Inter",
-    fontSize: 12,
-    fontWeight: "700",
-    color: colors.textSecondary,
-  },
-  calendarGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  calendarDay: {
-    width: "14.285%",
-    aspectRatio: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  calendarDayEmpty: {
-    backgroundColor: "transparent",
-  },
-  calendarDayInner: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  calendarDayInnerMarked: {
-    backgroundColor: colors.primaryBlue,
-  },
-  calendarDayInnerToday: {
-    borderWidth: 1.5,
-    borderColor: colors.primaryBlue,
-    backgroundColor: "#EEF4FF",
-  },
-  calendarDayText: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    fontWeight: "700",
-    color: colors.textPrimary,
-  },
-  calendarDayTextEmpty: {
-    color: "transparent",
-  },
-  calendarDayTextMarked: {
-    color: colors.white,
-  },
-  calendarDayTextToday: {
-    color: colors.primaryBlue,
-  },
-});

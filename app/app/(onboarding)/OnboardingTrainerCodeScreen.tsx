@@ -1,13 +1,13 @@
 import Header from "@/src/components/header";
 import ProgressDots from "@/src/components/ProgressDots";
-import { colors } from "@/src/theme/colors";
+import { useTheme } from "@/src/context/ThemeContext";
 import { spacing } from "@/src/theme/spacing";
 import { typography } from "@/src/theme/typography";
 import api from "@/src/utils/axiosInstance";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import axios from "axios";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -24,6 +24,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function OnboardingTrainerCodeScreen() {
+  const { colors, isDark } = useTheme();
   const router = useRouter();
   const { width, height: screenHeight } = useWindowDimensions();
   const isCompact = width < 380 || screenHeight < 750;
@@ -86,6 +87,165 @@ export default function OnboardingTrainerCodeScreen() {
     }
   };
 
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+    },
+    scrollContent: {
+      flexGrow: 1,
+      paddingTop: spacing.md,
+    },
+    scrollContentCompact: {
+      paddingTop: spacing.sm,
+    },
+    header: {
+      marginBottom: spacing.lg,
+    },
+    headerCompact: {
+      marginBottom: spacing.md,
+    },
+    subheader: {
+      fontSize: 18,
+      marginTop: spacing.md,
+      color: colors.textSecondary,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: spacing.md,
+      gap: spacing.sm,
+      shadowColor: colors.black,
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 2,
+    },
+    cardCompact: {
+      padding: spacing.sm,
+    },
+    label: {
+      ...typography.label,
+      color: colors.textPrimary,
+      marginBottom: 4,
+      marginLeft: 4,
+    },
+    inputRow: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      borderWidth: 2,
+      borderColor: colors.borderLight,
+      borderRadius: 12,
+      overflow: "hidden" as const,
+    },
+    prefixBox: {
+      backgroundColor: isDark ? colors.surfaceElevated : "#F3F4F6",
+      paddingHorizontal: spacing.md,
+      height: 56,
+      justifyContent: "center" as const,
+      borderRightWidth: 2,
+      borderRightColor: colors.borderLight,
+    },
+    prefixText: {
+      fontFamily: "Inter",
+      fontSize: 16,
+      fontWeight: "700" as const,
+      color: colors.textSecondary,
+    },
+    codeInput: {
+      flex: 1,
+      height: 56,
+      paddingHorizontal: spacing.md,
+      fontSize: 18,
+      fontFamily: "Inter",
+      fontWeight: "700" as const,
+      color: colors.textPrimary,
+      letterSpacing: 2,
+    },
+    checkButton: {
+      backgroundColor: colors.primaryBlue,
+      paddingHorizontal: spacing.md,
+      height: 56,
+      justifyContent: "center" as const,
+    },
+    checkButtonText: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      fontWeight: "800" as const,
+      color: colors.white,
+    },
+    errorText: {
+      fontFamily: "Inter",
+      fontSize: 13,
+      color: "red",
+      marginLeft: 4,
+    },
+    trainerFound: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      backgroundColor: isDark ? "#1c3a8a22" : "#EFF6FF",
+      borderRadius: 12,
+      padding: spacing.md,
+      gap: spacing.sm,
+      marginTop: spacing.xs,
+    },
+    trainerAvatar: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: colors.primaryBlue,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    trainerAvatarText: {
+      fontFamily: "Inter",
+      fontSize: 16,
+      fontWeight: "800" as const,
+      color: colors.white,
+    },
+    trainerInfo: {
+      flex: 1,
+    },
+    trainerFoundLabel: {
+      fontFamily: "Inter",
+      fontSize: 12,
+      fontWeight: "600" as const,
+      color: colors.textSecondary,
+    },
+    trainerName: {
+      fontFamily: "Inter",
+      fontSize: 16,
+      fontWeight: "800" as const,
+      color: colors.textPrimary,
+    },
+    hintText: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      marginTop: spacing.sm,
+      textAlign: "center" as const,
+    },
+    navigation: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      marginTop: "auto" as any,
+      paddingTop: spacing.md,
+      paddingBottom: spacing.xl + 20,
+    },
+    navigationCompact: {
+      paddingBottom: spacing.xl,
+    },
+    arrowButton: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: colors.primaryBlue,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+  }), [colors, isDark]);
+
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <Header />
@@ -105,7 +265,7 @@ export default function OnboardingTrainerCodeScreen() {
           <View
             style={[styles.header, isCompact ? styles.headerCompact : null]}
           >
-            <Text style={typography.title}>Trainer verbinden</Text>
+            <Text style={[typography.title, { color: colors.textPrimary }]}>Trainer verbinden</Text>
             <Text style={[typography.body, styles.subheader]}>
               Gib den Code deines Trainers ein
             </Text>
@@ -136,7 +296,7 @@ export default function OnboardingTrainerCodeScreen() {
                   }
                 }}
                 placeholder="ABC-DEF"
-                placeholderTextColor="#aaa"
+                placeholderTextColor={colors.textSecondary}
                 autoCapitalize="characters"
                 maxLength={7}
               />
@@ -217,161 +377,3 @@ export default function OnboardingTrainerCodeScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingTop: spacing.md,
-  },
-  scrollContentCompact: {
-    paddingTop: spacing.sm,
-  },
-  header: {
-    marginBottom: spacing.lg,
-  },
-  headerCompact: {
-    marginBottom: spacing.md,
-  },
-  subheader: {
-    fontSize: 18,
-    marginTop: spacing.md,
-  },
-  card: {
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    padding: spacing.md,
-    gap: spacing.sm,
-    shadowColor: colors.black,
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 2,
-  },
-  cardCompact: {
-    padding: spacing.sm,
-  },
-  label: {
-    ...typography.label,
-    color: colors.black,
-    marginBottom: 4,
-    marginLeft: 4,
-  },
-  inputRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "#E5E7EB",
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  prefixBox: {
-    backgroundColor: "#F3F4F6",
-    paddingHorizontal: spacing.md,
-    height: 56,
-    justifyContent: "center",
-    borderRightWidth: 2,
-    borderRightColor: "#E5E7EB",
-  },
-  prefixText: {
-    fontFamily: "Inter",
-    fontSize: 16,
-    fontWeight: "700",
-    color: colors.textSecondary,
-  },
-  codeInput: {
-    flex: 1,
-    height: 56,
-    paddingHorizontal: spacing.md,
-    fontSize: 18,
-    fontFamily: "Inter",
-    fontWeight: "700",
-    color: colors.textPrimary,
-    letterSpacing: 2,
-  },
-  checkButton: {
-    backgroundColor: colors.primaryBlue,
-    paddingHorizontal: spacing.md,
-    height: 56,
-    justifyContent: "center",
-  },
-  checkButtonText: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    fontWeight: "800",
-    color: colors.white,
-  },
-  errorText: {
-    fontFamily: "Inter",
-    fontSize: 13,
-    color: "red",
-    marginLeft: 4,
-  },
-  trainerFound: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#EFF6FF",
-    borderRadius: 12,
-    padding: spacing.md,
-    gap: spacing.sm,
-    marginTop: spacing.xs,
-  },
-  trainerAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.primaryBlue,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  trainerAvatarText: {
-    fontFamily: "Inter",
-    fontSize: 16,
-    fontWeight: "800",
-    color: colors.white,
-  },
-  trainerInfo: {
-    flex: 1,
-  },
-  trainerFoundLabel: {
-    fontFamily: "Inter",
-    fontSize: 12,
-    fontWeight: "600",
-    color: colors.textSecondary,
-  },
-  trainerName: {
-    fontFamily: "Inter",
-    fontSize: 16,
-    fontWeight: "800",
-    color: colors.textPrimary,
-  },
-  hintText: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginTop: spacing.sm,
-    textAlign: "center",
-  },
-  navigation: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: "auto",
-    paddingTop: spacing.md,
-    paddingBottom: spacing.xl + 20,
-  },
-  navigationCompact: {
-    paddingBottom: spacing.xl,
-  },
-  arrowButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.primaryBlue,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

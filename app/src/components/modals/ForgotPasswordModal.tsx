@@ -1,8 +1,8 @@
 import InputField from "@/src/components/input";
-import { colors } from "@/src/theme/colors";
+import { useTheme } from "@/src/context/ThemeContext";
 import { spacing } from "@/src/theme/spacing";
 import axios from "axios";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Alert,
   Animated,
@@ -22,6 +22,7 @@ interface Props {
 }
 
 export default function ForgotPasswordModal({ visible, onClose }: Props) {
+  const { colors } = useTheme();
   const [email, setEmail] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [internalVisible, setInternalVisible] = React.useState(false);
@@ -100,6 +101,68 @@ export default function ForgotPasswordModal({ visible, onClose }: Props) {
     }
   };
 
+  const styles = useMemo(() => StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: "#00000066",
+      justifyContent: "center" as const,
+      padding: spacing.lg,
+    },
+    fullscreenBackdrop: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: "#00000066",
+      zIndex: 0,
+    },
+    container: {
+      backgroundColor: colors.surface,
+      borderRadius: 24,
+      padding: spacing.lg,
+    },
+    title: {
+      fontFamily: "Inter",
+      fontSize: 20,
+      fontWeight: "800" as const,
+      marginBottom: spacing.sm,
+      color: colors.textPrimary,
+    },
+    description: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      color: colors.textSecondary,
+      marginBottom: spacing.md,
+    },
+    button: {
+      backgroundColor: colors.primaryBlue,
+      borderRadius: 999,
+      paddingVertical: 12,
+      alignItems: "center" as const,
+      marginTop: spacing.sm,
+    },
+    buttonText: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      fontWeight: "800" as const,
+      color: colors.white,
+    },
+    closeWrap: {
+      alignItems: "center" as const,
+      marginTop: spacing.md,
+    },
+    closeText: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      color: colors.textSecondary,
+    },
+    absoluteFill: {
+      position: "absolute" as const,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 0,
+    },
+  }), [colors]);
+
   return (
     <Modal visible={internalVisible} transparent animationType="none">
       <View style={styles.overlay} pointerEvents="box-none">
@@ -150,72 +213,3 @@ export default function ForgotPasswordModal({ visible, onClose }: Props) {
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "#00000066",
-    justifyContent: "center",
-    padding: spacing.lg,
-  },
-  fullscreenBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "#00000066",
-    zIndex: 0,
-  },
-
-  container: {
-    backgroundColor: colors.white,
-    borderRadius: 24,
-    padding: spacing.lg,
-  },
-
-  title: {
-    fontFamily: "Inter",
-    fontSize: 20,
-    fontWeight: "800",
-    marginBottom: spacing.sm,
-    color: colors.textPrimary,
-  },
-
-  description: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginBottom: spacing.md,
-  },
-
-  button: {
-    backgroundColor: colors.primaryBlue,
-    borderRadius: 999,
-    paddingVertical: 12,
-    alignItems: "center",
-    marginTop: spacing.sm,
-  },
-
-  buttonText: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    fontWeight: "800",
-    color: colors.white,
-  },
-
-  closeWrap: {
-    alignItems: "center",
-    marginTop: spacing.md,
-  },
-
-  closeText: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  absoluteFill: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 0,
-  },
-});

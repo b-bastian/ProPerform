@@ -1,10 +1,12 @@
+import { ThemeProvider, useTheme } from "@/src/context/ThemeContext";
 import { WorkoutProvider } from "@/src/context/WorkoutContext";
 import { Stack, useRouter } from "expo-router";
-import { OnboardingContext } from "../src/context/OnboardingContext";
 import { StatusBar } from "expo-status-bar";
+import { OnboardingContext } from "../src/context/OnboardingContext";
 
-export default function RootLayout() {
+function AppShell() {
   const router = useRouter();
+  const { isDark } = useTheme();
 
   return (
     <WorkoutProvider>
@@ -13,9 +15,17 @@ export default function RootLayout() {
           finishOnboarding: () => router.replace("/(tabs)/HomeScreen"),
         }}
       >
-        <StatusBar style="dark" />
+        <StatusBar style={isDark ? "light" : "dark"} />
         <Stack screenOptions={{ headerShown: false }} />
       </OnboardingContext.Provider>
     </WorkoutProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <ThemeProvider>
+      <AppShell />
+    </ThemeProvider>
   );
 }

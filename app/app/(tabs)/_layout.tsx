@@ -1,5 +1,6 @@
 import ActiveWorkoutPill from "@/src/components/ActiveWorkoutPill";
 import WorkoutModal from "@/src/components/modals/WorkoutModal";
+import { useTheme } from "@/src/context/ThemeContext";
 import { useWorkout } from "@/src/context/WorkoutContext";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import axios from "axios";
@@ -21,6 +22,7 @@ Notifications.setNotificationHandler({
 
 export default function TabLayout() {
   const { modalVisible, planId, planName, hideModal, stopWorkout } = useWorkout();
+  const { colors, isDark } = useTheme();
 
   useEffect(() => {
     console.log("🚀 TabLayout mounted");
@@ -100,7 +102,7 @@ export default function TabLayout() {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: "#F9FAFB",
+          backgroundColor: colors.surface,
           borderRadius: 40,
           marginHorizontal: 20,
           marginBottom: "2%",
@@ -110,11 +112,12 @@ export default function TabLayout() {
           position: "absolute",
           shadowColor: "#000",
           shadowRadius: 12,
-          shadowOpacity: 0.1,
+          shadowOpacity: isDark ? 0.4 : 0.1,
           elevation: 8,
+          borderTopWidth: 0,
         },
         tabBarActiveTintColor: "#F97316",
-        tabBarInactiveTintColor: "#8899bb",
+        tabBarInactiveTintColor: isDark ? "#4B5A78" : "#8899bb",
       }}
     >
       <Tabs.Screen

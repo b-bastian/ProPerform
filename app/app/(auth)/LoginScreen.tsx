@@ -1,6 +1,6 @@
 import Header from "@/src/components/header";
 import InputField from "@/src/components/input";
-import { colors } from "@/src/theme/colors";
+import { useTheme } from "@/src/context/ThemeContext";
 import { spacing } from "@/src/theme/spacing";
 import { typography } from "@/src/theme/typography";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
@@ -8,7 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -24,6 +24,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
+  const { colors, isDark } = useTheme();
   const router = useRouter();
   const { width, height: screenHeight } = useWindowDimensions();
   const isCompact = width < 380 || screenHeight < 750;
@@ -33,6 +34,105 @@ export default function LoginScreen() {
   const [stayLoggedIn, setStayLoggedIn] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+    },
+    scrollContent: {
+      flexGrow: 1,
+      paddingTop: spacing.md,
+    },
+    scrollContentCompact: {
+      paddingTop: spacing.sm,
+    },
+    headerSection: {
+      marginBottom: spacing.lg,
+    },
+    headerSectionCompact: {
+      marginBottom: spacing.md,
+    },
+    subheader: {
+      fontSize: 18,
+      marginTop: spacing.md,
+      color: colors.textSecondary,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: spacing.md,
+      gap: spacing.sm,
+      shadowColor: colors.black,
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 2,
+    },
+    cardCompact: {
+      padding: spacing.sm,
+      gap: spacing.xs,
+    },
+    checkboxContainer: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      marginTop: spacing.xs,
+      paddingVertical: spacing.xs,
+    },
+    checkbox: {
+      width: 22,
+      height: 22,
+      borderRadius: 6,
+      borderWidth: 2,
+      borderColor: colors.primaryBlue,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      marginRight: spacing.sm,
+    },
+    checkboxChecked: {
+      backgroundColor: colors.primaryBlue,
+    },
+    checkboxLabel: {
+      ...typography.body,
+      fontSize: 14,
+      color: colors.textPrimary,
+    },
+    errorText: {
+      ...typography.error,
+      textAlign: "center" as const,
+      marginTop: spacing.sm,
+    },
+    navigation: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      paddingBottom: spacing.lg,
+      marginTop: "auto" as any,
+      paddingTop: spacing.lg,
+    },
+    navigationCompact: {
+      paddingBottom: spacing.md,
+      paddingTop: spacing.md,
+    },
+    arrowButton: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: colors.primaryBlue,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    forgotPasswordWrap: {
+      alignSelf: "flex-end" as const,
+      marginTop: spacing.xs,
+    },
+    forgotPasswordText: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      color: colors.primaryBlue,
+    },
+  }), [colors, isDark]);
 
   const handleForgotPassword = () => {
     if (!email.trim()) {
@@ -63,9 +163,6 @@ export default function LoginScreen() {
       const { access_token, refresh_token, uid } = response.data;
       console.log("Login success for UID:", uid);
 
-      // await AsyncStorage.setItem("auth_token", token);
-      // await AsyncStorage.setItem("user_id", String(uid));
-      // ^ switch to secure store for sensitive data
       await SecureStore.setItemAsync("access_token", String(access_token));
       await SecureStore.setItemAsync("refresh_token", String(refresh_token));
       await SecureStore.setItemAsync("user_id", String(uid));
@@ -104,7 +201,7 @@ export default function LoginScreen() {
               isCompact ? styles.headerSectionCompact : null,
             ]}
           >
-            <Text style={typography.title}>Willkommen zurück</Text>
+            <Text style={[typography.title, { color: colors.textPrimary }]}>Willkommen zurück</Text>
             <Text style={[typography.body, styles.subheader]}>
               Melde dich mit deinem Account an
             </Text>
@@ -186,101 +283,3 @@ export default function LoginScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingTop: spacing.md,
-  },
-  scrollContentCompact: {
-    paddingTop: spacing.sm,
-  },
-  headerSection: {
-    marginBottom: spacing.lg,
-  },
-  headerSectionCompact: {
-    marginBottom: spacing.md,
-  },
-  subheader: {
-    fontSize: 18,
-    marginTop: spacing.md,
-  },
-  card: {
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    padding: spacing.md,
-    gap: spacing.sm,
-    shadowColor: colors.black,
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 2,
-  },
-  cardCompact: {
-    padding: spacing.sm,
-    gap: spacing.xs,
-  },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: spacing.xs,
-    paddingVertical: spacing.xs,
-  },
-  checkbox: {
-    width: 22,
-    height: 22,
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: colors.primaryBlue,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: spacing.sm,
-  },
-  checkboxChecked: {
-    backgroundColor: colors.primaryBlue,
-  },
-  checkboxLabel: {
-    ...typography.body,
-    fontSize: 14,
-  },
-  errorText: {
-    ...typography.error,
-    textAlign: "center",
-    marginTop: spacing.sm,
-  },
-  navigation: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingBottom: spacing.lg,
-    marginTop: "auto",
-    paddingTop: spacing.lg,
-  },
-  navigationCompact: {
-    paddingBottom: spacing.md,
-    paddingTop: spacing.md,
-  },
-  arrowButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.primaryBlue,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  forgotPasswordWrap: {
-    alignSelf: "flex-end",
-    marginTop: spacing.xs,
-  },
-
-  forgotPasswordText: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    color: colors.primaryBlue,
-  },
-});

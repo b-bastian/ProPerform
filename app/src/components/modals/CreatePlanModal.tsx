@@ -1,10 +1,10 @@
-import { colors } from "@/src/theme/colors";
+import { useTheme } from "@/src/context/ThemeContext";
 import { spacing } from "@/src/theme/spacing";
 import { typography } from "@/src/theme/typography";
 import api from "@/src/utils/axiosInstance";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -63,9 +63,279 @@ export default function CreatePlanModal({
   onClose,
   onPlanCreated,
 }: Props) {
+  const { colors, isDark } = useTheme();
   const [internalVisible, setInternalVisible] = useState(false);
   const backdropOpacity = React.useRef(new Animated.Value(0)).current;
   const slideAnim = React.useRef(new Animated.Value(300)).current;
+
+  const styles = useMemo(() => StyleSheet.create({
+    overlay: {
+      flex: 1,
+      justifyContent: "flex-end" as const,
+    },
+    absoluteFill: {
+      position: "absolute" as const,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 0,
+    },
+    fullscreenBackdrop: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: "rgba(0,0,0,0.4)",
+      zIndex: 0,
+    },
+    sheet: {
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+      paddingBottom: spacing.xl,
+      paddingTop: spacing.md,
+      height: "80%" as any,
+    },
+    header: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      marginBottom: spacing.md,
+    },
+    headerSpacer: {
+      width: 42,
+      height: 42,
+    },
+    title: {
+      ...typography.title,
+      fontSize: 20,
+      flex: 1,
+      textAlign: "center" as const,
+      color: colors.textPrimary,
+    },
+    iconButton: {
+      width: 42,
+      height: 42,
+      borderRadius: 21,
+      backgroundColor: colors.surfaceElevated,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    content: {
+      gap: spacing.md,
+      paddingBottom: spacing.lg,
+    },
+    label: {
+      ...typography.label,
+      color: colors.textPrimary,
+      marginBottom: 4,
+      fontSize: 14,
+    },
+    input: {
+      backgroundColor: colors.inputBg,
+      borderRadius: 14,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 16,
+      ...typography.body,
+      fontSize: 16,
+      color: colors.textPrimary,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    textArea: {
+      height: 90,
+      textAlignVertical: "top" as const,
+    },
+    todayButton: {
+      alignSelf: "flex-start" as const,
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: 999,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.sm,
+      marginTop: spacing.xs,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    todayButtonText: {
+      ...typography.body,
+      color: colors.primaryBlue,
+      fontWeight: "600" as const,
+    },
+    datePickerContainer: {
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: 14,
+      padding: spacing.sm,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    datePickerConfirmButton: {
+      alignSelf: "flex-end" as const,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.sm,
+    },
+    datePickerConfirmText: {
+      ...typography.body,
+      color: colors.primaryBlue,
+      fontWeight: "600" as const,
+    },
+    chipRow: {
+      flexDirection: "row" as const,
+      gap: spacing.sm,
+      flexWrap: "wrap" as const,
+    },
+    sessionsRow: {
+      flexDirection: "row" as const,
+      flexWrap: "wrap" as const,
+      gap: spacing.sm,
+    },
+    sessionButton: {
+      minWidth: 48,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 12,
+      borderRadius: 999,
+      backgroundColor: colors.surfaceElevated,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 4,
+      shadowOffset: { width: 0, height: 1 },
+      elevation: 1,
+    },
+    sessionButtonActive: {
+      backgroundColor: colors.primaryBlue,
+    },
+    sessionButtonText: {
+      ...typography.body,
+      fontSize: 15,
+      color: colors.textSecondary,
+      fontWeight: "600" as const,
+    },
+    sessionButtonTextActive: {
+      color: colors.white,
+    },
+    chip: {
+      paddingHorizontal: spacing.md,
+      paddingVertical: 12,
+      borderRadius: 999,
+      backgroundColor: colors.surfaceElevated,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 4,
+      shadowOffset: { width: 0, height: 1 },
+      elevation: 1,
+    },
+    chipActive: {
+      backgroundColor: colors.primaryBlue,
+    },
+    chipText: {
+      ...typography.body,
+      fontSize: 15,
+      color: colors.textSecondary,
+      fontWeight: "500" as const,
+    },
+    chipTextActive: {
+      color: colors.white,
+      fontWeight: "600" as const,
+    },
+    button: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      backgroundColor: colors.primaryBlue,
+      borderRadius: 999,
+      paddingVertical: 18,
+      gap: spacing.xs,
+      marginTop: spacing.sm,
+    },
+    buttonBottom: {
+      marginTop: spacing.md,
+    },
+    buttonDisabled: {
+      opacity: 0.6,
+    },
+    buttonText: {
+      ...typography.body,
+      color: colors.white,
+      fontWeight: "600" as const,
+      fontSize: 17,
+    },
+    filterRow: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: spacing.sm,
+      marginBottom: spacing.md,
+    },
+    selectedCount: {
+      ...typography.body,
+      fontSize: 13,
+      color: colors.textSecondary,
+      marginLeft: "auto" as any,
+    },
+    loader: {
+      marginTop: spacing.xl,
+    },
+    exerciseList: {
+      gap: spacing.xs,
+      paddingBottom: spacing.lg,
+    },
+    exerciseRow: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: 14,
+      padding: spacing.md,
+      gap: spacing.sm,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.03,
+      shadowRadius: 4,
+      shadowOffset: { width: 0, height: 1 },
+      elevation: 1,
+    },
+    exerciseRowSelected: {
+      backgroundColor: colors.primaryBlue,
+    },
+    exerciseIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 10,
+      backgroundColor: isDark ? "#1c3a8a22" : "#F0F4FF",
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    exerciseName: {
+      ...typography.body,
+      flex: 1,
+      fontSize: 15,
+      color: colors.textPrimary,
+      fontWeight: "500" as const,
+    },
+    exerciseNameSelected: {
+      color: colors.white,
+    },
+    stepTwoContainer: {
+      flex: 1,
+    },
+    stepTwoListWrap: {
+      flexShrink: 1,
+    },
+    stepTwoScroll: {
+      flexGrow: 0,
+    },
+  }), [colors, isDark]);
 
   React.useEffect(() => {
     if (visible) {
@@ -267,7 +537,6 @@ export default function CreatePlanModal({
       });
 
       console.log("3: assign fertig", assignResponse.data);
-      console.log("Assign Response", assignResponse.data);
 
       const userPlansResponse = await api.get("/users/training-plans");
 
@@ -570,271 +839,3 @@ export default function CreatePlanModal({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  absoluteFill: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 0,
-  },
-  fullscreenBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    zIndex: 0,
-  },
-  sheet: {
-    backgroundColor: colors.white,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-    paddingBottom: spacing.xl,
-    paddingTop: spacing.md,
-    height: "80%",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: spacing.md,
-  },
-  headerSpacer: {
-    width: 42,
-    height: 42,
-  },
-  title: {
-    ...typography.title,
-    fontSize: 20,
-    flex: 1,
-    textAlign: "center",
-  },
-  iconButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: colors.white,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  content: {
-    gap: spacing.md,
-    paddingBottom: spacing.lg,
-  },
-  label: {
-    ...typography.label,
-    color: colors.textPrimary,
-    marginBottom: 4,
-    fontSize: 14,
-  },
-  input: {
-    backgroundColor: colors.white,
-    borderRadius: 14,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 16,
-    ...typography.body,
-    fontSize: 16,
-    color: colors.textPrimary,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  textArea: {
-    height: 90,
-    textAlignVertical: "top",
-  },
-  todayButton: {
-    alignSelf: "flex-start",
-    backgroundColor: colors.white,
-    borderRadius: 999,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    marginTop: spacing.xs,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  todayButtonText: {
-    ...typography.body,
-    color: colors.primaryBlue,
-    fontWeight: "600",
-  },
-  datePickerContainer: {
-    backgroundColor: colors.white,
-    borderRadius: 14,
-    padding: spacing.sm,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  datePickerConfirmButton: {
-    alignSelf: "flex-end",
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-  },
-  datePickerConfirmText: {
-    ...typography.body,
-    color: colors.primaryBlue,
-    fontWeight: "600",
-  },
-  chipRow: {
-    flexDirection: "row",
-    gap: spacing.sm,
-    flexWrap: "wrap",
-  },
-  sessionsRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.sm,
-  },
-  sessionButton: {
-    minWidth: 48,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: spacing.md,
-    paddingVertical: 12,
-    borderRadius: 999,
-    backgroundColor: colors.white,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 1 },
-    elevation: 1,
-  },
-  sessionButtonActive: {
-    backgroundColor: colors.primaryBlue,
-  },
-  sessionButtonText: {
-    ...typography.body,
-    fontSize: 15,
-    color: colors.textSecondary,
-    fontWeight: "600",
-  },
-  sessionButtonTextActive: {
-    color: colors.white,
-  },
-  chip: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: 12,
-    borderRadius: 999,
-    backgroundColor: colors.white,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 1 },
-    elevation: 1,
-  },
-  chipActive: {
-    backgroundColor: colors.primaryBlue,
-  },
-  chipText: {
-    ...typography.body,
-    fontSize: 15,
-    color: colors.textSecondary,
-    fontWeight: "500",
-  },
-  chipTextActive: {
-    color: colors.white,
-    fontWeight: "600",
-  },
-  button: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.primaryBlue,
-    borderRadius: 999,
-    paddingVertical: 18,
-    gap: spacing.xs,
-    marginTop: spacing.sm,
-  },
-  buttonBottom: {
-    marginTop: spacing.md,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    ...typography.body,
-    color: colors.white,
-    fontWeight: "600",
-    fontSize: 17,
-  },
-  filterRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  selectedCount: {
-    ...typography.body,
-    fontSize: 13,
-    color: colors.textSecondary,
-    marginLeft: "auto",
-  },
-  loader: {
-    marginTop: spacing.xl,
-  },
-  exerciseList: {
-    gap: spacing.xs,
-    paddingBottom: spacing.lg,
-  },
-  exerciseRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.white,
-    borderRadius: 14,
-    padding: spacing.md,
-    gap: spacing.sm,
-    shadowColor: "#000",
-    shadowOpacity: 0.03,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 1 },
-    elevation: 1,
-  },
-  exerciseRowSelected: {
-    backgroundColor: colors.primaryBlue,
-  },
-  exerciseIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    backgroundColor: "#F0F4FF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  exerciseName: {
-    ...typography.body,
-    flex: 1,
-    fontSize: 15,
-    color: colors.textPrimary,
-    fontWeight: "500",
-  },
-  exerciseNameSelected: {
-    color: colors.white,
-  },
-  stepTwoContainer: {
-    flex: 1,
-  },
-  stepTwoListWrap: {
-    flexShrink: 1,
-  },
-  stepTwoScroll: {
-    flexGrow: 0,
-  },
-});

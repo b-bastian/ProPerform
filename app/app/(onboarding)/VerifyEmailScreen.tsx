@@ -1,14 +1,14 @@
 import Header from "@/src/components/header";
 import ProgressDots from "@/src/components/ProgressDots";
 import { OnboardingContext } from "@/src/context/OnboardingContext";
-import { colors } from "@/src/theme/colors";
+import { useTheme } from "@/src/context/ThemeContext";
 import { spacing } from "@/src/theme/spacing";
 import { typography } from "@/src/theme/typography";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useRouter } from "expo-router";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -25,6 +25,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function VerifyEmailScreen() {
+  const { colors, isDark } = useTheme();
   const router = useRouter();
   const { finishOnboarding } = useContext(OnboardingContext);
   const { width, height: screenHeight } = useWindowDimensions();
@@ -101,6 +102,100 @@ export default function VerifyEmailScreen() {
     router.back();
   };
 
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+    },
+    scrollContent: {
+      flexGrow: 1,
+      paddingTop: spacing.md,
+    },
+    scrollContentCompact: {
+      paddingTop: spacing.sm,
+    },
+    header: {
+      marginBottom: spacing.lg,
+    },
+    headerCompact: {
+      marginBottom: spacing.md,
+    },
+    subheader: {
+      fontSize: 18,
+      marginTop: spacing.md,
+      color: colors.textSecondary,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: spacing.md,
+      shadowColor: colors.black,
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 2,
+    },
+    cardCompact: {
+      padding: spacing.sm,
+    },
+    label: {
+      ...typography.label,
+      color: colors.textPrimary,
+      marginBottom: 8,
+      marginLeft: 4,
+    },
+    input: {
+      height: 56,
+      borderWidth: 2,
+      borderColor: colors.borderLight,
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      fontSize: 18,
+      backgroundColor: colors.inputBg,
+      color: colors.textPrimary,
+    },
+    errorText: {
+      ...typography.error,
+      marginTop: 6,
+      marginLeft: 4,
+    },
+    navigation: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      marginTop: "auto" as any,
+      paddingTop: spacing.md,
+      paddingBottom: spacing.xl + 20,
+    },
+    navigationCompact: {
+      paddingBottom: spacing.xl,
+    },
+    arrowButton: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: colors.primaryBlue,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    hintText: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      marginTop: 6,
+      textAlign: "center" as const,
+    },
+    resendWrap: {
+      alignSelf: "center" as const,
+      marginTop: spacing.sm,
+    },
+    resendText: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      color: colors.primaryBlue,
+    },
+  }), [colors, isDark]);
+
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <Header />
@@ -120,7 +215,7 @@ export default function VerifyEmailScreen() {
           <View
             style={[styles.header, isCompact ? styles.headerCompact : null]}
           >
-            <Text style={typography.title}>E-Mail bestätigen</Text>
+            <Text style={[typography.title, { color: colors.textPrimary }]}>E-Mail bestätigen</Text>
             <Text style={[typography.body, styles.subheader]}>
               Gib den 6-stelligen Code ein
             </Text>
@@ -141,7 +236,7 @@ export default function VerifyEmailScreen() {
               keyboardType="number-pad"
               maxLength={6}
               placeholder="123456"
-              placeholderTextColor="#aaa"
+              placeholderTextColor={colors.textSecondary}
             />
 
             {error ? <Text style={styles.errorText}>{error}</Text> : null}
@@ -195,95 +290,3 @@ export default function VerifyEmailScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingTop: spacing.md,
-  },
-  scrollContentCompact: {
-    paddingTop: spacing.sm,
-  },
-  header: {
-    marginBottom: spacing.lg,
-  },
-  headerCompact: {
-    marginBottom: spacing.md,
-  },
-  subheader: {
-    fontSize: 18,
-    marginTop: spacing.md,
-  },
-  card: {
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    padding: spacing.md,
-    shadowColor: colors.black,
-    shadowOpacity: 0.04,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 2,
-  },
-  cardCompact: {
-    padding: spacing.sm,
-  },
-  label: {
-    ...typography.label,
-    color: colors.black,
-    marginBottom: 8,
-    marginLeft: 4,
-  },
-  input: {
-    height: 56,
-    borderWidth: 2,
-    borderColor: "#E5E7EB",
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    fontSize: 18,
-    backgroundColor: "#fff",
-  },
-  errorText: {
-    ...typography.error,
-    marginTop: 6,
-    marginLeft: 4,
-  },
-  navigation: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: "auto",
-    paddingTop: spacing.md,
-    paddingBottom: spacing.xl + 20,
-  },
-  navigationCompact: {
-    paddingBottom: spacing.xl,
-  },
-  arrowButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.primaryBlue,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  hintText: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginTop: 6,
-    textAlign: "center",
-  },
-  resendWrap: {
-    alignSelf: "center",
-    marginTop: spacing.sm,
-  },
-  resendText: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    color: colors.primaryBlue,
-  },
-});

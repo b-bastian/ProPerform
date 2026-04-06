@@ -1,7 +1,7 @@
 import CreatePlanModal from "@/src/components/modals/CreatePlanModal";
 import EditPlanModal from "@/src/components/modals/EditPlanModal";
 import { useWorkout } from "@/src/context/WorkoutContext";
-import { colors } from "@/src/theme/colors";
+import { useTheme } from "@/src/context/ThemeContext";
 import { spacing } from "@/src/theme/spacing";
 import { typography } from "@/src/theme/typography";
 import api from "@/src/utils/axiosInstance";
@@ -9,7 +9,7 @@ import { MaterialIcons as Icon } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useFocusEffect } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -58,6 +58,7 @@ const getSportIcon = (sport: string) => {
 };
 
 export default function TrainingScreen() {
+  const { colors, isDark } = useTheme();
   const tabBarHeight = useBottomTabBarHeight();
   const [activeTab, setActiveTab] = useState("Eigene Pläne");
   const [plans, setPlans] = useState<TrainingPlan[]>([]);
@@ -80,6 +81,305 @@ export default function TrainingScreen() {
   const startWorkout = (plan: TrainingPlan) => {
     startWorkoutContext(plan.tpid, plan.name);
   };
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+    },
+    header: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      alignItems: "center" as const,
+      paddingTop: spacing.md,
+      marginBottom: spacing.md,
+    },
+    headerTitle: {
+      ...typography.title,
+      color: colors.textPrimary,
+    },
+    headerActions: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: spacing.sm,
+    },
+    headerIconButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.surface,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    categories: {
+      flexDirection: "row" as const,
+      gap: spacing.sm,
+      marginBottom: spacing.md,
+    },
+    categoryChip: {
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+      paddingVertical: spacing.lg,
+      borderRadius: 999,
+      backgroundColor: colors.surface,
+      alignItems: "center" as const,
+      flex: 1,
+    },
+    categoryChipActive: {
+      backgroundColor: colors.primaryBlue,
+    },
+    categoryText: {
+      ...typography.body,
+      fontSize: 14,
+      fontWeight: "500" as const,
+      color: colors.textSecondary,
+    },
+    categoryTextActive: {
+      color: colors.white,
+      fontWeight: "700" as const,
+    },
+    loader: {
+      marginTop: spacing.xl,
+    },
+    errorContainer: {
+      alignItems: "center" as const,
+      marginTop: spacing.xl,
+      gap: spacing.xs,
+    },
+    errorText: {
+      ...typography.body,
+      color: "red",
+      fontSize: 14,
+    },
+    retryText: {
+      ...typography.body,
+      color: colors.primaryBlue,
+      fontWeight: "600" as const,
+      fontSize: 14,
+    },
+    centeredContent: {
+      flex: 1,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      paddingBottom: 100,
+      gap: spacing.sm,
+    },
+    emptyContainer: {
+      flex: 1,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      gap: spacing.sm,
+      paddingBottom: spacing.xl,
+    },
+    emptyTitle: {
+      ...typography.title,
+      fontSize: 20,
+      marginTop: spacing.sm,
+      color: colors.textPrimary,
+    },
+    emptySubtitle: {
+      ...typography.body,
+      color: colors.textSecondary,
+      fontSize: 14,
+      textAlign: "center" as const,
+    },
+    emptyButton: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      backgroundColor: colors.primaryBlue,
+      borderRadius: 999,
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.lg,
+      gap: spacing.xs,
+      marginTop: spacing.sm,
+    },
+    emptyButtonText: {
+      ...typography.body,
+      color: colors.white,
+      fontWeight: "600" as const,
+      fontSize: 15,
+    },
+    list: {
+      gap: spacing.sm,
+    },
+    planCard: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: spacing.md,
+      gap: spacing.sm,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    leftBlock: {
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      minWidth: 90,
+      maxWidth: 140,
+      gap: 2,
+      flexShrink: 0,
+    },
+    planIcon: {
+      width: 40,
+      height: 40,
+      borderRadius: 12,
+      backgroundColor: isDark ? "#1c3a8a22" : "#F0F4FF",
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    sportText: {
+      ...typography.body,
+      fontSize: 11,
+      color: colors.textSecondary,
+      fontWeight: "500" as const,
+      paddingTop: spacing.xs,
+      textTransform: "capitalize" as const,
+      flexShrink: 1,
+      flexGrow: 1,
+      minWidth: 0,
+      textAlign: "center" as const,
+    },
+    planContent: {
+      flex: 1,
+      gap: 2,
+    },
+    planName: {
+      ...typography.body,
+      fontWeight: "600" as const,
+      color: colors.textPrimary,
+      fontSize: 15,
+    },
+    planDetailsText: {
+      ...typography.body,
+      fontSize: 13,
+      color: colors.textSecondary,
+    },
+    rightActions: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: spacing.sm,
+    },
+    activeDot: {
+      width: 10,
+      height: 10,
+      borderRadius: 999,
+      backgroundColor: "#22C55E",
+    },
+    morevert: {
+      marginLeft: spacing.xs,
+    },
+    modalOverlay: {
+      flex: 1,
+      justifyContent: "flex-end" as const,
+    },
+    modalBackdrop: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: "rgba(0,0,0,0.4)",
+    },
+    modalSheet: {
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      minHeight: "72%" as any,
+    },
+    modalContainer: {
+      flex: 1,
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+      paddingTop: spacing.md,
+      paddingBottom: spacing.lg,
+    },
+    modalHeader: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      marginBottom: spacing.md,
+    },
+    modalHeaderSpacer: {
+      width: 42,
+    },
+    modalHeaderCenter: {
+      flex: 1,
+      alignItems: "center" as const,
+    },
+    modalTitle: {
+      ...typography.body,
+      fontSize: 18,
+      fontWeight: "700" as const,
+      color: colors.textPrimary,
+    },
+    modalSubtitle: {
+      ...typography.body,
+      fontSize: 13,
+      color: colors.textSecondary,
+      marginTop: 2,
+    },
+    modalCloseButton: {
+      width: 42,
+      height: 42,
+      borderRadius: 21,
+      backgroundColor: colors.surfaceElevated,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    historyEmptyState: {
+      flex: 1,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      gap: spacing.sm,
+      paddingBottom: spacing.xl,
+    },
+    historyList: {
+      gap: spacing.sm,
+      paddingBottom: spacing.md,
+    },
+    historyCard: {
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: 16,
+      padding: spacing.md,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    historyCardTop: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      gap: spacing.sm,
+    },
+    historyContent: {
+      flex: 1,
+    },
+    historyPlanName: {
+      ...typography.body,
+      flex: 1,
+      fontSize: 16,
+      fontWeight: "700" as const,
+      color: colors.textPrimary,
+    },
+    historyDate: {
+      ...typography.body,
+      width: 88,
+      textAlign: "center" as const,
+      fontSize: 12,
+      color: colors.textSecondary,
+    },
+    historySets: {
+      ...typography.body,
+      fontSize: 14,
+      color: colors.textSecondary,
+      marginTop: 2,
+    },
+  }), [colors, isDark]);
 
   const getUserPlanForTrainingPlan = useCallback(
     (tpid: number) => userPlans.find((plan) => plan.tpid === tpid),
@@ -160,7 +460,7 @@ export default function TrainingScreen() {
     }
 
     try {
-      const response = await api.patch(
+      await api.patch(
         `/users/training-plans/${userPlan.id}/select`,
       );
 
@@ -266,7 +566,7 @@ export default function TrainingScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.header}>
-        <Text style={typography.title}>Trainingspläne</Text>
+        <Text style={[typography.title, { color: colors.textPrimary }]}>Trainingspläne</Text>
 
         <View style={styles.headerActions}>
           <TouchableOpacity
@@ -527,297 +827,3 @@ export default function TrainingScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingTop: spacing.md,
-    marginBottom: spacing.md,
-  },
-  headerActions: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-  },
-  headerIconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.white,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  categories: {
-    flexDirection: "row",
-    gap: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  categoryChip: {
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-    paddingVertical: spacing.lg,
-    borderRadius: 999,
-    backgroundColor: colors.white,
-    alignItems: "center",
-    flex: 1,
-  },
-  categoryChipActive: {
-    backgroundColor: colors.primaryBlue,
-  },
-  categoryText: {
-    ...typography.body,
-    fontSize: 14,
-    fontWeight: "500",
-    color: colors.textSecondary,
-  },
-  categoryTextActive: {
-    color: colors.white,
-    fontWeight: "700",
-  },
-  loader: {
-    marginTop: spacing.xl,
-  },
-  errorContainer: {
-    alignItems: "center",
-    marginTop: spacing.xl,
-    gap: spacing.xs,
-  },
-  errorText: {
-    ...typography.body,
-    color: "red",
-    fontSize: 14,
-  },
-  retryText: {
-    ...typography.body,
-    color: colors.primaryBlue,
-    fontWeight: "600",
-    fontSize: 14,
-  },
-  centeredContent: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingBottom: 100,
-    gap: spacing.sm,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.sm,
-    paddingBottom: spacing.xl,
-  },
-  emptyTitle: {
-    ...typography.title,
-    fontSize: 20,
-    marginTop: spacing.sm,
-  },
-  emptySubtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    fontSize: 14,
-    textAlign: "center",
-  },
-  emptyButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.primaryBlue,
-    borderRadius: 999,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    gap: spacing.xs,
-    marginTop: spacing.sm,
-  },
-  emptyButtonText: {
-    ...typography.body,
-    color: colors.white,
-    fontWeight: "600",
-    fontSize: 15,
-  },
-  list: {
-    gap: spacing.sm,
-  },
-  planCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: spacing.md,
-    gap: spacing.sm,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  leftBlock: {
-    alignItems: "center",
-    justifyContent: "center",
-    minWidth: 90,
-    maxWidth: 140,
-    gap: 2,
-    flexShrink: 0,
-  },
-  planIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: "#F0F4FF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  sportText: {
-    ...typography.body,
-    fontSize: 11,
-    color: colors.textSecondary,
-    fontWeight: "500",
-    paddingTop: spacing.xs,
-    textTransform: "capitalize",
-    flexShrink: 1,
-    flexGrow: 1,
-    minWidth: 0,
-    textAlign: "center",
-  },
-  planContent: {
-    flex: 1,
-    gap: 2,
-  },
-  planName: {
-    ...typography.body,
-    fontWeight: "600",
-    color: colors.textPrimary,
-    fontSize: 15,
-  },
-  planDetailsText: {
-    ...typography.body,
-    fontSize: 13,
-    color: colors.textSecondary,
-  },
-  rightActions: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-  },
-  activeDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 999,
-    backgroundColor: "#22C55E",
-  },
-  morevert: {
-    marginLeft: spacing.xs,
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  modalBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.4)",
-  },
-  modalSheet: {
-    backgroundColor: colors.background,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    minHeight: "72%",
-  },
-  modalContainer: {
-    flex: 1,
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
-  },
-  modalHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: spacing.md,
-  },
-  modalHeaderSpacer: {
-    width: 42,
-  },
-  modalHeaderCenter: {
-    flex: 1,
-    alignItems: "center",
-  },
-  modalTitle: {
-    ...typography.body,
-    fontSize: 18,
-    fontWeight: "700",
-    color: colors.textPrimary,
-  },
-  modalSubtitle: {
-    ...typography.body,
-    fontSize: 13,
-    color: colors.textSecondary,
-    marginTop: 2,
-  },
-  modalCloseButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: colors.white,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  historyEmptyState: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.sm,
-    paddingBottom: spacing.xl,
-  },
-  historyList: {
-    gap: spacing.sm,
-    paddingBottom: spacing.md,
-  },
-  historyCard: {
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    padding: spacing.md,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  historyCardTop: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: spacing.sm,
-  },
-  historyContent: {
-    flex: 1,
-  },
-  historyPlanName: {
-    ...typography.body,
-    flex: 1,
-    fontSize: 16,
-    fontWeight: "700",
-    color: colors.textPrimary,
-  },
-  historyDate: {
-    ...typography.body,
-    width: 88,
-    textAlign: "center",
-    fontSize: 12,
-    color: colors.textSecondary,
-  },
-  historySets: {
-    ...typography.body,
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginTop: 2,
-  },
-});

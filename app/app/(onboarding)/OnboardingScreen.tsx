@@ -1,7 +1,7 @@
 import Header from "@/src/components/header";
 import ProgressDots from "@/src/components/ProgressDots";
 import { OnboardingContext } from "@/src/context/OnboardingContext";
-import { colors } from "@/src/theme/colors";
+import { useTheme } from "@/src/context/ThemeContext";
 import { spacing } from "@/src/theme/spacing";
 import { typography } from "@/src/theme/typography";
 import api from "@/src/utils/axiosInstance";
@@ -12,7 +12,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -80,6 +80,7 @@ function formatDate(date: Date) {
 }
 
 export default function OnboardingScreen() {
+  const { colors, isDark } = useTheme();
   const router = useRouter();
   const { finishOnboarding } = React.useContext(OnboardingContext);
   const { width, height: screenHeight } = useWindowDimensions();
@@ -508,6 +509,486 @@ export default function OnboardingScreen() {
     animateToStep((step - 1) as Step);
   };
 
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+    },
+
+    decoCircleLarge: {
+      position: "absolute" as const,
+      width: 480,
+      height: 480,
+      borderRadius: 999,
+      backgroundColor: colors.primaryBlue,
+      top: -220,
+      right: -150,
+      opacity: 0.08,
+    },
+    decoCircleSmall: {
+      position: "absolute" as const,
+      width: 250,
+      height: 250,
+      borderRadius: 999,
+      backgroundColor: colors.accentOrange,
+      top: -90,
+      left: -100,
+      opacity: 0.08,
+    },
+
+    topSection: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      marginTop: spacing.screenPaddingTop,
+      gap: spacing.sm,
+    },
+    logoWrap: {
+      width: 72,
+      height: 72,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    logoImage: {
+      width: 72,
+      height: 72,
+    },
+    logoWrapCompact: {
+      width: 60,
+      height: 60,
+    },
+    logoImageCompact: {
+      width: 60,
+      height: 60,
+    },
+    ProPerform: {
+      fontFamily: "Inter",
+      fontSize: 36,
+      fontWeight: "900" as const,
+      color: colors.textPrimary,
+      letterSpacing: -0.5,
+    },
+    brandCompact: {
+      fontSize: 30,
+    },
+
+    mainSection: {
+      flex: 1,
+      justifyContent: "center" as const,
+      paddingBottom: spacing.xl,
+    },
+    mainTitle: {
+      fontFamily: "Inter",
+      fontSize: 48,
+      fontWeight: "900" as const,
+      color: colors.textPrimary,
+      lineHeight: 54,
+      letterSpacing: -1,
+      marginBottom: spacing.lg,
+    },
+    mainTitleCompact: {
+      fontSize: 38,
+      lineHeight: 44,
+      marginBottom: spacing.md,
+    },
+    mainSubtitle: {
+      fontFamily: "Inter",
+      fontSize: 16,
+      fontWeight: "400" as const,
+      color: colors.textSecondary,
+      lineHeight: 24,
+      maxWidth: "85%" as any,
+    },
+    mainSubtitleCompact: {
+      fontSize: 15,
+      lineHeight: 22,
+      maxWidth: "100%" as any,
+    },
+
+    bottomSection: {
+      paddingBottom: spacing.xl,
+      gap: spacing.md,
+    },
+    bottomSectionCompact: {
+      paddingBottom: spacing.lg,
+      gap: spacing.sm,
+    },
+    scrollContent: {
+      flexGrow: 1,
+      paddingTop: spacing.md,
+    },
+    scrollContentCompact: {
+      paddingTop: spacing.sm,
+    },
+    header: {
+      marginBottom: spacing.lg,
+    },
+    headerCompact: {
+      marginBottom: spacing.md,
+    },
+    subheader: {
+      fontSize: 18,
+      marginTop: spacing.md,
+      color: colors.textSecondary,
+    },
+    card: {
+      backgroundColor: isDark ? colors.surface : "#F9FBFF",
+      borderRadius: 20,
+      padding: spacing.lg,
+      borderWidth: 1,
+      borderColor: isDark ? colors.borderLight : "#E8EEF9",
+      shadowColor: "#0B3B8A",
+      shadowOpacity: isDark ? 0 : 0.08,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 3,
+    },
+    cardCompact: {
+      padding: spacing.md,
+    },
+    label: {
+      ...typography.label,
+      color: colors.textPrimary,
+      marginBottom: 8,
+      marginTop: spacing.sm,
+      marginLeft: 4,
+    },
+    inputShell: {
+      height: 58,
+      borderWidth: 1.5,
+      borderColor: colors.borderLight,
+      borderRadius: 14,
+      paddingHorizontal: 14,
+      backgroundColor: colors.inputBg,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: spacing.xs,
+    },
+    input: {
+      flex: 1,
+      height: "100%" as any,
+      fontSize: 16,
+      color: colors.textPrimary,
+    },
+    optionContainer: {
+      gap: spacing.sm,
+      marginBottom: spacing.md,
+    },
+    optionButton: {
+      minHeight: 54,
+      borderRadius: 14,
+      borderWidth: 1.5,
+      borderColor: colors.borderLight,
+      backgroundColor: colors.inputBg,
+      paddingHorizontal: spacing.md,
+      justifyContent: "center" as const,
+    },
+    optionButtonSelected: {
+      borderColor: colors.primaryBlue,
+      backgroundColor: isDark ? "#1c3a8a22" : "#EEF4FF",
+      shadowColor: colors.primaryBlue,
+      shadowOpacity: 0.12,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    optionContent: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: spacing.sm,
+    },
+    optionIndicator: {
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      borderWidth: 1.5,
+      borderColor: colors.borderGray,
+      backgroundColor: colors.inputBg,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    optionIndicatorSelected: {
+      borderColor: colors.primaryBlue,
+      backgroundColor: colors.primaryBlue,
+    },
+    optionText: {
+      flex: 1,
+      color: colors.textPrimary,
+      fontWeight: "700" as const,
+      fontSize: 16,
+    },
+    optionTextSelected: {
+      color: colors.primaryBlue,
+    },
+    unitLabel: {
+      fontSize: 13,
+      fontWeight: "700" as const,
+      color: colors.textSecondary,
+      backgroundColor: isDark ? colors.surfaceElevated : "#EFF3FA",
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 8,
+    },
+    datePickerWrap: {
+      backgroundColor: colors.inputBg,
+      borderRadius: 14,
+      borderWidth: 1.5,
+      borderColor: colors.borderLight,
+      overflow: "hidden" as const,
+      paddingVertical: spacing.xs,
+    },
+    datePickerCenterWrap: {
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    datePicker: {
+      alignSelf: "center" as const,
+    },
+    inputFocus: {
+      borderColor: colors.primaryBlue,
+      shadowColor: colors.primaryBlue,
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 3 },
+      elevation: 2,
+    },
+    inputError: {
+      borderColor: "#FF3B30",
+    },
+    visibilityToggle: {
+      paddingHorizontal: 4,
+      paddingVertical: 4,
+    },
+    errorText: {
+      ...typography.error,
+      marginTop: 6,
+      marginLeft: 4,
+    },
+    checkboxRow: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      marginTop: spacing.lg,
+      marginLeft: 4,
+      gap: spacing.xs,
+    },
+    checkboxLabel: {
+      ...typography.body,
+      color: colors.textPrimary,
+      fontWeight: "600" as const,
+    },
+    navigation: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      marginTop: "auto" as any,
+      paddingTop: spacing.md,
+      paddingBottom: spacing.xl + 20,
+    },
+    navigationCompact: {
+      paddingBottom: spacing.xl,
+    },
+    arrowButton: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: colors.primaryBlue,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    primaryButton: {
+      backgroundColor: colors.primaryBlue,
+      borderRadius: 999,
+      paddingVertical: 18,
+      paddingHorizontal: spacing.xl,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      gap: spacing.sm,
+      shadowColor: colors.primaryBlue,
+      shadowOpacity: 0.3,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 6,
+    },
+    primaryButtonCompact: {
+      paddingVertical: 16,
+    },
+    primaryButtonText: {
+      fontFamily: "Inter",
+      fontSize: 16,
+      fontWeight: "800" as const,
+      color: colors.white,
+      letterSpacing: 1,
+    },
+    secondaryButton: {
+      alignItems: "center" as const,
+      paddingVertical: spacing.sm,
+    },
+    secondaryButtonText: {
+      fontFamily: "Inter",
+      fontSize: 15,
+      fontWeight: "500" as const,
+      color: colors.textSecondary,
+    },
+
+    // Step 5 - Choice Cards
+    choiceContainer: {
+      gap: spacing.md,
+    },
+    choiceCard: {
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      padding: spacing.lg,
+      shadowColor: colors.black,
+      shadowOpacity: isDark ? 0 : 0.06,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 3,
+    },
+    choiceCardSelected: {
+      borderWidth: 2,
+      borderColor: colors.primaryBlue,
+    },
+    choiceCardBlue: {
+      backgroundColor: colors.primaryBlue,
+    },
+    choiceCardSelectedBlue: {
+      borderWidth: 2,
+      borderColor: colors.white,
+    },
+    choiceIconWrap: {
+      width: 56,
+      height: 56,
+      borderRadius: 16,
+      backgroundColor: isDark ? "#1c3a8a22" : "#EFF6FF",
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      marginBottom: spacing.md,
+    },
+    choiceIconWrapBlue: {
+      backgroundColor: "#FFFFFF29",
+    },
+    choiceTitle: {
+      fontFamily: "Inter",
+      fontSize: 18,
+      fontWeight: "800" as const,
+      color: colors.textPrimary,
+      marginBottom: spacing.xs,
+    },
+    choiceDescription: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      color: colors.textSecondary,
+      lineHeight: 20,
+    },
+    choiceArrow: {
+      position: "absolute" as const,
+      right: spacing.lg,
+      top: spacing.lg,
+    },
+
+    // Step 6 & 7 - Code Inputs
+    codeInput: {
+      height: 56,
+      borderWidth: 2,
+      borderColor: colors.borderLight,
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      fontSize: 18,
+      backgroundColor: colors.inputBg,
+      color: colors.textPrimary,
+      fontWeight: "700" as const,
+      letterSpacing: 2,
+    },
+    inputRow: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      borderWidth: 2,
+      borderColor: colors.borderLight,
+      borderRadius: 12,
+      overflow: "hidden" as const,
+    },
+    prefixBox: {
+      backgroundColor: isDark ? colors.surfaceElevated : "#F3F4F6",
+      paddingHorizontal: spacing.md,
+      height: 56,
+      justifyContent: "center" as const,
+      borderRightWidth: 2,
+      borderRightColor: colors.borderLight,
+    },
+    prefixText: {
+      fontFamily: "Inter",
+      fontSize: 16,
+      fontWeight: "700" as const,
+      color: colors.textSecondary,
+    },
+    checkButton: {
+      backgroundColor: colors.primaryBlue,
+      paddingHorizontal: spacing.md,
+      height: 56,
+      justifyContent: "center" as const,
+    },
+    checkButtonText: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      fontWeight: "800" as const,
+      color: colors.white,
+    },
+    trainerFound: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      backgroundColor: isDark ? "#1c3a8a22" : "#EFF6FF",
+      borderRadius: 12,
+      padding: spacing.md,
+      gap: spacing.sm,
+      marginTop: spacing.xs,
+    },
+    trainerAvatar: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: colors.primaryBlue,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    trainerAvatarText: {
+      fontFamily: "Inter",
+      fontSize: 16,
+      fontWeight: "800" as const,
+      color: colors.white,
+    },
+    trainerInfo: {
+      flex: 1,
+    },
+    trainerFoundLabel: {
+      fontFamily: "Inter",
+      fontSize: 12,
+      fontWeight: "600" as const,
+      color: colors.textSecondary,
+    },
+    trainerName: {
+      fontFamily: "Inter",
+      fontSize: 16,
+      fontWeight: "800" as const,
+      color: colors.textPrimary,
+    },
+    hintText: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      marginTop: 6,
+      textAlign: "center" as const,
+    },
+    resendWrap: {
+      alignSelf: "center" as const,
+      marginTop: spacing.sm,
+    },
+    resendText: {
+      fontFamily: "Inter",
+      fontSize: 14,
+      color: colors.primaryBlue,
+    },
+  }), [colors, isDark]);
+
   return (
     <SafeAreaView
       style={styles.container}
@@ -625,7 +1106,7 @@ export default function OnboardingScreen() {
               <View
                 style={[styles.header, isCompact ? styles.headerCompact : null]}
               >
-                <Text style={typography.title}>
+                <Text style={[typography.title, { color: colors.textPrimary }]}>
                   {step === 5
                     ? STEP_5_TITLE
                     : step === 6
@@ -889,7 +1370,7 @@ export default function OnboardingScreen() {
                               if (selectedDate) setBirthDate(selectedDate);
                             }}
                             locale="de-DE"
-                            themeVariant="light"
+                            themeVariant={isDark ? "dark" : "light"}
                             maximumDate={new Date()}
                             style={styles.datePicker}
                           />
@@ -1176,7 +1657,7 @@ export default function OnboardingScreen() {
                         keyboardType="number-pad"
                         maxLength={6}
                         placeholder="123456"
-                        placeholderTextColor="#aaa"
+                        placeholderTextColor={colors.textSecondary}
                       />
                       {verifyError ? (
                         <Text style={styles.errorText}>{verifyError}</Text>
@@ -1234,7 +1715,7 @@ export default function OnboardingScreen() {
                             }
                           }}
                           placeholder="ABC-DEF"
-                          placeholderTextColor="#aaa"
+                          placeholderTextColor={colors.textSecondary}
                           autoCapitalize="characters"
                           maxLength={7}
                         />
@@ -1329,481 +1810,3 @@ export default function OnboardingScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-  },
-
-  decoCircleLarge: {
-    position: "absolute",
-    width: 480,
-    height: 480,
-    borderRadius: 999,
-    backgroundColor: colors.primaryBlue,
-    top: -220,
-    right: -150,
-    opacity: 0.08,
-  },
-  decoCircleSmall: {
-    position: "absolute",
-    width: 250,
-    height: 250,
-    borderRadius: 999,
-    backgroundColor: colors.accentOrange,
-    top: -90,
-    left: -100,
-    opacity: 0.08,
-  },
-
-  topSection: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: spacing.screenPaddingTop,
-    gap: spacing.sm,
-  },
-  logoWrap: {
-    width: 72,
-    height: 72,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  logoImage: {
-    width: 72,
-    height: 72,
-  },
-  logoWrapCompact: {
-    width: 60,
-    height: 60,
-  },
-  logoImageCompact: {
-    width: 60,
-    height: 60,
-  },
-  ProPerform: {
-    fontFamily: "Inter",
-    fontSize: 36,
-    fontWeight: "900",
-    color: colors.textPrimary,
-    letterSpacing: -0.5,
-  },
-  brandCompact: {
-    fontSize: 30,
-  },
-
-  mainSection: {
-    flex: 1,
-    justifyContent: "center",
-    paddingBottom: spacing.xl,
-  },
-  mainTitle: {
-    fontFamily: "Inter",
-    fontSize: 48,
-    fontWeight: "900",
-    color: colors.textPrimary,
-    lineHeight: 54,
-    letterSpacing: -1,
-    marginBottom: spacing.lg,
-  },
-  mainTitleCompact: {
-    fontSize: 38,
-    lineHeight: 44,
-    marginBottom: spacing.md,
-  },
-  mainSubtitle: {
-    fontFamily: "Inter",
-    fontSize: 16,
-    fontWeight: "400",
-    color: colors.textSecondary,
-    lineHeight: 24,
-    maxWidth: "85%",
-  },
-  mainSubtitleCompact: {
-    fontSize: 15,
-    lineHeight: 22,
-    maxWidth: "100%",
-  },
-
-  bottomSection: {
-    paddingBottom: spacing.xl,
-    gap: spacing.md,
-  },
-  bottomSectionCompact: {
-    paddingBottom: spacing.lg,
-    gap: spacing.sm,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingTop: spacing.md,
-  },
-  scrollContentCompact: {
-    paddingTop: spacing.sm,
-  },
-  header: {
-    marginBottom: spacing.lg,
-  },
-  headerCompact: {
-    marginBottom: spacing.md,
-  },
-  subheader: {
-    fontSize: 18,
-    marginTop: spacing.md,
-  },
-  card: {
-    backgroundColor: "#F9FBFF",
-    borderRadius: 20,
-    padding: spacing.lg,
-    borderWidth: 1,
-    borderColor: "#E8EEF9",
-    shadowColor: "#0B3B8A",
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 3,
-  },
-  cardCompact: {
-    padding: spacing.md,
-  },
-  label: {
-    ...typography.label,
-    color: colors.black,
-    marginBottom: 8,
-    marginTop: spacing.sm,
-    marginLeft: 4,
-  },
-  inputShell: {
-    height: 58,
-    borderWidth: 1.5,
-    borderColor: "#D8E1F0",
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    backgroundColor: colors.white,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-  },
-  input: {
-    flex: 1,
-    height: "100%",
-    fontSize: 16,
-    color: colors.textPrimary,
-  },
-  optionContainer: {
-    gap: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  optionButton: {
-    minHeight: 54,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: "#D8E1F0",
-    backgroundColor: colors.white,
-    paddingHorizontal: spacing.md,
-    justifyContent: "center",
-  },
-  optionButtonSelected: {
-    borderColor: colors.primaryBlue,
-    backgroundColor: "#EEF4FF",
-    shadowColor: colors.primaryBlue,
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  optionContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-  },
-  optionIndicator: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 1.5,
-    borderColor: "#C9D6EA",
-    backgroundColor: colors.white,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  optionIndicatorSelected: {
-    borderColor: colors.primaryBlue,
-    backgroundColor: colors.primaryBlue,
-  },
-  optionText: {
-    flex: 1,
-    color: colors.textPrimary,
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  optionTextSelected: {
-    color: colors.primaryBlue,
-  },
-  unitLabel: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: colors.textSecondary,
-    backgroundColor: "#EFF3FA",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  datePickerWrap: {
-    backgroundColor: colors.white,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: "#D8E1F0",
-    overflow: "hidden",
-    paddingVertical: spacing.xs,
-  },
-  datePickerCenterWrap: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  datePicker: {
-    alignSelf: "center",
-  },
-  inputFocus: {
-    borderColor: colors.primaryBlue,
-    shadowColor: colors.primaryBlue,
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2,
-  },
-  inputError: {
-    borderColor: "#FF3B30",
-  },
-  visibilityToggle: {
-    paddingHorizontal: 4,
-    paddingVertical: 4,
-  },
-  errorText: {
-    ...typography.error,
-    marginTop: 6,
-    marginLeft: 4,
-  },
-  checkboxRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: spacing.lg,
-    marginLeft: 4,
-    gap: spacing.xs,
-  },
-  checkboxLabel: {
-    ...typography.body,
-    color: colors.textPrimary,
-    fontWeight: "600",
-  },
-  navigation: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: "auto",
-    paddingTop: spacing.md,
-    paddingBottom: spacing.xl + 20,
-  },
-  navigationCompact: {
-    paddingBottom: spacing.xl,
-  },
-  arrowButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.primaryBlue,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  primaryButton: {
-    backgroundColor: colors.primaryBlue,
-    borderRadius: 999,
-    paddingVertical: 18,
-    paddingHorizontal: spacing.xl,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.sm,
-    shadowColor: colors.primaryBlue,
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 6,
-  },
-  primaryButtonCompact: {
-    paddingVertical: 16,
-  },
-  primaryButtonText: {
-    fontFamily: "Inter",
-    fontSize: 16,
-    fontWeight: "800",
-    color: colors.white,
-    letterSpacing: 1,
-  },
-  secondaryButton: {
-    alignItems: "center",
-    paddingVertical: spacing.sm,
-  },
-  secondaryButtonText: {
-    fontFamily: "Inter",
-    fontSize: 15,
-    fontWeight: "500",
-    color: colors.textSecondary,
-  },
-
-  // Step 5 - Choice Cards
-  choiceContainer: {
-    gap: spacing.md,
-  },
-  choiceCard: {
-    backgroundColor: colors.white,
-    borderRadius: 20,
-    padding: spacing.lg,
-    shadowColor: colors.black,
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 3,
-  },
-  choiceCardSelected: {
-    borderWidth: 2,
-    borderColor: colors.primaryBlue,
-  },
-  choiceCardBlue: {
-    backgroundColor: colors.primaryBlue,
-  },
-  choiceCardSelectedBlue: {
-    borderWidth: 2,
-    borderColor: colors.white,
-  },
-  choiceIconWrap: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
-    backgroundColor: "#EFF6FF",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: spacing.md,
-  },
-  choiceIconWrapBlue: {
-    backgroundColor: "#FFFFFF29",
-  },
-  choiceTitle: {
-    fontFamily: "Inter",
-    fontSize: 18,
-    fontWeight: "800",
-    color: colors.textPrimary,
-    marginBottom: spacing.xs,
-  },
-  choiceDescription: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    color: colors.textSecondary,
-    lineHeight: 20,
-  },
-  choiceArrow: {
-    position: "absolute",
-    right: spacing.lg,
-    top: spacing.lg,
-  },
-
-  // Step 6 & 7 - Code Inputs
-  codeInput: {
-    height: 56,
-    borderWidth: 2,
-    borderColor: "#E5E7EB",
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    fontSize: 18,
-    backgroundColor: "#fff",
-    fontWeight: "700",
-    letterSpacing: 2,
-  },
-  inputRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "#E5E7EB",
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  prefixBox: {
-    backgroundColor: "#F3F4F6",
-    paddingHorizontal: spacing.md,
-    height: 56,
-    justifyContent: "center",
-    borderRightWidth: 2,
-    borderRightColor: "#E5E7EB",
-  },
-  prefixText: {
-    fontFamily: "Inter",
-    fontSize: 16,
-    fontWeight: "700",
-    color: colors.textSecondary,
-  },
-  checkButton: {
-    backgroundColor: colors.primaryBlue,
-    paddingHorizontal: spacing.md,
-    height: 56,
-    justifyContent: "center",
-  },
-  checkButtonText: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    fontWeight: "800",
-    color: colors.white,
-  },
-  trainerFound: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#EFF6FF",
-    borderRadius: 12,
-    padding: spacing.md,
-    gap: spacing.sm,
-    marginTop: spacing.xs,
-  },
-  trainerAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.primaryBlue,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  trainerAvatarText: {
-    fontFamily: "Inter",
-    fontSize: 16,
-    fontWeight: "800",
-    color: colors.white,
-  },
-  trainerInfo: {
-    flex: 1,
-  },
-  trainerFoundLabel: {
-    fontFamily: "Inter",
-    fontSize: 12,
-    fontWeight: "600",
-    color: colors.textSecondary,
-  },
-  trainerName: {
-    fontFamily: "Inter",
-    fontSize: 16,
-    fontWeight: "800",
-    color: colors.textPrimary,
-  },
-  hintText: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginTop: 6,
-    textAlign: "center",
-  },
-  resendWrap: {
-    alignSelf: "center",
-    marginTop: spacing.sm,
-  },
-  resendText: {
-    fontFamily: "Inter",
-    fontSize: 14,
-    color: colors.primaryBlue,
-  },
-});

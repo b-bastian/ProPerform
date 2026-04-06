@@ -1,12 +1,10 @@
-import { colors } from "./colors";
-
+// Colors are intentionally omitted — use useTheme().colors in each component
 export const typography = {
   title: {
     fontFamily: "Inter",
     fontSize: 32,
     fontWeight: "bold" as const,
     textAlign: "center" as const,
-    color: colors.textPrimary,
   },
 
   body: {
@@ -14,7 +12,6 @@ export const typography = {
     fontSize: 20,
     fontWeight: "500" as const,
     textAlign: "center" as const,
-    color: colors.textSecondary,
   },
 
   secondary: {
@@ -22,14 +19,12 @@ export const typography = {
     fontSize: 18,
     fontWeight: "500" as const,
     textAlign: "center" as const,
-    color: colors.textSecondary,
   },
 
   greeting: {
     fontFamily: "Inter",
     fontSize: 24,
     fontWeight: "600" as const,
-    color: colors.textPrimary,
     textAlign: "center" as const,
   },
 
@@ -37,7 +32,6 @@ export const typography = {
     fontFamily: "Inter",
     fontSize: 14,
     fontWeight: "500" as const,
-    color: colors.textPrimary,
   },
 
   error: {
@@ -50,7 +44,6 @@ export const typography = {
     fontFamily: "Inter",
     fontSize: 12,
     fontWeight: "500" as const,
-    color: colors.textPrimary,
     lineHeight: 20,
   },
 };

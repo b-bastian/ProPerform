@@ -1,11 +1,12 @@
-import { colors } from "@/src/theme/colors";
+import { useTheme } from "@/src/context/ThemeContext";
+import { ColorSchemePreference } from "@/src/context/ThemeContext";
 import { spacing } from "@/src/theme/spacing";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Alert,
   Linking,
@@ -20,11 +21,177 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SettingsScreen() {
+  const { colors, isDark, colorSchemePreference, setColorSchemePreference } = useTheme();
   const router = useRouter();
   const { width, height: screenHeight } = useWindowDimensions();
   const isCompact = width < 380 || screenHeight < 750;
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
-  const [darkModeEnabled, setDarkModeEnabled] = React.useState(false);
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    header: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+      paddingVertical: spacing.lg,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderLight,
+    },
+    backButton: {
+      padding: spacing.sm,
+    },
+    headerTitle: {
+      fontSize: 24,
+      fontWeight: "700" as const,
+      color: colors.textPrimary,
+      fontFamily: "Inter",
+    },
+    content: {
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+      paddingVertical: spacing.lg,
+    },
+    contentCompact: {
+      paddingVertical: spacing.md,
+    },
+    section: {
+      marginBottom: spacing.xl,
+      backgroundColor: colors.surface,
+      borderRadius: 15,
+      overflow: "hidden" as const,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.05,
+      shadowRadius: 8,
+      elevation: 2,
+    },
+    sectionCompact: {
+      marginBottom: spacing.lg,
+    },
+    sectionTitle: {
+      fontSize: 12,
+      fontWeight: "800" as const,
+      letterSpacing: 1.5,
+      color: colors.textSecondary,
+      paddingHorizontal: spacing.lg,
+      paddingTop: spacing.lg,
+      paddingBottom: spacing.md,
+      fontFamily: "Inter",
+    },
+    settingItem: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.lg,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderLight,
+    },
+    settingItemCompact: {
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.md,
+    },
+    settingLeft: {
+      flex: 1,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+    },
+    settingText: {
+      marginLeft: spacing.lg,
+      flex: 1,
+    },
+    settingLabel: {
+      fontSize: 16,
+      fontWeight: "600" as const,
+      color: colors.textPrimary,
+      fontFamily: "Inter",
+    },
+    settingDescription: {
+      fontSize: 13,
+      color: colors.textSecondary,
+      marginTop: spacing.xs,
+      fontFamily: "Inter",
+    },
+    // Appearance segmented control
+    appearanceItem: {
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.lg,
+    },
+    appearanceItemCompact: {
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.md,
+    },
+    appearanceTop: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      marginBottom: spacing.md,
+    },
+    appearanceSegmented: {
+      flexDirection: "row" as const,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: colors.borderLight,
+      overflow: "hidden" as const,
+    },
+    segmentBtn: {
+      flex: 1,
+      paddingVertical: 10,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      backgroundColor: colors.surface,
+    },
+    segmentBtnActive: {
+      backgroundColor: colors.primaryBlue,
+    },
+    segmentBtnText: {
+      fontFamily: "Inter",
+      fontSize: 13,
+      fontWeight: "600" as const,
+      color: colors.textSecondary,
+    },
+    segmentBtnTextActive: {
+      color: colors.white,
+    },
+    logoutSection: {
+      marginBottom: spacing.xl,
+    },
+    logoutButton: {
+      backgroundColor: "#DC2626",
+      borderRadius: 16,
+      minHeight: 58,
+      paddingHorizontal: spacing.lg,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      shadowColor: "#991B1B",
+      shadowOpacity: 0.25,
+      shadowRadius: 14,
+      shadowOffset: { width: 0, height: 8 },
+      elevation: 8,
+    },
+    logoutButtonCompact: {
+      minHeight: 54,
+    },
+    logoutText: {
+      fontSize: 16,
+      fontWeight: "800" as const,
+      color: colors.white,
+      fontFamily: "Inter",
+      flex: 1,
+      marginLeft: spacing.md,
+    },
+    footer: {
+      textAlign: "center" as const,
+      fontSize: 14,
+      color: colors.textSecondary,
+      marginTop: spacing.xl,
+      marginBottom: spacing.xl,
+      fontWeight: "600" as const,
+      fontFamily: "Inter",
+    },
+  }), [colors, isDark]);
 
   const clearUserSessionData = async () => {
     await SecureStore.deleteItemAsync("access_token");
@@ -105,6 +272,12 @@ export default function SettingsScreen() {
 
     await Linking.openURL(url);
   };
+
+  const SCHEME_OPTIONS: { label: string; value: ColorSchemePreference }[] = [
+    { label: "System", value: "system" },
+    { label: "Hell", value: "light" },
+    { label: "Dunkel", value: "dark" },
+  ];
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -230,23 +403,42 @@ export default function SettingsScreen() {
 
           <View
             style={[
-              styles.settingItem,
-              isCompact ? styles.settingItemCompact : null,
+              isCompact ? styles.appearanceItemCompact : styles.appearanceItem,
             ]}
           >
-            <View style={styles.settingLeft}>
+            <View style={styles.appearanceTop}>
               <Icon name="dark-mode" size={22} color={colors.primaryBlue} />
-              <View style={styles.settingText}>
-                <Text style={styles.settingLabel}>Dunkler Modus</Text>
+              <View style={[styles.settingText]}>
+                <Text style={styles.settingLabel}>Erscheinungsbild</Text>
                 <Text style={styles.settingDescription}>Design bevorzugen</Text>
               </View>
             </View>
-            <Switch
-              value={darkModeEnabled}
-              disabled={true}
-              onValueChange={setDarkModeEnabled}
-              thumbColor={darkModeEnabled ? colors.primaryBlue : "#ccc"}
-            />
+
+            <View style={styles.appearanceSegmented}>
+              {SCHEME_OPTIONS.map((opt) => {
+                const isActive = colorSchemePreference === opt.value;
+                return (
+                  <TouchableOpacity
+                    key={opt.value}
+                    style={[
+                      styles.segmentBtn,
+                      isActive && styles.segmentBtnActive,
+                    ]}
+                    onPress={() => setColorSchemePreference(opt.value)}
+                    activeOpacity={0.8}
+                  >
+                    <Text
+                      style={[
+                        styles.segmentBtnText,
+                        isActive && styles.segmentBtnTextActive,
+                      ]}
+                    >
+                      {opt.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </View>
         </View>
 
@@ -313,129 +505,3 @@ export default function SettingsScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-    paddingVertical: spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  backButton: {
-    padding: spacing.sm,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: colors.textPrimary,
-    fontFamily: "Inter",
-  },
-  content: {
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-    paddingVertical: spacing.lg,
-  },
-  contentCompact: {
-    paddingVertical: spacing.md,
-  },
-  section: {
-    marginBottom: spacing.xl,
-    backgroundColor: colors.white,
-    borderRadius: 15,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  sectionCompact: {
-    marginBottom: spacing.lg,
-  },
-  sectionTitle: {
-    fontSize: 12,
-    fontWeight: "800",
-    letterSpacing: 1.5,
-    color: colors.textSecondary,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
-    fontFamily: "Inter",
-  },
-  settingItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
-  },
-  settingItemCompact: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-  },
-  settingLeft: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  settingText: {
-    marginLeft: spacing.lg,
-    flex: 1,
-  },
-  settingLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textPrimary,
-    fontFamily: "Inter",
-  },
-  settingDescription: {
-    fontSize: 13,
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
-    fontFamily: "Inter",
-  },
-  logoutSection: {
-    marginBottom: spacing.xl,
-  },
-  logoutButton: {
-    backgroundColor: "#DC2626",
-    borderRadius: 16,
-    minHeight: 58,
-    paddingHorizontal: spacing.lg,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    shadowColor: "#991B1B",
-    shadowOpacity: 0.25,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 8,
-  },
-  logoutButtonCompact: {
-    minHeight: 54,
-  },
-  logoutText: {
-    fontSize: 16,
-    fontWeight: "800",
-    color: colors.white,
-    fontFamily: "Inter",
-    flex: 1,
-    marginLeft: spacing.md,
-  },
-  footer: {
-    textAlign: "center",
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginTop: spacing.xl,
-    marginBottom: spacing.xl,
-    fontWeight: "600",
-    fontFamily: "Inter",
-  },
-});

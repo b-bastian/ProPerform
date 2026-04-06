@@ -1,10 +1,10 @@
-import { colors } from "@/src/theme/colors";
+import { useTheme } from "@/src/context/ThemeContext";
 import { spacing } from "@/src/theme/spacing";
 import { typography } from "@/src/theme/typography";
 import api from "@/src/utils/axiosInstance";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -71,6 +71,7 @@ export default function WorkoutModal({
   onClose,
   onWorkoutFinished,
 }: Props) {
+  const { colors, isDark } = useTheme();
   const [loading, setLoading] = useState(false);
   const [workoutData, setWorkoutData] = useState<ExerciseProgress[]>([]);
   const [seconds, setSeconds] = useState(0);
@@ -80,6 +81,255 @@ export default function WorkoutModal({
   const activeWorkoutPlanIdRef = useRef<number | null>(null);
   const backdropOpacity = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(300)).current;
+
+  const styles = useMemo(() => StyleSheet.create({
+    overlay: {
+      flex: 1,
+      justifyContent: "flex-end" as const,
+    },
+    fullscreenBackdrop: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: "rgba(0,0,0,0.4)",
+      zIndex: 0,
+    },
+    sheet: {
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      height: "80%" as any,
+    },
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+      paddingTop: spacing.md,
+    },
+    header: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: spacing.sm,
+      paddingBottom: spacing.md,
+    },
+    headerSide: {
+      width: 78,
+      justifyContent: "center" as const,
+    },
+    headerSideRight: {
+      alignItems: "flex-end" as const,
+    },
+    iconButton: {
+      width: 42,
+      height: 42,
+      borderRadius: 21,
+      backgroundColor: colors.surfaceElevated,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    headerCenter: {
+      flex: 1,
+      alignItems: "center" as const,
+    },
+    headerTitle: {
+      ...typography.body,
+      fontSize: 18,
+      color: colors.textPrimary,
+      fontWeight: "700" as const,
+    },
+    headerSubtitle: {
+      ...typography.body,
+      fontSize: 12,
+      color: colors.textSecondary,
+      marginTop: 2,
+    },
+    timerBadge: {
+      minWidth: 78,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      gap: spacing.xs,
+      backgroundColor: colors.surfaceElevated,
+      paddingHorizontal: spacing.sm,
+      paddingVertical: 8,
+      borderRadius: 999,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 6,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    timerText: {
+      ...typography.body,
+      fontSize: 14,
+      color: colors.primaryBlue,
+      fontWeight: "600" as const,
+    },
+    headerSpacer: {
+      width: 78,
+    },
+    loaderContainer: {
+      flex: 1,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    scrollContent: {
+      paddingBottom: spacing.lg,
+      gap: spacing.md,
+    },
+    exerciseCard: {
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: 16,
+      padding: spacing.md,
+      gap: spacing.sm,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    exerciseName: {
+      ...typography.body,
+      textAlign: "left" as const,
+      color: colors.textPrimary,
+      fontSize: 17,
+      fontWeight: "700" as const,
+    },
+    setRow: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: spacing.sm,
+    },
+    setLabel: {
+      ...typography.body,
+      textAlign: "left" as const,
+      width: 56,
+      fontSize: 14,
+      color: colors.textSecondary,
+    },
+    repsInput: {
+      flex: 1,
+      backgroundColor: colors.inputBg,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colors.borderLight,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 10,
+      ...typography.body,
+      fontSize: 15,
+      color: colors.textPrimary,
+      textAlign: "center" as const,
+    },
+    removeCircle: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      borderWidth: 2,
+      borderColor: colors.borderLight,
+      backgroundColor: colors.background,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    checkCircle: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      borderWidth: 2,
+      borderColor: colors.borderLight,
+      backgroundColor: colors.background,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    checkCircleActive: {
+      backgroundColor: colors.primaryBlue,
+      borderColor: colors.primaryBlue,
+    },
+    addSetButton: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      gap: spacing.xs,
+      marginTop: spacing.xs,
+      paddingVertical: spacing.sm,
+      borderWidth: 1,
+      borderColor: colors.borderLight,
+      borderRadius: 12,
+    },
+    addSetText: {
+      ...typography.body,
+      fontSize: 14,
+      color: colors.primaryBlue,
+    },
+    emptyState: {
+      paddingVertical: spacing.xl,
+      alignItems: "center" as const,
+    },
+    emptyStateText: {
+      ...typography.body,
+      fontSize: 14,
+      color: colors.textSecondary,
+    },
+    footer: {
+      paddingTop: spacing.sm,
+      paddingBottom: spacing.sm,
+    },
+    summary: {
+      flex: 1,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+    },
+    summaryIcon: {
+      width: 88,
+      height: 88,
+      borderRadius: 44,
+      backgroundColor: isDark ? "#1c3a8a22" : "#F0F4FF",
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      marginBottom: spacing.md,
+    },
+    summaryTitle: {
+      ...typography.title,
+      fontSize: 24,
+      marginBottom: spacing.sm,
+      color: colors.textPrimary,
+    },
+    summaryText: {
+      ...typography.body,
+      fontSize: 15,
+      color: colors.textSecondary,
+      marginBottom: spacing.xs,
+    },
+    mainButton: {
+      backgroundColor: colors.primaryBlue,
+      borderRadius: 999,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      paddingVertical: 16,
+      paddingHorizontal: spacing.xl,
+      marginTop: spacing.md,
+    },
+    mainButtonDisabled: {
+      opacity: 0.5,
+    },
+    mainButtonText: {
+      ...typography.body,
+      color: colors.white,
+      fontSize: 16,
+      fontWeight: "600" as const,
+    },
+    absoluteFill: {
+      position: "absolute" as const,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: 0,
+    },
+  }), [colors, isDark]);
 
   useEffect(() => {
     if (visible) {
@@ -372,7 +622,7 @@ export default function WorkoutModal({
       onRequestClose={handleClose}
     >
       <View style={styles.overlay} pointerEvents="box-none">
-        {/* Backdrop: sofort grau, unabhängig vom Sheet */}
+        {/* Backdrop */}
         <Animated.View
           style={[styles.absoluteFill, { opacity: backdropOpacity }]}
           pointerEvents="box-none"
@@ -384,7 +634,7 @@ export default function WorkoutModal({
           />
         </Animated.View>
 
-        {/* Sheet: manuell von unten hochslidend */}
+        {/* Sheet */}
         <Animated.View
           style={[styles.sheet, { transform: [{ translateY: slideAnim }] }]}
         >
@@ -564,251 +814,3 @@ export default function WorkoutModal({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  fullscreenBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    zIndex: 0,
-  },
-  sheet: {
-    backgroundColor: colors.white,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    height: "80%",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-    paddingTop: spacing.md,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    paddingBottom: spacing.md,
-  },
-  headerSide: {
-    width: 78,
-    justifyContent: "center",
-  },
-  headerSideRight: {
-    alignItems: "flex-end",
-  },
-  iconButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: colors.white,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  headerCenter: {
-    flex: 1,
-    alignItems: "center",
-  },
-  headerTitle: {
-    ...typography.body,
-    fontSize: 18,
-    color: colors.textPrimary,
-    fontWeight: "700",
-  },
-  headerSubtitle: {
-    ...typography.body,
-    fontSize: 12,
-    color: colors.textSecondary,
-    marginTop: 2,
-  },
-  timerBadge: {
-    minWidth: 78,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.xs,
-    backgroundColor: colors.white,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 8,
-    borderRadius: 999,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  timerText: {
-    ...typography.body,
-    fontSize: 14,
-    color: colors.primaryBlue,
-    fontWeight: "600",
-  },
-  headerSpacer: {
-    width: 78,
-  },
-  loaderContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  scrollContent: {
-    paddingBottom: spacing.lg,
-    gap: spacing.md,
-  },
-  exerciseCard: {
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    padding: spacing.md,
-    gap: spacing.sm,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  exerciseName: {
-    ...typography.body,
-    textAlign: "left",
-    color: colors.textPrimary,
-    fontSize: 17,
-    fontWeight: "700",
-  },
-  setRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-  },
-  setLabel: {
-    ...typography.body,
-    textAlign: "left",
-    width: 56,
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  repsInput: {
-    flex: 1,
-    backgroundColor: colors.white,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 10,
-    ...typography.body,
-    fontSize: 15,
-    color: colors.textPrimary,
-    textAlign: "center",
-  },
-  removeCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    borderWidth: 2,
-    borderColor: colors.borderLight,
-    backgroundColor: colors.background,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  checkCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    borderWidth: 2,
-    borderColor: colors.borderLight,
-    backgroundColor: colors.background,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  checkCircleActive: {
-    backgroundColor: colors.primaryBlue,
-    borderColor: colors.primaryBlue,
-  },
-  addSetButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.xs,
-    marginTop: spacing.xs,
-    paddingVertical: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
-    borderRadius: 12,
-  },
-  addSetText: {
-    ...typography.body,
-    fontSize: 14,
-    color: colors.primaryBlue,
-  },
-  emptyState: {
-    paddingVertical: spacing.xl,
-    alignItems: "center",
-  },
-  emptyStateText: {
-    ...typography.body,
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  footer: {
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.sm,
-  },
-  summary: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-  },
-  summaryIcon: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    backgroundColor: "#F0F4FF",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: spacing.md,
-  },
-  summaryTitle: {
-    ...typography.title,
-    fontSize: 24,
-    marginBottom: spacing.sm,
-  },
-  summaryText: {
-    ...typography.body,
-    fontSize: 15,
-    color: colors.textSecondary,
-    marginBottom: spacing.xs,
-  },
-  mainButton: {
-    backgroundColor: colors.primaryBlue,
-    borderRadius: 999,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 16,
-    paddingHorizontal: spacing.xl,
-    marginTop: spacing.md,
-  },
-  mainButtonDisabled: {
-    opacity: 0.5,
-  },
-  mainButtonText: {
-    ...typography.body,
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  absoluteFill: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 0,
-  },
-});

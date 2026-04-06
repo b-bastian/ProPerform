@@ -1,11 +1,11 @@
-import { colors } from "@/src/theme/colors";
+import { useTheme } from "@/src/context/ThemeContext";
 import { spacing } from "@/src/theme/spacing";
 import { typography } from "@/src/theme/typography";
 import api from "@/src/utils/axiosInstance";
 import { parseDecimal } from "@/src/utils/number";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -96,6 +96,7 @@ const hasNumericChange = (
 };
 
 export default function EditProfileScreen() {
+  const { colors, isDark } = useTheme();
   const router = useRouter();
   const { width, height: screenHeight } = useWindowDimensions();
   const isCompact = width < 380 || screenHeight < 750;
@@ -125,6 +126,209 @@ export default function EditProfileScreen() {
     training_frequency: TrainingFrequency | null;
     primary_goal: PrimaryGoal | null;
   } | null>(null);
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    keyboardAvoidingView: {
+      flex: 1,
+    },
+    header: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+      paddingVertical: spacing.lg,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderLight,
+    },
+    backButton: {
+      padding: spacing.sm,
+    },
+    headerTitle: {
+      fontSize: 24,
+      fontWeight: "700" as const,
+      color: colors.textPrimary,
+      fontFamily: "Inter",
+    },
+    headerSpacer: {
+      width: 44,
+    },
+    loaderContainer: {
+      flex: 1,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    content: {
+      flexGrow: 1,
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+      paddingVertical: spacing.lg,
+      paddingBottom: spacing.xl * 2,
+    },
+    contentCompact: {
+      paddingVertical: spacing.md,
+      paddingBottom: spacing.xl + spacing.lg,
+    },
+    section: {
+      marginBottom: spacing.xl,
+      backgroundColor: colors.surface,
+      borderRadius: 15,
+      overflow: "hidden" as const,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.05,
+      shadowRadius: 8,
+      elevation: 2,
+      paddingHorizontal: spacing.lg,
+      paddingTop: spacing.lg,
+      paddingBottom: spacing.lg,
+    },
+    sectionCompact: {
+      marginBottom: spacing.lg,
+      paddingHorizontal: spacing.md,
+      paddingTop: spacing.md,
+      paddingBottom: spacing.md,
+    },
+    sectionTitle: {
+      fontSize: 12,
+      fontWeight: "800" as const,
+      letterSpacing: 1.5,
+      color: colors.textSecondary,
+      paddingBottom: spacing.md,
+      fontFamily: "Inter",
+    },
+    label: {
+      ...typography.label,
+      color: colors.textPrimary,
+      marginBottom: spacing.sm,
+      marginTop: spacing.sm,
+      marginLeft: 4,
+      textAlign: "left" as const,
+    },
+    inputShell: {
+      minHeight: 58,
+      borderWidth: 1.5,
+      borderColor: colors.borderLight,
+      borderRadius: 14,
+      paddingHorizontal: 14,
+      backgroundColor: colors.inputBg,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: spacing.xs,
+    },
+    input: {
+      flex: 1,
+      height: "100%" as any,
+      fontSize: 16,
+      color: colors.textPrimary,
+      fontFamily: "Inter",
+    },
+    inputFocus: {
+      borderColor: colors.primaryBlue,
+      shadowColor: colors.primaryBlue,
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 3 },
+      elevation: 2,
+    },
+    inputError: {
+      borderColor: "#FF3B30",
+    },
+    unitLabel: {
+      fontSize: 13,
+      fontWeight: "700" as const,
+      color: colors.textSecondary,
+      backgroundColor: isDark ? colors.surfaceElevated : "#EFF3FA",
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 8,
+      fontFamily: "Inter",
+    },
+    optionContainer: {
+      gap: spacing.sm,
+      marginBottom: spacing.md,
+    },
+    optionButton: {
+      minHeight: 54,
+      borderRadius: 14,
+      borderWidth: 1.5,
+      borderColor: colors.borderLight,
+      backgroundColor: colors.inputBg,
+      paddingHorizontal: spacing.md,
+      justifyContent: "center" as const,
+    },
+    optionButtonSelected: {
+      borderColor: colors.primaryBlue,
+      backgroundColor: isDark ? "#1c3a8a22" : "#EEF4FF",
+      shadowColor: colors.primaryBlue,
+      shadowOpacity: isDark ? 0 : 0.12,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    optionContent: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: spacing.sm,
+    },
+    optionIndicator: {
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      borderWidth: 1.5,
+      borderColor: colors.borderGray,
+      backgroundColor: colors.inputBg,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+    },
+    optionIndicatorSelected: {
+      borderColor: colors.primaryBlue,
+      backgroundColor: colors.primaryBlue,
+    },
+    optionText: {
+      flex: 1,
+      color: colors.textPrimary,
+      fontWeight: "700" as const,
+      fontSize: 16,
+      fontFamily: "Inter",
+    },
+    optionTextSelected: {
+      color: colors.primaryBlue,
+    },
+    errorText: {
+      ...typography.error,
+      marginTop: 6,
+      marginLeft: 4,
+    },
+    saveButton: {
+      backgroundColor: colors.primaryBlue,
+      borderRadius: 16,
+      minHeight: 58,
+      paddingHorizontal: spacing.lg,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      gap: spacing.sm,
+      shadowColor: colors.primaryBlue,
+      shadowOpacity: 0.25,
+      shadowRadius: 14,
+      shadowOffset: { width: 0, height: 8 },
+      elevation: 8,
+    },
+    saveButtonCompact: {
+      minHeight: 54,
+    },
+    saveButtonDisabled: {
+      opacity: 0.7,
+    },
+    saveButtonText: {
+      fontSize: 16,
+      fontWeight: "800" as const,
+      color: colors.white,
+      fontFamily: "Inter",
+    },
+  }), [colors, isDark]);
 
   const loadProfile = React.useCallback(async () => {
     try {
@@ -619,205 +823,3 @@ export default function EditProfileScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-    paddingVertical: spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  backButton: {
-    padding: spacing.sm,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: colors.textPrimary,
-    fontFamily: "Inter",
-  },
-  headerSpacer: {
-    width: 44,
-  },
-  loaderContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  content: {
-    flexGrow: 1,
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-    paddingVertical: spacing.lg,
-    paddingBottom: spacing.xl * 2,
-  },
-  contentCompact: {
-    paddingVertical: spacing.md,
-    paddingBottom: spacing.xl + spacing.lg,
-  },
-  section: {
-    marginBottom: spacing.xl,
-    backgroundColor: colors.white,
-    borderRadius: 15,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.lg,
-  },
-  sectionCompact: {
-    marginBottom: spacing.lg,
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.md,
-  },
-  sectionTitle: {
-    fontSize: 12,
-    fontWeight: "800",
-    letterSpacing: 1.5,
-    color: colors.textSecondary,
-    paddingBottom: spacing.md,
-    fontFamily: "Inter",
-  },
-  label: {
-    ...typography.label,
-    marginBottom: spacing.sm,
-    marginTop: spacing.sm,
-    marginLeft: 4,
-    textAlign: "left",
-  },
-  inputShell: {
-    minHeight: 58,
-    borderWidth: 1.5,
-    borderColor: "#D8E1F0",
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    backgroundColor: colors.white,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-  },
-  input: {
-    flex: 1,
-    height: "100%",
-    fontSize: 16,
-    color: colors.textPrimary,
-    fontFamily: "Inter",
-  },
-  inputFocus: {
-    borderColor: colors.primaryBlue,
-    shadowColor: colors.primaryBlue,
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2,
-  },
-  inputError: {
-    borderColor: "#FF3B30",
-  },
-  unitLabel: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: colors.textSecondary,
-    backgroundColor: "#EFF3FA",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    fontFamily: "Inter",
-  },
-  optionContainer: {
-    gap: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  optionButton: {
-    minHeight: 54,
-    borderRadius: 14,
-    borderWidth: 1.5,
-    borderColor: "#D8E1F0",
-    backgroundColor: colors.white,
-    paddingHorizontal: spacing.md,
-    justifyContent: "center",
-  },
-  optionButtonSelected: {
-    borderColor: colors.primaryBlue,
-    backgroundColor: "#EEF4FF",
-    shadowColor: colors.primaryBlue,
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  optionContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-  },
-  optionIndicator: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 1.5,
-    borderColor: "#C9D6EA",
-    backgroundColor: colors.white,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  optionIndicatorSelected: {
-    borderColor: colors.primaryBlue,
-    backgroundColor: colors.primaryBlue,
-  },
-  optionText: {
-    flex: 1,
-    color: colors.textPrimary,
-    fontWeight: "700",
-    fontSize: 16,
-    fontFamily: "Inter",
-  },
-  optionTextSelected: {
-    color: colors.primaryBlue,
-  },
-  errorText: {
-    ...typography.error,
-    marginTop: 6,
-    marginLeft: 4,
-  },
-  saveButton: {
-    backgroundColor: colors.primaryBlue,
-    borderRadius: 16,
-    minHeight: 58,
-    paddingHorizontal: spacing.lg,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.sm,
-    shadowColor: colors.primaryBlue,
-    shadowOpacity: 0.25,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 8,
-  },
-  saveButtonCompact: {
-    minHeight: 54,
-  },
-  saveButtonDisabled: {
-    opacity: 0.7,
-  },
-  saveButtonText: {
-    fontSize: 16,
-    fontWeight: "800",
-    color: colors.white,
-    fontFamily: "Inter",
-  },
-});

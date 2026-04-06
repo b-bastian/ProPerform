@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
-import { colors } from "@/src/theme/colors";
+import { useTheme } from "@/src/context/ThemeContext";
 import { typography } from "@/src/theme/typography";
 import { spacing } from "@/src/theme/spacing";
 import ExerciseDetailModal from "@/src/components/modals/ExerciseDetailModal";
@@ -58,6 +58,7 @@ const categories = ["Gym", "Basketball"];
 const LIMIT = 10;
 
 export default function ExerciseScreen() {
+  const { colors, isDark } = useTheme();
   const tabBarHeight = useBottomTabBarHeight();
   const [activeCategory, setActiveCategory] = useState("Gym");
   const [searchQuery, setSearchQuery] = useState("");
@@ -72,6 +73,177 @@ export default function ExerciseScreen() {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+    },
+    header: {
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      alignItems: "center" as const,
+      paddingTop: spacing.md,
+      marginBottom: spacing.md,
+    },
+    searchContainer: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      backgroundColor: colors.surface,
+      borderRadius: 18,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.md,
+      marginBottom: spacing.md,
+      gap: spacing.xs,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.1,
+      shadowRadius: 14,
+      shadowOffset: { width: 0, height: 6 },
+      elevation: 5,
+    },
+    searchInput: {
+      flex: 1,
+      ...typography.body,
+      fontSize: 15,
+      color: colors.textPrimary,
+    },
+    categories: {
+      flexDirection: "row" as const,
+      gap: spacing.sm,
+      marginBottom: spacing.md,
+    },
+    categoryChip: {
+      paddingHorizontal: spacing.screenPaddingHorizontal,
+      paddingVertical: spacing.lg,
+      borderRadius: 999,
+      backgroundColor: colors.surface,
+      alignItems: "center" as const,
+      flex: 1,
+    },
+    categoryChipActive: {
+      backgroundColor: colors.primaryBlue,
+    },
+    categoryText: {
+      ...typography.body,
+      fontSize: 14,
+      fontWeight: "500" as const,
+      color: colors.textSecondary,
+    },
+    categoryTextActive: {
+      color: colors.white,
+      fontWeight: "700" as const,
+    },
+    list: {
+      gap: spacing.sm,
+    },
+    exerciseCard: {
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: spacing.lg,
+      gap: spacing.sm,
+      shadowColor: "#000",
+      shadowOpacity: isDark ? 0 : 0.04,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+    },
+    exerciseImage: {
+      width: 48,
+      height: 48,
+      borderRadius: 12,
+      backgroundColor: isDark ? "#1c3a8a22" : "#F0F4FF",
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      overflow: "hidden" as const,
+    },
+    exerciseInfo: {
+      flex: 1,
+    },
+    exerciseName: {
+      ...typography.body,
+      fontWeight: "600" as const,
+      color: colors.textPrimary,
+      fontSize: 15,
+    },
+    exerciseMuscle: {
+      ...typography.body,
+      fontSize: 13,
+      color: colors.textSecondary,
+      marginTop: 2,
+    },
+    loader: {
+      marginTop: spacing.xl,
+    },
+    errorContainer: {
+      alignItems: "center" as const,
+      marginBottom: spacing.md,
+      gap: spacing.xs,
+    },
+    errorText: {
+      ...typography.body,
+      color: "red",
+      fontSize: 14,
+    },
+    emptyContainer: {
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      paddingVertical: spacing.xl,
+      gap: spacing.sm,
+    },
+    emptyTitle: {
+      ...typography.title,
+      fontSize: 20,
+      color: colors.textPrimary,
+    },
+    emptySubtitle: {
+      ...typography.body,
+      color: colors.textSecondary,
+      fontSize: 14,
+      textAlign: "center" as const,
+    },
+    retryText: {
+      ...typography.body,
+      color: colors.primaryBlue,
+      fontWeight: "600" as const,
+      fontSize: 14,
+    },
+    emptySearchState: {
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: spacing.lg,
+      alignItems: "center" as const,
+      marginTop: spacing.xs,
+    },
+    emptySearchTitle: {
+      ...typography.body,
+      fontSize: 16,
+      fontWeight: "700" as const,
+      color: colors.textPrimary,
+      marginBottom: spacing.xs,
+    },
+    emptySearchText: {
+      ...typography.body,
+      fontSize: 14,
+      color: colors.textSecondary,
+      textAlign: "center" as const,
+    },
+    loadMoreButton: {
+      backgroundColor: colors.primaryBlue,
+      borderRadius: 999,
+      paddingVertical: spacing.sm,
+      alignItems: "center" as const,
+      marginTop: spacing.sm,
+    },
+    loadMoreText: {
+      ...typography.body,
+      color: colors.white,
+      fontWeight: "600" as const,
+      fontSize: 14,
+    },
+  }), [colors, isDark]);
 
   const fetchExercises = useCallback(
     async (category: string, pageNum: number) => {
@@ -132,7 +304,7 @@ export default function ExerciseScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.header}>
-        <Text style={typography.title}>Übungen</Text>
+        <Text style={[typography.title, { color: colors.textPrimary }]}>Übungen</Text>
         <TouchableOpacity onPress={() => setSearchVisible(!searchVisible)}>
           <Icon
             name={searchVisible ? "close" : "search"}
@@ -240,13 +412,6 @@ export default function ExerciseScreen() {
 
                 <View style={styles.exerciseInfo}>
                   <Text style={styles.exerciseName}>{exercise.name}</Text>
-                  {/* muscle group api not working
-                  <Text style={styles.exerciseMuscle}>
-                    {(exercise.muscle_groups ?? []).find(
-                      (mg) => mg.is_primary === 1,
-                    )?.name ?? ""}
-                  </Text>
-                  */}
                 </View>
 
                 <Icon
@@ -293,173 +458,3 @@ export default function ExerciseScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingTop: spacing.md,
-    marginBottom: spacing.md,
-  },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.white,
-    borderRadius: 18,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    marginBottom: spacing.md,
-    gap: spacing.xs,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 5,
-  },
-  searchInput: {
-    flex: 1,
-    ...typography.body,
-    fontSize: 15,
-    color: colors.textPrimary,
-  },
-  categories: {
-    flexDirection: "row",
-    gap: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  categoryChip: {
-    paddingHorizontal: spacing.screenPaddingHorizontal,
-    paddingVertical: spacing.lg,
-    borderRadius: 999,
-    backgroundColor: colors.white,
-    alignItems: "center",
-    flex: 1,
-  },
-  categoryChipActive: {
-    backgroundColor: colors.primaryBlue,
-  },
-  categoryText: {
-    ...typography.body,
-    fontSize: 14,
-    fontWeight: "500",
-    color: colors.textSecondary,
-  },
-  categoryTextActive: {
-    color: colors.white,
-    fontWeight: "700",
-  },
-  list: {
-    gap: spacing.sm,
-  },
-  exerciseCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    padding: spacing.lg,
-    gap: spacing.sm,
-    shadowColor: "#000",
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  exerciseImage: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: "#F0F4FF",
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden",
-  },
-  exerciseInfo: {
-    flex: 1,
-  },
-  exerciseName: {
-    ...typography.body,
-    fontWeight: "600",
-    color: colors.textPrimary,
-    fontSize: 15,
-  },
-  exerciseMuscle: {
-    ...typography.body,
-    fontSize: 13,
-    color: colors.textSecondary,
-    marginTop: 2,
-  },
-  loader: {
-    marginTop: spacing.xl,
-  },
-  errorContainer: {
-    alignItems: "center",
-    marginBottom: spacing.md,
-    gap: spacing.xs,
-  },
-  errorText: {
-    ...typography.body,
-    color: "red",
-    fontSize: 14,
-  },
-  emptyContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: spacing.xl,
-    gap: spacing.sm,
-  },
-  emptyTitle: {
-    ...typography.title,
-    fontSize: 20,
-  },
-  emptySubtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    fontSize: 14,
-    textAlign: "center",
-  },
-  retryText: {
-    ...typography.body,
-    color: colors.primaryBlue,
-    fontWeight: "600",
-    fontSize: 14,
-  },
-  emptySearchState: {
-    backgroundColor: colors.white,
-    borderRadius: 16,
-    padding: spacing.lg,
-    alignItems: "center",
-    marginTop: spacing.xs,
-  },
-  emptySearchTitle: {
-    ...typography.body,
-    fontSize: 16,
-    fontWeight: "700",
-    color: colors.textPrimary,
-    marginBottom: spacing.xs,
-  },
-  emptySearchText: {
-    ...typography.body,
-    fontSize: 14,
-    color: colors.textSecondary,
-    textAlign: "center",
-  },
-  loadMoreButton: {
-    backgroundColor: colors.primaryBlue,
-    borderRadius: 999,
-    paddingVertical: spacing.sm,
-    alignItems: "center",
-    marginTop: spacing.sm,
-  },
-  loadMoreText: {
-    ...typography.body,
-    color: colors.white,
-    fontWeight: "600",
-    fontSize: 14,
-  },
-});

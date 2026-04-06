@@ -15,8 +15,8 @@ const router = express.Router();
 
 router.use(regenerateCodeRoutes);
 router.use(linkAthleteRoutes);
-router.use(deleteTrainer);
 router.use(deleteTrainerToUser);
+router.use(deleteTrainer);
 router.use(trainerAthleteRoutes);
 router.use(trainersMe);
 router.use(TrainerToUserRoutes);

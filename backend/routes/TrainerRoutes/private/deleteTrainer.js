@@ -5,27 +5,26 @@ import { requireAuth } from "../../../middleware/auth.js";
 
 const router = express.Router();
 
-router.delete(
-  "/:tid(\\d+)",
-  requireAuth,
-  requireRole("owner"),
-  async (req, res) => {
-    const { tid } = req.params;
+router.delete("/:tid", requireAuth, requireRole("owner"), async (req, res) => {
+  const { tid } = req.params;
 
-    try {
-      const [result] = await db.execute("DELETE FROM trainers WHERE tid = ?", [
-        tid,
-      ]);
+  if (!Number.isInteger(Number(tid))) {
+    return res.status(400).json({ error: "invalid trainer id." });
+  }
 
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ error: "trainer not found." });
-      }
+  try {
+    const [result] = await db.execute("DELETE FROM trainers WHERE tid = ?", [
+      tid,
+    ]);
 
-      res.status(200).json({ message: `trainer with id ${tid} deleted.` });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "trainer not found." });
     }
-  },
-);
+
+    res.status(200).json({ message: `trainer with id ${tid} deleted.` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 export default router;

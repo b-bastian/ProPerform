@@ -27,6 +27,11 @@ import { API_BASE_URL } from "../config/api";
 type Athlete = { uid: string; firstname: string; email: string };
 type VideoItem = { id: string; name: string };
 type Exercise = { eid: string; name: string; duration_minutes?: number };
+type UploadedMedia = {
+  mid: string;
+  url: string;
+  filename?: string;
+};
 type TrainerRequest = {
   id: string;
   status: "pending" | "accepted" | "rejected" | string;
@@ -48,8 +53,6 @@ type ModalType =
 type ExerciseFormState = {
   name: string;
   description: string;
-  video_url: string;
-  thumbnail_url: string;
   sid: string;
   dlid: string;
 };
@@ -137,6 +140,13 @@ export default function Dashboard() {
   const [selectedVideo, setSelectedVideo] = useState<VideoItem | null>(null);
   const [selectedAthleteIds, setSelectedAthleteIds] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [exerciseVideoMedia, setExerciseVideoMedia] =
+    useState<UploadedMedia | null>(null);
+  const [exerciseThumbnailMedia, setExerciseThumbnailMedia] =
+    useState<UploadedMedia | null>(null);
+  const [isUploadingExerciseMedia, setIsUploadingExerciseMedia] = useState<
+    "video" | "thumbnail" | null
+  >(null);
   const [isUploading, setIsUploading] = useState(false);
   const [copiedTrainerCode, setCopiedTrainerCode] = useState(false);
   const [isCreatingExercise, setIsCreatingExercise] = useState(false);
@@ -146,8 +156,6 @@ export default function Dashboard() {
   const [exerciseForm, setExerciseForm] = useState<ExerciseFormState>({
     name: "",
     description: "",
-    video_url: "",
-    thumbnail_url: "",
     sid: "",
     dlid: "",
   });
@@ -267,11 +275,11 @@ export default function Dashboard() {
     setExerciseForm({
       name: "",
       description: "",
-      video_url: "",
-      thumbnail_url: "",
       sid: "",
       dlid: "",
     });
+    setExerciseVideoMedia(null);
+    setExerciseThumbnailMedia(null);
   };
 
   const openCreateExerciseModal = () => {
@@ -293,6 +301,81 @@ export default function Dashboard() {
     resetExerciseForm();
   };
 
+  const uploadExerciseMedia = async (
+    file: File,
+    kind: "video" | "thumbnail",
+  ) => {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      navigate("/login", { replace: true });
+      return null;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    setIsUploadingExerciseMedia(kind);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/media`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data?.message ||
+            data?.error ||
+            "Media konnte nicht hochgeladen werden.",
+        );
+      }
+
+      return {
+        mid: String(data.mid),
+        url: String(data.url),
+        filename: file.name,
+      } satisfies UploadedMedia;
+    } catch (error) {
+      console.error("Media konnte nicht hochgeladen werden:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Media konnte nicht hochgeladen werden.",
+      );
+      return null;
+    } finally {
+      setIsUploadingExerciseMedia(null);
+    }
+  };
+
+  const pickExerciseMedia = (kind: "video" | "thumbnail") => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = kind === "video" ? "video/*" : "image/*";
+    input.onchange = async (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      const file = target.files?.[0];
+
+      if (!file) return;
+
+      const uploadedMedia = await uploadExerciseMedia(file, kind);
+      if (!uploadedMedia) return;
+
+      if (kind === "video") {
+        setExerciseVideoMedia(uploadedMedia);
+      } else {
+        setExerciseThumbnailMedia(uploadedMedia);
+      }
+    };
+    input.click();
+  };
+
   const handleCreateExercise = async () => {
     const token = localStorage.getItem("accessToken");
 
@@ -310,6 +393,11 @@ export default function Dashboard() {
       return;
     }
 
+    if (!exerciseVideoMedia || !exerciseThumbnailMedia) {
+      alert("Bitte Video und Thumbnail hochladen.");
+      return;
+    }
+
     setIsCreatingExercise(true);
     try {
       const response = await fetch(`${API_BASE_URL}/trainers/exercises`, {
@@ -321,8 +409,8 @@ export default function Dashboard() {
         body: JSON.stringify({
           name: exerciseForm.name.trim(),
           description: exerciseForm.description.trim() || undefined,
-          video_url: exerciseForm.video_url.trim() || undefined,
-          thumbnail_url: exerciseForm.thumbnail_url.trim() || undefined,
+          video_media_id: exerciseVideoMedia.mid,
+          thumbnail_media_id: exerciseThumbnailMedia.mid,
           sid: exerciseForm.sid.trim(),
           dlid: exerciseForm.dlid.trim(),
         }),
@@ -1293,39 +1381,46 @@ export default function Dashboard() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
-                  Video-URL
-                </label>
-                <input
-                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white placeholder-slate-400 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all"
-                  placeholder="https://..."
-                  value={exerciseForm.video_url}
-                  onChange={(e) =>
-                    setExerciseForm((prev) => ({
-                      ...prev,
-                      video_url: e.target.value,
-                    }))
-                  }
-                />
-              </div>
+              <button
+                type="button"
+                className="flex flex-col items-start gap-2 w-full bg-slate-50 dark:bg-slate-800 border border-dashed border-slate-200 dark:border-slate-700 hover:border-[#F97316] rounded-xl px-4 py-4 text-left transition-colors"
+                onClick={() => pickExerciseMedia("video")}
+              >
+                <div className="flex items-center gap-2">
+                  <Upload size={16} className="text-[#F97316]" />
+                  <span className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                    Video hochladen *
+                  </span>
+                </div>
+                <span className="text-xs text-[#64748b] dark:text-[#94A3B8]">
+                  {isUploadingExerciseMedia === "video"
+                    ? "Lade hoch..."
+                    : exerciseVideoMedia
+                      ? exerciseVideoMedia.filename || "Video hochgeladen"
+                      : "Datei auswählen und direkt in Media speichern"}
+                </span>
+              </button>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
-                  Thumbnail-URL
-                </label>
-                <input
-                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white placeholder-slate-400 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all"
-                  placeholder="https://..."
-                  value={exerciseForm.thumbnail_url}
-                  onChange={(e) =>
-                    setExerciseForm((prev) => ({
-                      ...prev,
-                      thumbnail_url: e.target.value,
-                    }))
-                  }
-                />
-              </div>
+              <button
+                type="button"
+                className="flex flex-col items-start gap-2 w-full bg-slate-50 dark:bg-slate-800 border border-dashed border-slate-200 dark:border-slate-700 hover:border-[#F97316] rounded-xl px-4 py-4 text-left transition-colors"
+                onClick={() => pickExerciseMedia("thumbnail")}
+              >
+                <div className="flex items-center gap-2">
+                  <Upload size={16} className="text-[#F97316]" />
+                  <span className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                    Thumbnail hochladen
+                  </span>
+                </div>
+                <span className="text-xs text-[#64748b] dark:text-[#94A3B8]">
+                  {isUploadingExerciseMedia === "thumbnail"
+                    ? "Lade hoch..."
+                    : exerciseThumbnailMedia
+                      ? exerciseThumbnailMedia.filename ||
+                        "Thumbnail hochgeladen"
+                      : "Optional: Bild auswählen und hochladen"}
+                </span>
+              </button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

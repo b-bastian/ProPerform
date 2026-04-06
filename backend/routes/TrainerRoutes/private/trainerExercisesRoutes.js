@@ -12,19 +12,61 @@ router.post(
   requireRole("trainer"),
   async (req, res) => {
     const creatorId = req.user.uid ?? req.user.tid ?? null;
-    const { name, description, video_url, thumbnail_url, sid, dlid } = req.body;
+    const { name, description, video_media_id, thumbnail_media_id, sid, dlid } =
+      req.body;
 
     console.log("[trainerExercisesRoutes] create exercise request", {
       creatorId,
-      body: { name, description, video_url, thumbnail_url, sid, dlid },
+      body: {
+        name,
+        description,
+        video_media_id,
+        thumbnail_media_id,
+        sid,
+        dlid,
+      },
     });
+
+    if (!video_media_id) {
+      return res.status(400).json({ error: "video missing" });
+    }
+
+    if (!thumbnail_media_id) {
+      return res.status(400).json({ error: "thumbnail missing" });
+    }
+
+    const [videoMediaRows] = await db.query(
+      "SELECT mid FROM media WHERE mid = ? AND created_by_user = ? AND created_by_role = ?",
+      [video_media_id, req.user.tid, "trainer"],
+    );
+
+    if (videoMediaRows.length === 0) {
+      return res.status(400).json({ error: "invalid video media" });
+    }
+
+    const [thumbnailMediaRows] = await db.query(
+      "SELECT mid FROM media WHERE mid = ? AND created_by_user = ? AND created_by_role = ?",
+      [thumbnail_media_id, req.user.tid, "trainer"],
+    );
+
+    if (thumbnailMediaRows.length === 0) {
+      return res.status(400).json({ error: "invalid thumbnail media" });
+    }
 
     try {
       const result = await db.query(
         `INSERT INTO exercises
-        (name, description, video_url, thumbnail_url, sid, dlid, created_by)
+        (name, description, sid, dlid, created_by, video_mid, thumbnail_mid)
         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [name, description, video_url, thumbnail_url, sid, dlid, creatorId],
+        [
+          name,
+          description,
+          sid,
+          dlid,
+          creatorId,
+          video_media_id,
+          thumbnail_media_id,
+        ],
       );
 
       console.log("[trainerExercisesRoutes] create exercise success", {

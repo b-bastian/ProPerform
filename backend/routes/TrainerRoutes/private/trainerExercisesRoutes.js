@@ -14,6 +14,11 @@ router.post(
     const creatorId = req.user.uid ?? req.user.tid ?? null;
     const { name, description, video_url, thumbnail_url, sid, dlid } = req.body;
 
+    console.log("[trainerExercisesRoutes] create exercise request", {
+      creatorId,
+      body: { name, description, video_url, thumbnail_url, sid, dlid },
+    });
+
     try {
       const result = await db.query(
         `INSERT INTO exercises
@@ -22,8 +27,14 @@ router.post(
         [name, description, video_url, thumbnail_url, sid, dlid, creatorId],
       );
 
+      console.log("[trainerExercisesRoutes] create exercise success", {
+        eid: result.insertId,
+        creatorId,
+      });
+
       return res.status(201).json({ eid: result.insertId });
     } catch (err) {
+      console.error("[trainerExercisesRoutes] create exercise failed", err);
       return res.status(500).json({ error: "failed" });
     }
   },
@@ -38,6 +49,12 @@ router.put(
     const { eid } = req.params;
     const creatorId = req.user.uid ?? req.user.tid ?? null;
     const { name, description } = req.body;
+
+    console.log("[trainerExercisesRoutes] update exercise request", {
+      eid,
+      creatorId,
+      body: { name, description },
+    });
 
     try {
       const [check] = await db.query(
@@ -54,8 +71,14 @@ router.put(
         [name, description, eid],
       );
 
+      console.log("[trainerExercisesRoutes] update exercise success", {
+        eid,
+        creatorId,
+      });
+
       return res.json({ message: "updated" });
     } catch (err) {
+      console.error("[trainerExercisesRoutes] update exercise failed", err);
       return res.status(500).json({ error: "failed" });
     }
   },
@@ -70,6 +93,11 @@ router.delete(
     const { eid } = req.params;
     const creatorId = req.user.uid ?? req.user.tid ?? null;
 
+    console.log("[trainerExercisesRoutes] delete exercise request", {
+      eid,
+      creatorId,
+    });
+
     try {
       const result = await db.query(
         "DELETE FROM exercises WHERE eid = ? AND created_by = ?",
@@ -80,8 +108,14 @@ router.delete(
         return res.status(403).json({ error: "not yours" });
       }
 
+      console.log("[trainerExercisesRoutes] delete exercise success", {
+        eid,
+        creatorId,
+      });
+
       return res.json({ message: "deleted" });
     } catch (err) {
+      console.error("[trainerExercisesRoutes] delete exercise failed", err);
       return res.status(500).json({ error: "failed" });
     }
   },

@@ -21,12 +21,34 @@ import {
   Copy,
   RefreshCw,
   HelpCircle,
+  FileText,
 } from "lucide-react";
 import { API_BASE_URL } from "../config/api";
 
 type Athlete = { uid: string; firstname: string; email: string };
 type VideoItem = { id: string; name: string };
 type Exercise = { eid: string; name: string; duration_minutes?: number };
+type TrainingPlan = {
+  tpid: string;
+  name: string;
+  description?: string;
+  sport?: string;
+  difficulty?: string;
+  duration_weeks?: number;
+  sessions_per_week?: number;
+  assigned_count?: number;
+  is_template?: boolean | number;
+};
+type AthleteTrainingPlan = {
+  id: string;
+  tpid: string;
+  plan_name: string;
+  description?: string;
+  sport?: string;
+  difficulty?: string;
+  start_date?: string;
+  status?: string;
+};
 type UploadedMedia = {
   mid: string;
   url: string;
@@ -41,10 +63,18 @@ type TrainerRequest = {
   lastname?: string;
   email?: string;
 };
-type Tab = "overview" | "athletes" | "exercises" | "requests" | "videos";
+type Tab =
+  | "overview"
+  | "athletes"
+  | "exercises"
+  | "trainingPlans"
+  | "requests"
+  | "videos";
 type ModalType =
   | "exercise"
   | "createExercise"
+  | "createTrainingPlan"
+  | "assignTrainingPlan"
   | "videoUpload"
   | "videoAssign"
   | "kick"
@@ -55,6 +85,16 @@ type ExerciseFormState = {
   description: string;
   sid: string;
   dlid: string;
+};
+
+type TrainingPlanFormState = {
+  name: string;
+  description: string;
+  sid: string;
+  dlid: string;
+  duration_weeks: string;
+  sessions_per_week: string;
+  is_template: boolean;
 };
 
 type RequestFilter = "all" | "pending" | "accepted" | "rejected";
@@ -129,6 +169,7 @@ export default function Dashboard() {
   const [requestFilter, setRequestFilter] = useState<RequestFilter>("all");
   const [trainerRequests, setTrainerRequests] = useState<TrainerRequest[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [trainingPlans, setTrainingPlans] = useState<TrainingPlan[]>([]);
   const [videos, setVideos] = useState<VideoItem[]>([
     { id: "v1", name: "Basic Dribbling Tutorial.mp4" },
   ]);
@@ -144,12 +185,21 @@ export default function Dashboard() {
     useState<UploadedMedia | null>(null);
   const [exerciseThumbnailMedia, setExerciseThumbnailMedia] =
     useState<UploadedMedia | null>(null);
+  const [selectedTrainingPlanIds, setSelectedTrainingPlanIds] = useState<
+    string[]
+  >([]);
+  const [selectedAthletePlans, setSelectedAthletePlans] = useState<
+    AthleteTrainingPlan[]
+  >([]);
   const [isUploadingExerciseMedia, setIsUploadingExerciseMedia] = useState<
     "video" | "thumbnail" | null
   >(null);
   const [isUploading, setIsUploading] = useState(false);
   const [copiedTrainerCode, setCopiedTrainerCode] = useState(false);
   const [isCreatingExercise, setIsCreatingExercise] = useState(false);
+  const [isCreatingTrainingPlan, setIsCreatingTrainingPlan] = useState(false);
+  const [isAssigningTrainingPlans, setIsAssigningTrainingPlans] =
+    useState(false);
   const [processingRequestId, setProcessingRequestId] = useState<string | null>(
     null,
   );
@@ -159,6 +209,16 @@ export default function Dashboard() {
     sid: "",
     dlid: "",
   });
+  const [trainingPlanForm, setTrainingPlanForm] =
+    useState<TrainingPlanFormState>({
+      name: "",
+      description: "",
+      sid: "",
+      dlid: "",
+      duration_weeks: "",
+      sessions_per_week: "",
+      is_template: false,
+    });
 
   const trainerCode = localStorage.getItem("inviteCode") ?? "-";
 
@@ -174,12 +234,15 @@ export default function Dashboard() {
   const fetchDashboardData = async (token: string) => {
     try {
       const trainerId = localStorage.getItem("trainerId");
-      const [exerciseResponse, requestResponse, athleteResponse] =
+      const [exerciseResponse, requestResponse, planResponse, athleteResponse] =
         await Promise.all([
           fetch(`${API_BASE_URL}/exercises?limit=100`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
           fetch(`${API_BASE_URL}/trainers/requests`, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          fetch(`${API_BASE_URL}/trainers/training-plans`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
           trainerId
@@ -189,15 +252,17 @@ export default function Dashboard() {
             : Promise.resolve(null),
         ]);
 
-      const [exerciseData, requestData] = await Promise.all([
+      const [exerciseData, requestData, planData] = await Promise.all([
         exerciseResponse.json(),
         requestResponse.json(),
+        planResponse.json(),
       ]);
 
       const athleteData = athleteResponse ? await athleteResponse.json() : null;
 
       setExercises(exerciseData?.exercises || []);
       setTrainerRequests(requestData?.requests || []);
+      setTrainingPlans(planData?.plans || []);
       setAthleteList(athleteData?.athletes || []);
     } catch (error) {
       console.error("Fehler:", error);
@@ -215,6 +280,18 @@ export default function Dashboard() {
       setExercises(data?.exercises || []);
     } catch (error) {
       console.error("Fehler:", error);
+    }
+  };
+
+  const fetchTrainingPlans = async (token: string) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/trainers/training-plans`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setTrainingPlans(data?.plans || []);
+    } catch (error) {
+      console.error("Trainingsplaene konnten nicht geladen werden:", error);
     }
   };
 
@@ -282,9 +359,26 @@ export default function Dashboard() {
     setExerciseThumbnailMedia(null);
   };
 
+  const resetTrainingPlanForm = () => {
+    setTrainingPlanForm({
+      name: "",
+      description: "",
+      sid: "",
+      dlid: "",
+      duration_weeks: "",
+      sessions_per_week: "",
+      is_template: false,
+    });
+  };
+
   const openCreateExerciseModal = () => {
     resetExerciseForm();
     setActiveModal("createExercise");
+  };
+
+  const openCreateTrainingPlanModal = () => {
+    resetTrainingPlanForm();
+    setActiveModal("createTrainingPlan");
   };
 
   const openRequestsTab = (filter: RequestFilter = "all") => {
@@ -299,6 +393,50 @@ export default function Dashboard() {
   const closeCreateExerciseModal = () => {
     setActiveModal(null);
     resetExerciseForm();
+  };
+
+  const closeCreateTrainingPlanModal = () => {
+    setActiveModal(null);
+    resetTrainingPlanForm();
+  };
+
+  const loadAthleteTrainingPlans = async (athleteUid: string) => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) return [];
+
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/trainers/training-plans/athletes/${athleteUid}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      const data = await res.json();
+      const plans = data?.plans || [];
+      setSelectedAthletePlans(plans);
+      return plans;
+    } catch (error) {
+      console.error(
+        "Trainingsplaene fuer Athlet konnten nicht geladen werden:",
+        error,
+      );
+      return [];
+    }
+  };
+
+  const openAssignTrainingPlanModal = async (athlete: Athlete) => {
+    setSelectedAthlete(athlete);
+    setSelectedTrainingPlanIds([]);
+    setSelectedAthletePlans([]);
+    setActiveModal("assignTrainingPlan");
+
+    await loadAthleteTrainingPlans(athlete.uid);
+  };
+
+  const toggleTrainingPlanSelection = (tpid: string) => {
+    setSelectedTrainingPlanIds((prev) =>
+      prev.includes(tpid) ? prev.filter((id) => id !== tpid) : [...prev, tpid],
+    );
   };
 
   const uploadExerciseMedia = async (
@@ -438,6 +576,127 @@ export default function Dashboard() {
       );
     } finally {
       setIsCreatingExercise(false);
+    }
+  };
+
+  const handleCreateTrainingPlan = async () => {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    if (
+      !trainingPlanForm.name.trim() ||
+      !trainingPlanForm.sid.trim() ||
+      !trainingPlanForm.duration_weeks.trim() ||
+      !trainingPlanForm.sessions_per_week.trim()
+    ) {
+      alert("Bitte Name, Sport, Dauer und Sessions ausfuellen.");
+      return;
+    }
+
+    setIsCreatingTrainingPlan(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/trainers/training-plans`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: trainingPlanForm.name.trim(),
+          description: trainingPlanForm.description.trim() || undefined,
+          sid: trainingPlanForm.sid.trim(),
+          dlid: trainingPlanForm.dlid.trim() || undefined,
+          duration_weeks: trainingPlanForm.duration_weeks.trim(),
+          sessions_per_week: trainingPlanForm.sessions_per_week.trim(),
+          is_template: trainingPlanForm.is_template,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data?.error ||
+            data?.message ||
+            "Trainingsplan konnte nicht erstellt werden.",
+        );
+      }
+
+      await fetchTrainingPlans(token);
+      setActiveModal(null);
+      resetTrainingPlanForm();
+    } catch (error) {
+      console.error("Trainingsplan konnte nicht erstellt werden:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Trainingsplan konnte nicht erstellt werden.",
+      );
+    } finally {
+      setIsCreatingTrainingPlan(false);
+    }
+  };
+
+  const handleAssignTrainingPlans = async () => {
+    if (!selectedAthlete) return;
+
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    if (selectedTrainingPlanIds.length === 0) {
+      alert("Bitte mindestens einen Trainingsplan auswählen.");
+      return;
+    }
+
+    setIsAssigningTrainingPlans(true);
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/trainers/training-plans/assign`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            uid: selectedAthlete.uid,
+            tpid_list: selectedTrainingPlanIds,
+            start_date: new Date().toISOString().slice(0, 10),
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data?.error ||
+            data?.message ||
+            "Trainingsplan konnte nicht zugewiesen werden.",
+        );
+      }
+
+      await fetchTrainingPlans(token);
+      await loadAthleteTrainingPlans(selectedAthlete.uid);
+      setSelectedTrainingPlanIds([]);
+      setActiveModal(null);
+      setSelectedAthlete(null);
+    } catch (error) {
+      console.error("Trainingsplan konnte nicht zugewiesen werden:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Trainingsplan konnte nicht zugewiesen werden.",
+      );
+    } finally {
+      setIsAssigningTrainingPlans(false);
     }
   };
 
@@ -623,6 +882,7 @@ export default function Dashboard() {
     { id: "overview", label: "Übersicht", icon: LayoutDashboard },
     { id: "athletes", label: "Athleten", icon: Users },
     { id: "exercises", label: "Übungen", icon: Dumbbell },
+    { id: "trainingPlans", label: "Trainingspläne", icon: FileText },
     { id: "requests", label: "Anfragen", icon: LayoutDashboard },
     { id: "videos", label: "Videos", icon: Film },
   ];
@@ -744,6 +1004,14 @@ export default function Dashboard() {
                   bg: "bg-[#F97316]/10",
                 },
                 {
+                  icon: FileText,
+                  value: trainingPlans.length,
+                  label: "Trainingspläne",
+                  tab: "trainingPlans" as Tab,
+                  color: "text-violet-600 dark:text-violet-400",
+                  bg: "bg-violet-50 dark:bg-violet-500/10",
+                },
+                {
                   icon: Users,
                   value: pendingRequestCount,
                   label: "Anfragen",
@@ -815,6 +1083,29 @@ export default function Dashboard() {
                   <ChevronRight
                     size={16}
                     className="text-slate-400 group-hover:text-[#F97316] transition-colors"
+                  />
+                </button>
+                <button
+                  className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-100 dark:border-slate-700 p-4 flex items-center gap-4 text-left hover:border-violet-300 dark:hover:border-violet-500/30 transition-colors cursor-pointer group"
+                  onClick={openCreateTrainingPlanModal}
+                >
+                  <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center shrink-0">
+                    <FileText
+                      size={18}
+                      className="text-violet-600 dark:text-violet-400"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-[#1E3A8A] dark:text-white">
+                      Trainingsplan erstellen
+                    </p>
+                    <p className="text-xs text-[#64748b] dark:text-[#94A3B8]">
+                      Neue Pläne anlegen und Athleten zuweisen
+                    </p>
+                  </div>
+                  <ChevronRight
+                    size={16}
+                    className="text-slate-400 group-hover:text-violet-500 transition-colors"
                   />
                 </button>
                 <button
@@ -1046,6 +1337,13 @@ export default function Dashboard() {
                           <span className="hidden sm:inline">Übung</span>
                         </button>
                         <button
+                          className="inline-flex items-center gap-1.5 bg-violet-50 dark:bg-violet-500/10 hover:bg-violet-100 dark:hover:bg-violet-500/20 text-violet-700 dark:text-violet-300 text-xs font-semibold px-3 py-2 rounded-lg border-0 cursor-pointer transition-colors"
+                          onClick={() => openAssignTrainingPlanModal(athlete)}
+                        >
+                          <FileText size={13} />
+                          <span className="hidden sm:inline">Plan</span>
+                        </button>
+                        <button
                           className="p-2 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 rounded-lg border-0 cursor-pointer transition-colors"
                           onClick={() => {
                             setSelectedAthlete(athlete);
@@ -1115,6 +1413,89 @@ export default function Dashboard() {
                           {exercise.duration_minutes} Min.
                         </p>
                       )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </>
+        )}
+
+        {/* TRAINING PLANS TAB */}
+        {activeTab === "trainingPlans" && (
+          <>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-2xl font-bold text-[#1E3A8A] dark:text-white">
+                  Trainingspläne
+                </h2>
+                <p className="text-sm text-[#64748b] dark:text-[#94A3B8] mt-0.5">
+                  {trainingPlans.length} Pläne für deine Athleten
+                </p>
+              </div>
+              <button
+                className={primaryBtn}
+                onClick={openCreateTrainingPlanModal}
+              >
+                <Plus size={14} />
+                <span className="hidden sm:inline">Neu</span>
+              </button>
+            </div>
+
+            <div className="bg-white dark:bg-[#1E293B] rounded-2xl border border-slate-100 dark:border-slate-700 overflow-hidden">
+              {trainingPlans.length === 0 ? (
+                <div className="py-12 text-center">
+                  <FileText
+                    size={28}
+                    className="text-slate-300 dark:text-slate-600 mx-auto mb-2"
+                  />
+                  <p className="text-sm text-[#64748b] dark:text-[#94A3B8]">
+                    Noch keine Trainingspläne angelegt
+                  </p>
+                </div>
+              ) : (
+                trainingPlans.map((plan, i) => (
+                  <div
+                    key={plan.tpid}
+                    className={`flex items-center gap-4 px-5 py-4 ${i !== trainingPlans.length - 1 ? "border-b border-slate-100 dark:border-slate-700" : ""}`}
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center shrink-0">
+                      <FileText
+                        size={15}
+                        className="text-violet-600 dark:text-violet-400"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-[#1E3A8A] dark:text-white">
+                        {plan.name}
+                      </p>
+                      <p className="text-xs text-[#64748b] dark:text-[#94A3B8] mt-0.5">
+                        {plan.sport || "Sport unbekannt"}
+                        {plan.difficulty ? ` · ${plan.difficulty}` : ""}
+                        {plan.duration_weeks
+                          ? ` · ${plan.duration_weeks} Wochen`
+                          : ""}
+                        {plan.sessions_per_week
+                          ? ` · ${plan.sessions_per_week}x/Woche`
+                          : ""}
+                      </p>
+                      {plan.description && (
+                        <p className="text-xs text-[#64748b] dark:text-[#94A3B8] mt-1 line-clamp-2">
+                          {plan.description}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end gap-2 shrink-0">
+                      <span className="text-xs font-semibold px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-[#1E3A8A] dark:text-white">
+                        {plan.assigned_count ?? 0} zugewiesen
+                      </span>
+                      <button
+                        className="inline-flex items-center gap-1.5 bg-violet-50 dark:bg-violet-500/10 hover:bg-violet-100 dark:hover:bg-violet-500/20 text-violet-700 dark:text-violet-300 text-xs font-semibold px-3 py-2 rounded-lg border-0 cursor-pointer transition-colors"
+                        onClick={() => setActiveTab("athletes")}
+                      >
+                        <FileText size={13} />
+                        Athlet wählen
+                      </button>
                     </div>
                   </div>
                 ))
@@ -1559,6 +1940,285 @@ export default function Dashboard() {
           >
             Abbrechen
           </button>
+        </div>
+      </Modal>
+
+      <Modal
+        visible={activeModal === "createTrainingPlan"}
+        onClose={closeCreateTrainingPlanModal}
+      >
+        <div className={modalCard}>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-base font-bold text-[#1E3A8A] dark:text-white">
+                Trainingsplan erstellen
+              </p>
+              <p className="text-xs text-[#64748b] dark:text-[#94A3B8]">
+                Plan für deine Athleten anlegen
+              </p>
+            </div>
+            <button
+              className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 border-0 cursor-pointer"
+              onClick={closeCreateTrainingPlanModal}
+            >
+              <X size={14} className="text-[#64748b] dark:text-slate-400" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                Name *
+              </label>
+              <input
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white placeholder-slate-400 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all"
+                placeholder="z.B. Offseason Aufbau"
+                value={trainingPlanForm.name}
+                onChange={(e) =>
+                  setTrainingPlanForm((prev) => ({
+                    ...prev,
+                    name: e.target.value,
+                  }))
+                }
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                Beschreibung
+              </label>
+              <textarea
+                className="w-full min-h-24 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white placeholder-slate-400 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all resize-none"
+                placeholder="Kurz beschreiben, worauf der Plan abzielt"
+                value={trainingPlanForm.description}
+                onChange={(e) =>
+                  setTrainingPlanForm((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                  SID *
+                </label>
+                <input
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white placeholder-slate-400 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all"
+                  placeholder="z.B. 1"
+                  value={trainingPlanForm.sid}
+                  onChange={(e) =>
+                    setTrainingPlanForm((prev) => ({
+                      ...prev,
+                      sid: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                  DLID
+                </label>
+                <input
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white placeholder-slate-400 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all"
+                  placeholder="optional"
+                  value={trainingPlanForm.dlid}
+                  onChange={(e) =>
+                    setTrainingPlanForm((prev) => ({
+                      ...prev,
+                      dlid: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                  Dauer in Wochen *
+                </label>
+                <input
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white placeholder-slate-400 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all"
+                  placeholder="z.B. 8"
+                  value={trainingPlanForm.duration_weeks}
+                  onChange={(e) =>
+                    setTrainingPlanForm((prev) => ({
+                      ...prev,
+                      duration_weeks: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold text-[#1E3A8A] dark:text-slate-300">
+                  Sessions pro Woche *
+                </label>
+                <input
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1E3A8A] dark:text-white placeholder-slate-400 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#F97316] focus:ring-2 focus:ring-[#F97316]/20 transition-all"
+                  placeholder="z.B. 3"
+                  value={trainingPlanForm.sessions_per_week}
+                  onChange={(e) =>
+                    setTrainingPlanForm((prev) => ({
+                      ...prev,
+                      sessions_per_week: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+
+            <label className="flex items-center gap-2 text-sm text-[#1E3A8A] dark:text-white">
+              <input
+                type="checkbox"
+                checked={trainingPlanForm.is_template}
+                onChange={(e) =>
+                  setTrainingPlanForm((prev) => ({
+                    ...prev,
+                    is_template: e.target.checked,
+                  }))
+                }
+              />
+              Als Vorlage markieren
+            </label>
+          </div>
+
+          <div className="flex gap-3 mt-5">
+            <button
+              className={`${ghostBtn} flex-1`}
+              onClick={closeCreateTrainingPlanModal}
+            >
+              Abbrechen
+            </button>
+            <button
+              className={`${primaryBtn} flex-1 ${isCreatingTrainingPlan ? "opacity-60 cursor-not-allowed" : ""}`}
+              onClick={handleCreateTrainingPlan}
+              disabled={isCreatingTrainingPlan}
+            >
+              {isCreatingTrainingPlan ? (
+                <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-[spin_0.8s_linear_infinite]" />
+              ) : (
+                "Erstellen"
+              )}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        visible={activeModal === "assignTrainingPlan"}
+        onClose={() => setActiveModal(null)}
+      >
+        <div className={modalCard}>
+          <div className="flex items-center justify-between mb-1">
+            <div>
+              <p className="text-base font-bold text-[#1E3A8A] dark:text-white">
+                Trainingspläne zuweisen
+              </p>
+              <p className="text-xs text-[#64748b] dark:text-[#94A3B8]">
+                für {selectedAthlete?.firstname}
+              </p>
+            </div>
+            <button
+              className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 border-0 cursor-pointer"
+              onClick={() => setActiveModal(null)}
+            >
+              <X size={14} className="text-[#64748b] dark:text-slate-400" />
+            </button>
+          </div>
+
+          {selectedAthletePlans.length > 0 && (
+            <div className="mb-4 rounded-xl bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20 p-3">
+              <p className="text-xs font-semibold text-violet-700 dark:text-violet-300 mb-2">
+                Bereits zugewiesene Pläne
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {selectedAthletePlans.map((plan) => (
+                  <span
+                    key={plan.id}
+                    className="text-xs px-2 py-1 rounded-full bg-white dark:bg-[#1E293B] text-[#1E3A8A] dark:text-white border border-violet-100 dark:border-violet-500/20"
+                  >
+                    {plan.plan_name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="max-h-72 overflow-y-auto flex flex-col gap-2">
+            {trainingPlans.length === 0 ? (
+              <p className="text-sm text-[#64748b] dark:text-[#94A3B8] py-4 text-center">
+                Keine Trainingspläne gefunden.
+              </p>
+            ) : (
+              trainingPlans.map((plan) => {
+                const isSelected = selectedTrainingPlanIds.includes(plan.tpid);
+                return (
+                  <button
+                    key={plan.tpid}
+                    className={`flex items-center gap-3 rounded-xl p-3 border cursor-pointer text-left w-full transition-colors ${isSelected ? "bg-violet-50 dark:bg-violet-500/10 border-violet-300 dark:border-violet-500/30" : "bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"}`}
+                    onClick={() => toggleTrainingPlanSelection(plan.tpid)}
+                  >
+                    <div
+                      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${isSelected ? "bg-violet-600 border-violet-600" : "border-slate-300 dark:border-slate-600"}`}
+                    >
+                      {isSelected && (
+                        <Check
+                          size={11}
+                          className="text-white"
+                          strokeWidth={3}
+                        />
+                      )}
+                    </div>
+                    <div className="w-8 h-8 rounded-full bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center shrink-0">
+                      <FileText
+                        size={14}
+                        className="text-violet-600 dark:text-violet-400"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p
+                        className={`text-sm font-semibold ${isSelected ? "text-violet-700 dark:text-violet-300" : "text-[#1E3A8A] dark:text-white"}`}
+                      >
+                        {plan.name}
+                      </p>
+                      <p className="text-xs text-[#64748b] dark:text-[#94A3B8] truncate">
+                        {plan.sport || "Sport unbekannt"}
+                        {plan.difficulty ? ` · ${plan.difficulty}` : ""}
+                        {plan.duration_weeks
+                          ? ` · ${plan.duration_weeks} Wochen`
+                          : ""}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })
+            )}
+          </div>
+
+          <div className="flex gap-3 mt-4">
+            <button
+              className={`${ghostBtn} flex-1`}
+              onClick={() => setActiveModal(null)}
+            >
+              Abbrechen
+            </button>
+            <button
+              className={`${primaryBtn} flex-1 ${isAssigningTrainingPlans ? "opacity-60 cursor-not-allowed" : ""}`}
+              onClick={handleAssignTrainingPlans}
+              disabled={isAssigningTrainingPlans}
+            >
+              {isAssigningTrainingPlans ? (
+                <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-[spin_0.8s_linear_infinite]" />
+              ) : (
+                "Zuweisen"
+              )}
+            </button>
+          </div>
         </div>
       </Modal>
 
